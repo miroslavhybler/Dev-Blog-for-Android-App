@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Dev Blog for Android</string>
+
+    <string name="ntfc_def_group_name">App Functions</string>
+    <string name="ntfc_def_group_desc">Default notification group.</string>
+
+    <string name="ntfc_def_channel_name">New Posts</string>
+    <string name="ntfc_def_channel_desc">App will notify you when new post is published. App is checking for new posts once a week on background, or when opened.</string>
+
+    <string name="settings_dynamic_colors_label">Dynamic colors</string>
+    <string name="settings_dark_mode_label">Dark Mode</string>
+    <string name="dark_mode_yes">Dark</string>
+    <string name="dark_mode_no">Light</string>
+    <string name="setting_notifications_label">Notifications</string>
+    <string name="dark_mode_system">System</string>
+    <string name="settings_version">Version:</string>
+    <string name="settings_title">Settings &amp; about</string>
+    <string name="settings_github">Available on Github</string>
+    <string name="settings_about_libs_title">Used Libraries</string>
+    <string name="settings_changelog_title">Changelog</string>
+    <string name="settings_about_0_0">Dev Blog for Android is unofficial open-source app for keeping in touch with Android dev blog. App is using</string>
+    <string name="settings_about_0_1">jet-article project</string>
+    <string name="settings_about_0_2">(which is now under development) to load posts and show it natively using Jetpack Compose.</string>
+
+    <string name="settings_about_1">App is checking for new posts every 2 days, or when opened. You can turn on notifications to get notified.</string>
+    <string name="settings_about_2">Enjoy latest news from world of Android development in fully adaptive way 😊</string>
+
+    <string name="settings_changelog_title_1_0_0">First release 🚀</string>
+    <string name="settings_changelog_1_0_0__0">Loading posts and post detail 📖</string>
+    <string name="settings_changelog_1_0_0__1">Fully adaptive 📱</string>
+    <string name="settings_changelog_1_0_0__2">Checking for new posts every two days on background using WorkManager</string>
+
+    <string name="settings_changelog_title_1_0_1">Cache support &amp; Bugfixes 🐞</string>
+    <string name="settings_changelog_1_0_1__0">Added cache support for posts</string>
+    <string name="settings_changelog_1_0_1__1">Updated Content synchronization, enabled to load data from local when offline</string>
+    <string name="settings_changelog_1_0_1__2">Updated side cases and error scenarios</string>
+    <string name="settings_changelog_1_0_1__3">Other minor fixes</string>
+
+
+    <string name="settings_about_title">About</string>
+
+
+    <string name="content_desc_show_contest">Show Contest screen</string>
+    <string name="content_desc_open_settings">Open settings</string>
+    <string name="content_desc_report_on_mail">Report bug on Mail</string>
+    <string name="content_desc_report_on_github">Report bug on Github</string>
+    <string name="content_desc_copy_stacktrace">Copy stacktrace to clipboard</string>
+    <string name="report_on_mail">Report on Mail</string>
+    <string name="report_on_github">Report on Github</string>
+    <string name="post_empty_desc">Pick some post to read 🤓 or enjoy this animation if you like it 😁</string>
+    <string name="general_error_description">App is showing data from source i do not control, this might happen 😕 Please report this bug to me, thanks.</string>
+    <string name="general_error_label">Sorry for your inconvenience</string>
+    <string name="error_unable_load_post">Unable to show the post</string>
+    <string name="error_connection">No internet connection</string>
+</resources>

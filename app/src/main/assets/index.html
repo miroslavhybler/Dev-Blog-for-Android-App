@@ -1,0 +1,1069 @@
+
+<!DOCTYPE html>
+<html class='v2 list-page' dir='ltr' itemscope='' itemtype='http://schema.org/Blog' lang='en' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr' xmlns:og='http://ogp.me/ns#'>
+<head>
+    <link href='https://www.blogger.com/static/v1/widgets/3566091532-css_bundle_v2.css' rel='stylesheet' type='text/css'/>
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-TB2PQP2');
+    </script>
+    <!-- End Google Tag Manager -->
+    <title>Android Developers Blog</title>
+
+    <!-- start all head -->
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+    <meta content='blogger' name='generator'/>
+    <link href='https://android-developers.googleblog.com/favicon.ico' rel='icon' type='image/x-icon'/>
+    <link href='https://android-developers.googleblog.com/' rel='canonical'/>
+    <link rel="alternate" type="application/atom+xml" title="Android Developers Blog - Atom" href="https://android-developers.googleblog.com/feeds/posts/default" />
+    <link rel="alternate" type="application/rss+xml" title="Android Developers Blog - RSS" href="https://android-developers.googleblog.com/feeds/posts/default?alt=rss" />
+    <link rel="service.post" type="application/atom+xml" title="Android Developers Blog - Atom" href="https://www.blogger.com/feeds/6755709643044947179/posts/default" />
+    <!--Can't find substitution for tag [blog.ieCssRetrofitLinks]-->
+    <meta content='News and insights on the Android platform, developer tools, and events.' name='description'/>
+    <meta content='https://android-developers.googleblog.com/' property='og:url'/>
+    <meta content='Android Developers Blog' property='og:title'/>
+    <meta content='News and insights on the Android platform, developer tools, and events.' property='og:description'/>
+    <!-- end all head -->
+    <base target='_self'/>
+
+    <script type='text/javascript'>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-5831155-1', 'auto', 'blogger');
+        ga('blogger.send', 'pageview');
+    </script>
+    <link href='https://www.blogger.com/dyn-css/authorization.css?targetBlogID=6755709643044947179&amp;zx=67396356-0985-4fb9-94b0-4443ab95e2d8' media='none' onload='if(media!=&#39;all&#39;)media=&#39;all&#39;' rel='stylesheet'/><noscript><link href='https://www.blogger.com/dyn-css/authorization.css?targetBlogID=6755709643044947179&amp;zx=67396356-0985-4fb9-94b0-4443ab95e2d8' rel='stylesheet'/></noscript>
+    <meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+    <meta name='google-adsense-platform-domain' content='blogspot.com'/>
+
+    <script type="text/javascript" language="javascript">
+        // Supply ads personalization default for EEA readers
+        // See https://www.blogger.com/go/adspersonalization
+        adsbygoogle = window.adsbygoogle || [];
+        if (typeof adsbygoogle.requestNonPersonalizedAds === 'undefined') {
+          adsbygoogle.requestNonPersonalizedAds = 1;
+        }
+    </script>
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Open+Sans"></head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe height='0' src='https://www.googletagmanager.com/ns.html?id=GTM-TB2PQP2' style='display: none; visibility: hidden' width='0'></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script type='text/javascript'>
+    //<![CDATA[
+    var axel = Math.random() + "";
+    var a = axel * 10000000000000;
+    document.write(
+      '<iframe src="https://2542116.fls.doubleclick.net/activityi;src=2542116;type=gblog;cat=googl0;ord=ord=' +
+        a +
+        '?" width="1" height="1" frameborder="0" style="display:none"></iframe>'
+    );
+    //]]>
+</script>
+<noscript>
+    <img alt='' height='1' src='https://ad.doubleclick.net/ddm/activity/src=2542116;type=gblog;cat=googl0;ord=1?' width='1'/>
+</noscript>
+<div class='adb-hero-area'>
+    <a href='https://android-developers.googleblog.com'><img alt='hero android logo' class='adb-hero-logo' src='https://developer.android.com/static/images/logos/android.svg'/></a>
+    <span class='adb-burger-box'> &#9776; </span>
+    <div class='adb-hero-title'>
+        <a href='https://android-developers.googleblog.com'>Android Developers Blog</a>
+    </div>
+    <div class='adb-hero-summary'>
+        <a>The latest Android and Google Play news for app and game
+            developers.</a>
+    </div>
+    <span class='adb-search-box'> 🔍 </span>
+    <div class='popout-search'>
+        <span class='popout-options' id='close-search-popout'><img height='22px' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAAAoklEQVR4Ae2UtQEDMQDE5LHCsE26nyBQfenuS1dZM8yscGW5M8h8nJPJ9Ag8ItDFoWBBeqAKJOYMENosNiVxj7TrUUcodx0rblHtWksc4l3VXhNxzlTxLY0MiqoRVSnbPaL3M5ILUMJeZU/CCUxPNOETUXLRH7e210yY+GHj1+8f53cPUga5yj+t//13Y2SC0DnXeLBZ1CJRW3wn/PucksksATXJlBc3KdoMAAAAAElFTkSuQmCC' width='22px'/></span>
+        <div class='section' id='header-popout-search'><div class='widget BlogSearch' data-version='1' id='BlogSearch2'>
+            <div class='widget-content'>
+                <div id='BlogSearch2_form'>
+                    <div class='searchBox popout-options'>
+                        <form action='/search' class='searchbox'>
+                            <input autocomplete='off' name='q' placeholder='Search blog' title='Search blog' type='text' value=''/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div></div>
+    </div>
+    <div class='adb-hero-search'>
+        <div class='section' id='header-search'><div class='widget BlogSearch' data-version='1' id='BlogSearch1'>
+            <div class='widget-content'>
+                <div id='BlogSearch1_form'>
+                    <div class='searchBox'>
+                        <form action='/search' class='searchbox'>
+                            <input autocomplete='off' name='q' placeholder='Search blog' title='Search blog' type='text' value=''/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div></div>
+    </div>
+    <div class='adb-hero-link'>
+        <a href='https://developer.android.com/' target='_blank'>Android Developers <span class='adb-hero-arrow'>&#8594;</span></a>
+    </div>
+</div>
+<div class='dropdown-nav'>
+    <a class='dropdown-options' href='https://developer.android.com/jetpack'>
+        <span>Jetpack</span>
+    </a>
+    <a class='dropdown-options' href='https://developer.android.com/kotlin'>
+        <span>Kotlin</span>
+    </a>
+    <a class='dropdown-options' href='https://developer.android.com/docs'>
+        <span>Docs</span>
+    </a>
+    <a class='dropdown-options' href='https://developer.android.com/news'>
+        <span>News</span>
+    </a>
+</div>
+<div class='popout-nav'>
+    <span class='popout-options' id='close-popout'><img height='22px' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAAAoklEQVR4Ae2UtQEDMQDE5LHCsE26nyBQfenuS1dZM8yscGW5M8h8nJPJ9Ag8ItDFoWBBeqAKJOYMENosNiVxj7TrUUcodx0rblHtWksc4l3VXhNxzlTxLY0MiqoRVSnbPaL3M5ILUMJeZU/CCUxPNOETUXLRH7e210yY+GHj1+8f53cPUga5yj+t//13Y2SC0DnXeLBZ1CJRW3wn/PucksksATXJlBc3KdoMAAAAAElFTkSuQmCC' width='22px'/></span>
+    <a class='popout-options' href='https://developer.android.com/about'>
+        <span>Platform</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/studio'>
+        <span>Android Studio</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/distribute'>
+        <span>Google Play</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/jetpack'>
+        <span>Jetpack</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/kotlin'>
+        <span>Kotlin</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/docs'>
+        <span>Docs</span>
+    </a>
+    <a class='popout-options' href='https://developer.android.com/news'>
+        <span>News</span>
+    </a>
+    <div class='popout-xoptions'>
+        <div class='sidebar-social-links' style='display: flex'>
+            <a href='https://developer.android.com/' title='Android Developers Site'>
+                <img alt='Android Developers Site' class='sidebar-icon android-logo' src='https://developer.android.com/static/images/logos/android.svg'/>
+            </a>
+            <a href='https://www.youtube.com/user/androiddevelopers' title='Android Developers on YouTube'>
+                <img alt='Android Developers on YouTube' class='sidebar-icon' src='https://www.gstatic.com/images/icons/material/system/2x/video_youtube_grey600_24dp.png'/>
+            </a>
+            <a href='https://www.linkedin.com/showcase/androiddev/' title='Android Developers on LinkedIn'>
+                <img alt='Android Developers on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+            </a>
+            <a href='https://medium.com/androiddevelopers' title='Android Developers on Medium'>
+                <img alt='Android Developers on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+            </a>
+            <a href='https://x.com/androiddev' title='Follow Android Developers on X'>
+                <img alt='Follow Android Developers on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+            </a>
+        </div>
+    </div>
+    <div class='popout-options'>
+        <div class='sidebar-social-links' style='display: flex'>
+            <a href='https://developer.android.com/distribute/' title='Google Play Site'>
+                <img alt='Google Play Site' class='sidebar-icon' src='https://developer.android.com/static/images/logos/google-play.svg'/>
+            </a>
+            <a href='https://www.linkedin.com/company/googleplaybiz/' title='Google Play Apps & Games on LinkedIn'>
+                <img alt='Google Play Apps & Games on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+            </a>
+            <a href='https://medium.com/googleplaydev' title='Google Play Apps & Games on Medium'>
+                <img alt='Google Play Apps & Games on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+            </a>
+            <a href='https://x.com/GooglePlayBiz' title='Follow GooglePlaydBiz on X'>
+                <img alt='Follow GooglePlayBiz on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+            </a>
+        </div>
+    </div>
+</div>
+<div class='popout-overlay'></div>
+<div class='popout-search-overlay'></div>
+<div class='adb-header'>
+    <div class='adb-header-inner'>
+        <div class='adb-htag-box'>
+<span class='adb-header-tags'>
+<a href='https://developer.android.com/about'>Platform</a>
+</span>
+            <span class='adb-header-tags'>
+<a href='https://developer.android.com/studio'>Android Studio</a>
+</span>
+            <span class='adb-header-tags'>
+<a href='https://developer.android.com/distribute'>Google Play</a>
+</span>
+            <span class='adb-header-tags breakpoint-hide'>
+<a href='https://developer.android.com/jetpack'>Jetpack</a>
+</span>
+            <span class='adb-header-tags breakpoint-hide'>
+<a href='https://developer.android.com/kotlin'>Kotlin</a>
+</span>
+            <span class='adb-header-tags breakpoint-hide'>
+<a href='https://developer.android.com/docs'>Docs</a>
+</span>
+            <span class='adb-header-tags breakpoint-hide'>
+<a href='https://developer.android.com/news'>News</a>
+</span>
+            <span class='adb-header-tags more-dropdown' status='inactive'>
+<a>More</a>
+<img class='dropdown-icon' height='24px' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAR0lEQVR4Ae3OMREAIBDEQCQgBf8qkIID+P4qqnyRnUmfIUmS1NesdnU/O9VqMJUz5FTMAFPcTE7xMzHFz8QUPxNT/IwkSUoPu7I4F2kEFg8AAAAASUVORK5CYII= ' width='24px'/>
+</span>
+        </div>
+        <div class='adb-socials-box'>
+            <div class='adb-socials-category'>
+                <div class='sidebar-social-links' style='display: flex; justify-content: center; padding: 0 4px'>
+                    <a href='https://developer.android.com/' title='Android Developers Site'>
+                        <img alt='Android Developers Site' class='sidebar-icon android-logo' src='https://developer.android.com/static/images/logos/android.svg'/>
+                    </a>
+                    <a href='https://www.youtube.com/user/androiddevelopers' title='Android Developers on YouTube'>
+                        <img alt='Android Developers on YouTube' class='sidebar-icon' src='https://www.gstatic.com/images/icons/material/system/2x/video_youtube_grey600_24dp.png'/>
+                    </a>
+                    <a href='https://www.linkedin.com/showcase/androiddev/' title='Android Developers on LinkedIn'>
+                        <img alt='Android Developers on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+                    </a>
+                    <a href='https://medium.com/androiddevelopers' title='Android Developers on Medium'>
+                        <img alt='Android Developers on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+                    </a>
+                    <a href='https://X.com/androiddev' title='Follow Android Developers on X'>
+                        <img alt='Follow Android Developers on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+                    </a>
+                </div>
+            </div>
+            <div class='adb-socials-divider'>|</div>
+            <div class='adb-socials-category'>
+                <div class='sidebar-social-links' style='display: flex; justify-content: center; padding: 0 4px'>
+                    <a href='https://developer.android.com/distribute/' title='Google Play Site'>
+                        <img alt='Google Play Site' class='sidebar-icon' src='https://developer.android.com/static/images/logos/google-play.svg'/>
+                    </a>
+                    <a href='https://www.linkedin.com/company/googleplaybiz/' title='Google Play Apps & Games on LinkedIn'>
+                        <img alt='Google Play Apps & Games on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+                    </a>
+                    <a href='https://medium.com/googleplaydev' title='Google Play Apps & Games on Medium'>
+                        <img alt='Google Play Apps & Games on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+                    </a>
+                    <a href='https://X.com/GooglePlayBiz' title='Follow GooglePlaydBiz on X'>
+                        <img alt='Follow GooglePlayBiz on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- all content wrapper start -->
+<div class='content-wrap'>
+    <div class='full-width section' id='Body'><div class='widget FeaturedPost' data-version='2' id='FeaturedPost1'>
+        <div class='featured__wrapper'>
+            <div class='featured__inner'>
+                <a aria-label='Featured Article' class='featured__href' href='https://android-developers.googleblog.com/2024/07/the-fourth-beta-of-android-15.html'></a>
+                <div class='featured__image'>
+                    <img alt='Featured Post Image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjW1UxJk2BEGQu-9eSLY0fV6wrCb0FJTo_-rMykFO0wUDajMwXeF7CgXx9MBKZcOLhd5bOikhbK9PWvM3aYfncnDn_Lba0ASuchSeKbpt4ZWcmcEHDK8_W6-_C2DnWs3T7v1DPk2EtTAH_amWewikG5f9NDadQSJ6DbcwiTKEG0XtlO_f250KaNRz76Jcg/s1600/AD-15-Developer-Preview.png'/>
+                </div>
+                <div class='featured__content'>
+                    <div class='featured__title'>
+                        The Fourth Beta of Android 15
+                    </div>
+                    <div class='featured__info'>
+                        11:00&#8239;AM
+                    </div>
+                    <div class='featured__description'>
+                        Posted by Matthew McCullough &#8211; VP of Product Management, Android Developer     Today we&#39;re bringing you Beta 4, the last scheduled u...
+                    </div>
+                    <div class='blog-label-container'>
+                        <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Android?max-results=12'>
+                            <span>Android</span>
+                        </a>
+                        <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android15?max-results=12'>
+                            <span>android15</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><div class='widget Blog' data-version='1' id='Blog1'>
+        <div class='adb-container--large'>
+            <div class='posts-container'>
+                <div class='adb-card'>
+                    <a aria-label='#WeArePlay | How Jakub is infusing Czech mythology into his games' class='adb-card__href' href='https://android-developers.googleblog.com/2024/08/weareplay-how-jakub-is-infusing-czech-mythology-into-his-games.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='#WeArePlay | How Jakub is infusing Czech mythology into his games' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNrZUz7AsjqnFhJZ3BiBy2mDVmKO6hCv66KtgSq7vZtgt9ZZiljd7_JNFJEyuOg7tF1HfYqOqSnW6MQLRoYOaPalEg4vC4XVwstTgXz-hzYmzqeAGmEmZ4R56DNL8UtllCGOoCkVcCpkE73wue1m40mPu2tHjPirvMwBMZiQZARYWiMRlhYRkmTfwfaZM/s1600/%23WeArePlay%20Social%20.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            #WeArePlay | How Jakub is infusing Czech mythology into his games
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>08 August 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Robbie McLachlan, Developer Marketing        In our latest film for #WeArePlay , which celebrates the people behind groundbreak...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/%23WeArePlay?max-results=12'>
+                                <span>#WeArePlay</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android%20developers?max-results=12'>
+                                <span>android developers</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='Android Device Streaming: Announcing Early Access to Samsung, Xiaomi, and Oppo Device Labs' class='adb-card__href' href='https://android-developers.googleblog.com/2024/08/android-device-streaming-announcing-early-access.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='Android Device Streaming: Announcing Early Access to Samsung, Xiaomi, and Oppo Device Labs' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrZUrcdVXeHfTLAR0aoOJ0pMIAROCKRaTSh3L0Y8yErEAUxZLYO9aLYt0mDaP5JKn1ltxYaAEoYyWvQffr-bz4tAFx85VnHKl2hZLtIzkmWHaQBFfewdAoKUTJ-0dhpLlt1_TgBbrmLSVMoVghe2gCl7whqiio6LVNM0aZLPuggQpf-vsxRG1VbbdZyfU/s1600/Android-Studio-white-Social.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            Android Device Streaming: Announcing Early Access to Samsung, Xiaomi, and Oppo Device Labs
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>06 August 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Grant Yang (Product Manager for OmniLab) &amp; Adarsh Fernando (Product Manager for Android Studio)        At Google I/O 2024, ...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Android?max-results=12'>
+                                <span>Android</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Android%20Studio?max-results=12'>
+                                <span>Android Studio</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='Making security easy: How we are helping you fix vulnerabilities in your Android apps' class='adb-card__href' href='https://android-developers.googleblog.com/2024/07/making-security-easy-vuln-remediation.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='Making security easy: How we are helping you fix vulnerabilities in your Android apps' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg3EQV5j-ddJhvUjwyJgHmpQkLE-qfgaRaQyBr5f29cOgm8Q6pQ5_yDEVLGTsX-WQaYlBvflq5J4ywoNLLEGtlerHYhyphenhyphenRGjsDH4hq-HTsmWf5Q74iH2qHJ3mkNKqep83s3gg6Tt-koewlbA3bAZY_PvWds1nbEWMjPjyarZlncLH4DlC1PjlMQ0FpdL1UA/s1600/Making-security-easy--How-we-are-helping-developers-fix-vulnerabilities-social.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            Making security easy: How we are helping you fix vulnerabilities in your Android apps
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>25 July 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Bessie Jiang &#8211; Software Engineer and Chris Schneider &#8211; Security Engineer   Contributors: Maciej Szawłowski &#8211; Security Engineer,...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/AAKB?max-results=12'>
+                                <span>AAKB</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Android?max-results=12'>
+                                <span>Android</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='Introducing Collections, a new on-device surface for your content' class='adb-card__href' href='https://android-developers.googleblog.com/2024/07/introducing-collections-powered-by-engage-sdk.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='Introducing Collections, a new on-device surface for your content' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiUZEgFYi7Ywgipf5UquqK_SnHp3HCfUq9ilvgFRSAPVkRAd_QklH3gcn4BE9QB9RX2DcPB20TBB2kXjoZTh3MdJohTcPcl9A7K0cf7yZVFsiBkB6VqQgpzpZiAZI7gVWr7idRoUuMNIeTpPFmch5kPKH7k_7G1D4mgAeAWAcNofgb_wDQtje9riwxKWg0/s1600/Collections-Social.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            Introducing Collections, a new on-device surface for your content
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>24 July 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>    Posted by Cullen Rotroff, Product Manager, Google Play       Over the past year, the Play Store has evolved into a dynamic discovery eng...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android%20developers?max-results=12'>
+                                <span>android developers</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Featured?max-results=12'>
+                                <span>Featured</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='#WeArePlay | 153 new stories from people creating apps and games in the U.S.' class='adb-card__href' href='https://android-developers.googleblog.com/2024/07/weareplay-stories-from-people-creating-apps-and-games-in-the-us.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='#WeArePlay | 153 new stories from people creating apps and games in the U.S.' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEju1CCQW-tDhzvcq9_yWPv6MCT9LgnhWVX-kLWqLH0nf0AKuXHnNDZGUAcR7UTo8CtcU7Ffg8eFN0bCCRlfpPHQ7pxSHNdlAT9WmFIq5yq8d2YW8uWTxS1VAxitANwTJU4gxMbxsQiWAgY1ZnI8GH_UKFbTJb735U-9gVFQzjGfrwuOcJlHM6BKXgQwEJU/s1600/WeArePlay-USA-Social.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            #WeArePlay | 153 new stories from people creating apps and games in the U.S.
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>23 July 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Robbie McLachlan, Developer Marketing          In 2022, #WeArePlay launched 153 stories about the people behind app and game co...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/%23WeArePlay?max-results=12'>
+                                <span>#WeArePlay</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android%20developers?max-results=12'>
+                                <span>android developers</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='The Fourth Beta of Android 15' class='adb-card__href' href='https://android-developers.googleblog.com/2024/07/the-fourth-beta-of-android-15.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='The Fourth Beta of Android 15' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjW1UxJk2BEGQu-9eSLY0fV6wrCb0FJTo_-rMykFO0wUDajMwXeF7CgXx9MBKZcOLhd5bOikhbK9PWvM3aYfncnDn_Lba0ASuchSeKbpt4ZWcmcEHDK8_W6-_C2DnWs3T7v1DPk2EtTAH_amWewikG5f9NDadQSJ6DbcwiTKEG0XtlO_f250KaNRz76Jcg/s1600/AD-15-Developer-Preview.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            The Fourth Beta of Android 15
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>18 July 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>    Posted by Matthew McCullough &#8211; VP of Product Management, Android Developer     Today we&#39;re bringing you Beta 4, the last scheduled u...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Android?max-results=12'>
+                                <span>Android</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android15?max-results=12'>
+                                <span>android15</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='Prepare your app for the new Samsung Galaxy foldables and watches! ' class='adb-card__href' href='https://android-developers.googleblog.com/2024/07/updates-samsung-galaxy-unpacked.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='Prepare your app for the new Samsung Galaxy foldables and watches! ' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhEYBbFlJ8tUA2JTbby5V8GbqjutTgrCZnZpfz2ulQz4wFGFItfxiaJpU37pzwBthh0E31M7RM8m4V5_2gRdoejpZXRdIA-yJ2Dm7Q01t6_GQ8cAX_tbLGwLbUr3pM4kr8Acx2UM2Y1rq-tPURCJnNRqkW25DkNI09gOanIqxdWi8p05UFrTZ04kjkhVSE/s1600/Samsung-Unpacked-Social.png'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            Prepare your app for the new Samsung Galaxy foldables and watches!
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>11 July 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Maru Ahues Bouza &#8211; Product Management Director, Android Developer      Yesterday&#8217;s Galaxy Unpacked event  from Samsung debuted ...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Announcements?max-results=12'>
+                                <span>Announcements</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/Explore?max-results=12'>
+                                <span>Explore</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+                <div class='adb-card'>
+                    <a aria-label='#WeArePlay | 4 stories of founders building apps for the LGBTQIA+ community' class='adb-card__href' href='https://android-developers.googleblog.com/2024/06/weareplay-founders-building-apps-for-lgbtqia-community.html'></a>
+                    <div class='adb-card__image-wrapper'>
+                        <img alt='#WeArePlay | 4 stories of founders building apps for the LGBTQIA+ community' class='adb-card__image' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiiumydpt8ngiN-hcaD1hyphenhyphen1Q0RBc2_3jHqJfVjzAXDdMFvmVchxAa84klxcYj87JiG7NSAC1GBxau4FYka1sp6zM4j_CScFQnGhzt0CJQtSBqu7FH8aPo_nNX7WRKK6pnxPAgsRaA-GJvu4fBQgEeEjzD6CYNg5IO8hgxVpHlsImgXaMggGFvKrxncWEx0/s1600/%23WeArePlay_4Stories_AndroidDevsBlog_LGBTQ+_2096x1182px.jpg'/>
+                    </div>
+                    <div class='adb-card__content'>
+                        <div class='adb-card__title'>
+                            #WeArePlay | 4 stories of founders building apps for the LGBTQIA+ community
+                        </div>
+                        <div class='adb-card__info'>
+                            <p>28 June 2024</p>
+                        </div>
+                        <div class='adb-card__description'>
+                            <p>   Posted by Robbie McLachlan, Developer Marketing     #WeArePlay  celebrates the inspiring journeys of people behind apps and games on Goog...</p>
+                        </div>
+                        <div class='blog-label-container'>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/%23WeArePlay?max-results=12'>
+                                <span>#WeArePlay</span>
+                            </a>
+                            <a class='blog-label' href='https://android-developers.googleblog.com/search/label/android%20developers?max-results=12'>
+                                <span>android developers</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class='divider'/>
+            </div>
+            <div data-posts-count='8'>
+                <div class='blog-pager pagination' id='blog-pager'>
+                    <a class='disabled page-button'>
+                        <span>Newer posts</span>
+                    </a>
+                    <a class='blog-pager-older-link page-button' href='https://android-developers.googleblog.com/search?updated-max=2024-06-28T09:00:00-07:00&max-results=10' id='Blog1_blog-pager-older-link' title='Older Posts'>
+                        <span>Older posts</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div></div>
+</div>
+<!-- Other blogs -->
+<div class='adb-footer-section'>
+    <div class='adb-footer-columns'>
+        <div class='adb-footer-column'>
+            <h2 class='adb-footer-title'>Google developers blog</h2>
+            <a href='https://developers.googleblog.com' target='_blank'>Google Developers Blog</a>
+        </div>
+        <div class='adb-footer-column'>
+            <h2 class='adb-footer-title'>Connect</h2>
+            <span class='adb-footer-social-label'>
+<a href='https://developer.android.com/' title='Android Developers Site'>
+<img alt='Android Developers Site' class='sidebar-icon android-logo' src='https://developer.android.com/static/images/logos/android.svg'/>
+</a>Android Developers</span>
+            <div class='adb-footer-social-links' style='display: flex'>
+                <a href='https://www.youtube.com/user/androiddevelopers' title='Android Developers on YouTube'>
+                    <img alt='Android Developers on YouTube' class='sidebar-icon' src='https://www.gstatic.com/images/icons/material/system/2x/video_youtube_grey600_24dp.png'/>
+                </a>
+                <a href='https://www.linkedin.com/showcase/androiddev/' title='Android Developers on LinkedIn'>
+                    <img alt='Android Developers on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+                </a>
+                <a href='https://medium.com/androiddevelopers' title='Android Developers on Medium'>
+                    <img alt='Android Developers on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+                </a>
+                <a href='https://x.com/androiddev' title='Follow Android Developers on X'>
+                    <img alt='Follow Android Developers on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+                </a>
+            </div>
+            <span class='adb-footer-social-label'>
+<a href='https://developer.android.com/distribute/' title='Google Play Site'>
+<img alt='Google Play Site' class='sidebar-icon' src='https://developer.android.com/static/images/logos/google-play.svg'/>
+</a>Google Play</span>
+            <div class='adb-footer-social-links' style='display: flex'>
+                <a href='https://www.linkedin.com/company/googleplaybiz/' title='Google Play Apps & Games on LinkedIn'>
+                    <img alt='Google Play Apps & Games on LinkedIn' class='sidebar-icon' src='https://www.pagetraffic.com/blog/wp-content/uploads/2022/09/linkedin-black-white-logo.png'/>
+                </a>
+                <a href='https://medium.com/googleplaydev' title='Google Play Apps & Games on Medium'>
+                    <img alt='Google Play Apps & Games on Medium' class='sidebar-icon' src='data:image/png;base64,R0lGODlhMAAwAPcAAHJxcHFwb4iGhYODgre2tnNxcLi4t+jo6LCvr3BubW1ram5tbLOzsm1sa3BvbmtqaWppaG5ta2poZ2dmZoB/fmhnZ3Jxb3Jwb5CPjqqpqWtram9ubWxras7OzmloaGpoaHh3d8XExPj4+GhnZmhoZ/39/fv7+2pqaWtqaObm5r69vK2trIWEg+np6X59fIOCgYiHhoaFg93d3ba1tJKRj66trdDQz2lnZrm5uIKCge7t7WpqarW1tKampW1ra9ra2t3d3PPy8uvr67W1s8LCwZ2cm5WUk2ppafX19auqqpKRkff393RzcXRycbSzso+OjbW0s8vLyqalpODf3/f39srKymdnZ+Xl5IKCgLa2tXRzcnZ0c/7+/ru7upuamrS0s7y8u5GPjpuamNPS0nZ1dJqZmLu6ufHx8X18e+zs7O7u7fDw8Obl5dXU1JaVlLSzs52dm9DOzpOSkWtoZ2dnZoCAf+jn525sa9bW1r28vOfn556enbKysamop9nZ2Hl3dnFvbuXl5cTEw399fMHAv6Cenb6+vayrqsrKya+urdHR0fr5+W1tbHp5eNfW1uno6ODg4OLi4qqpqPr6+omIhn59fXh3dmZmZv///3FwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxMTEgNzkuMTU4MzI1LCAyMDE1LzA5LzEwLTAxOjEwOjIwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQzNFMDRFOTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQzNFMDRFQTlEMzgxMUU3OTk1N0ZEREQyNENCOTcxNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJDM0UwNEU3OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJDM0UwNEU4OUQzODExRTc5OTU3RkRERDI0Q0I5NzE0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADAAMAAACP8AKVgaSLCgwYMIEyq0RCGTw4cQI0qcSLHiQ0sWM2rcOHCjx48QO4IcqVEkyZMTTaJc6VAlS5QuX5J0CcDBpZs4cY4AYBFAgpxAM/EMiRHiAiYYBChdqrRJg6ETN6BgwXQphgILIrp80EANpq9gv465FIFigEsCwoYNBOGB1qIPz7JQG/bFJagQAV0KQRdTGhAeArydeElOX0xVLiWYWCHAJLoyGF0qIDFmgJ+HDlu6JBgigEtS+rqYnBIuxAANLnXoa+iSg4gcLl0RfYliTIefV/TlssVK50wXLj05PKB26YqXCBwmYNzhz9V9i9s2HTE5JjYl1C5p4OEhHTKYRAj/oSv9OEXrPWzQ7XPJQiYLlxJh6hKFfPPB55UboURXxwS3D1yyBiaDtGHfdMgpl8ElSNAlxmSXYIAJEJekcKB5hCnHwyVD0BXJJRpcoggmZVzSwoWVUQeRdW9c0khfYVzyByYmQDDBASjilyEmDNwEXVh+XOIEJipcwgGOapWXYoI83hQDXSWAcGIdlzSAZFhK6iiRdT1GcMkPdD2CCSSXjKDAlWBlSRSTPX5Gw2GFXDLHmTmumV+TmcRmoVpULECCBHQmeZ+dhGWBCR+1fbYHXYTUBiiaX6l5kYoOFXCJbgtSdgIJZ6gVA2eP1jnpRAB8cIkjmOBxyQcAwCdJWFNc06JAJhI8oAddWAw6akSoXSIIWCGQBQAEEAQBFhx3BXDDJXbQpcVdGDp02SVJqLWgA8Eh8JUIC1RwwQaXeGECXVCAiFdL1J2lRF92FdDYIpjEoZhNRRzW5ALnujRBDvZWUkEmlxCBiRuuXfKFvV8hQpaWmZwAAw4IRCwxAmDAcEQAGqBRQwI+bLDDDCoYIPLII5uRxwKzElopBEDlhAJlBUxwyR0FBGBpyy0DkC+lMn10W88e/Qx0STwPnZHQRleEdNLRMk200z5DDZJAC1VttdUUBAQAOw=='/>
+                </a>
+                <a href='https://x.com/GooglePlayBiz' title='Follow GooglePlaydBiz on X'>
+                    <img alt='Follow GooglePlayBiz on X' class='sidebar-icon' src='https://developers.google.com/static/homepage-assets/images/x.svg'/>
+                </a>
+            </div>
+        </div>
+        <div class='adb-footer-column'>
+            <h2 class='adb-footer-title'>Subscribe</h2>
+            <div class='section' id='footer-subscribe'><div class='widget HTML' data-version='1' id='HTML1'>
+                <a href='https://android-developers.blogspot.com/atom.xml' rel='alternate' title='Subscribe to our feed' type='application/rss+xml'>
+                    <div class='tab'>
+                        <img alt='' class='sidebar-icon' src='https://www.gstatic.com/images/icons/material/system/1x/rss_feed_grey600_24dp.png'/>
+                        <h2>Feed</h2>
+                    </div>
+                </a>
+            </div><div class='widget HTML' data-version='1' id='HTML2'>
+                <a href='https://developer.android.com/newsletter/index.html'>
+                    <div class='tab'>
+                        <img alt='' class='sidebar-icon' src='https://www.gstatic.com/images/icons/material/system/2x/news_grey600_24dp.png'/>
+                        <h2>Newsletter</h2>
+                    </div>
+                </a>
+            </div></div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer class='adb-footer-btm'>
+    <ul class='adb-footer-info'>
+        <a href='https://policies.google.com/privacy'><li class='footer-list'>Privacy</li></a>
+        |
+        <a href='https://developer.android.com/license'><li class='footer-list'>License</li></a>
+        |
+        <a href='https://developer.android.com/distribute/marketing-tools/brand-guidelines'><li class='footer-list'>Brand guidelines</li></a>
+    </ul>
+    <div class='footer-newsletter'>
+        <a href='https://developer.android.com/newsletter/#subscribe'><button class='subscribe-btn'>Get news and tips by email</button></a>
+    </div>
+</footer>
+<script type='text/javascript'>
+    //<![CDATA[
+    (function () {
+      "use strict";
+
+      // Social sharing popups.
+      var postEl = document.getElementsByClassName("social-wrapper");
+      var postCount = postEl.length;
+      for (var i = 0; i < postCount; i++) {
+        postEl[i].addEventListener("click", function (event) {
+          var postUrl = this.getAttribute("data-href");
+          window.open(
+            postUrl,
+            "popUpWindow",
+            "height=500,width=500,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes"
+          );
+        });
+      }
+      var BreakpointHandler = function () {
+        this.initted = false;
+        this.isHomePage = false;
+        this.isMobile = false;
+      };
+      BreakpointHandler.prototype.finalizeSummary = function (
+        summaryHtml,
+        lastNode
+      ) {
+        // Use $.trim for IE8 compatibility
+        summaryHtml = $.trim(summaryHtml).replace(/(<br>|\s+)*$/, "");
+        if (lastNode.nodeType == 3) {
+          var lastChar = summaryHtml.slice(-1);
+          if (!lastChar.match(/[.”"?]/)) {
+            if (!lastChar.match(/[A-Za-z]/)) {
+              summaryHtml = summaryHtml.slice(0, -1);
+            }
+            summaryHtml += " ...";
+          }
+        } else if (
+          lastNode.nodeType == 1 &&
+          (lastNode.nodeName == "I" || lastNode.nodeName == "A")
+        ) {
+          summaryHtml += " ...";
+        }
+        return summaryHtml;
+      };
+      BreakpointHandler.prototype.generateSummaryFromContent = function (
+        content,
+        numWords
+      ) {
+        var seenWords = 0;
+        var summaryHtml = "";
+        for (var i = 0; i < content.childNodes.length; i++) {
+          var node = content.childNodes[i];
+          var nodeText;
+          if (node.nodeType == 1) {
+            if (node.hasAttribute("data-about-pullquote")) {
+              continue;
+            }
+            nodeText = node.textContent;
+            if (nodeText === undefined) {
+              // innerText for IE8
+              nodeText = node.innerText;
+            }
+            if (node.nodeName == "DIV" || node.nodeName == "B") {
+              // Don't end early if we haven't seen enough words.
+              if (seenWords < 10) {
+                continue;
+              }
+              if (i > 0) {
+                summaryHtml = this.finalizeSummary(
+                  summaryHtml,
+                  content.childNodes[i - 1]
+                );
+              }
+              break;
+            }
+            summaryHtml += node.outerHTML;
+          } else if (node.nodeType == 3) {
+            nodeText = node.nodeValue;
+            summaryHtml += nodeText + " ";
+          }
+          var words = nodeText.match(/\S+\s*/g);
+          if (!words) {
+            continue;
+          }
+          var remain = numWords - seenWords;
+          if (words.length >= remain) {
+            summaryHtml = this.finalizeSummary(summaryHtml, node);
+            break;
+          }
+          seenWords += words.length;
+        }
+        return summaryHtml;
+      };
+      BreakpointHandler.prototype.detect = function () {
+        var match,
+          pl = /\+/g,
+          search = /([^&=]+)=?([^&]*)/g,
+          decode = function (s) {
+            return decodeURIComponent(s.replace(pl, " "));
+          },
+          query = window.location.search.substring(1);
+        var urlParams = {};
+        while ((match = search.exec(query)))
+          urlParams[decode(match[1])] = decode(match[2]);
+        this.isListPage = $("html").hasClass("list-page");
+        this.isMobile = urlParams["m"] === "1";
+        this.isHomePage = window.location.pathname == "/";
+      };
+      BreakpointHandler.prototype.initContent = function () {
+        var self = this;
+        $(".post").each(function (index) {
+          var body = $(this).children(".post-body")[0];
+          var content = $(body).children(".post-content")[0];
+          $(content).addClass("post-original");
+
+          var data = $(content).children("script").html();
+          data = self.rewriteForSSL(data);
+
+          // If exists, extract specified editor's preview.
+          var match = data.match(
+            /([\s\S]+?)<div data-is-preview.+?>([\s\S]+)<\/div>/m
+          );
+
+          if (match) {
+            data = match[1];
+          }
+
+          // Prevent big images from loading when they aren't needed.
+          // This must be done as a pre-injection step, since image loading can't be
+          // canceled once embedded into the DOM.
+          if (self.isListPage && self.isMobile) {
+            data = data.replace(/<(img|iframe) .+?>/g, "");
+          }
+
+          // Insert template to be rendered as nodes.
+          content.innerHTML = data;
+
+          if (self.isListPage) {
+            var summary = document.createElement("div");
+            $(summary).addClass("post-content");
+            $(summary).addClass("post-summary");
+            body.insertBefore(summary, content);
+            if (match) {
+              // Use provided summary.
+              summary.innerHTML = match[2];
+            } else {
+              // Generate a summary.
+              // Summary generation relies on DOM, so it must occur after content is
+              // inserted into the page.
+              summary.innerHTML = self.generateSummaryFromContent(
+                content,
+                30
+              );
+            }
+
+            // Add read more link to summary.
+            var titleAnchor = $(this).find(".title a")[0];
+            var link = titleAnchor.cloneNode(true);
+            link.innerHTML = "Read More";
+            $(link).addClass("read-more");
+            summary.appendChild(link);
+          }
+        });
+        // Firefox does not allow for proper styling of BR.
+        if (navigator.userAgent.indexOf("Firefox") > -1) {
+          $(".post-content br").replaceWith('<span class="space"></span>');
+        }
+        $(".loading").removeClass("loading");
+      };
+      BreakpointHandler.prototype.process = function () {
+        if (!this.initted) {
+          var makeInsecureImageRegex = function (hosts) {
+            var whitelist = hosts.join("|").replace(/\./g, "\\.");
+            // Normal image tags, plus input images (yes, this is possible!)
+            return new RegExp(
+              "(<(img|input)[^>]+?src=(\"|'))http:\/\/(" + whitelist + ")",
+              "g"
+            );
+          };
+          this.sslImageRegex = makeInsecureImageRegex(
+            BreakpointHandler.KNOWN_HTTPS_HOSTS
+          );
+          this.sslImageCurrentDomainRegex = makeInsecureImageRegex([
+            window.location.hostname,
+          ]);
+          this.detect();
+          this.initContent();
+          this.initted = true;
+        }
+      };
+      BreakpointHandler.KNOWN_HTTPS_HOSTS = [
+        "www.google.org",
+        "www.google.com",
+        "services.google.com",
+
+        "blogger.com",
+        "draft.blogger.com",
+        "www.blogger.com",
+        "photos1.blogger.com",
+        "photos2.blogger.com",
+        "photos3.blogger.com",
+
+        "blogblog.com",
+        "img1.blogblog.com",
+        "img2.blogblog.com",
+        "www.blogblog.com",
+        "www1.blogblog.com",
+        "www2.blogblog.com",
+
+        "0.bp.blogspot.com",
+        "1.bp.blogspot.com",
+        "2.bp.blogspot.com",
+        "3.bp.blogspot.com",
+        "4.bp.blogspot.com",
+
+        "lh3.googleusercontent.com",
+        "lh4.googleusercontent.com",
+        "lh5.googleusercontent.com",
+        "lh6.googleusercontent.com",
+        "themes.googleusercontent.com",
+      ];
+      BreakpointHandler.prototype.rewriteForSSL = function (html) {
+        // Handle HTTP -> HTTPS source replacement of images, movies, and other embedded content.
+        return (
+          html
+            .replace(this.sslImageRegex, "$1https://$4")
+            .replace(this.sslImageCurrentDomainRegex, "$1//$4")
+            .replace(
+              /(<(embed|iframe)[^>]+?src=("|'))http:\/\/([^"']*?(youtube|picasaweb\.google)\.com)/g,
+              "$1https://$4"
+            )
+            // Slideshow SWF takes a image host, so we need to rewrite that parameter.
+            .replace(/(<embed[^>]+?feed=http(?=[^s]))/g, "$1s")
+        );
+      };
+      $(document).ready(function () {
+        var handler = new BreakpointHandler();
+        handler.process();
+        // Top-level navigation.
+        $(".BlogArchive .tab").click(function (ev) {
+          ev.preventDefault();
+          $(this).parent().toggleClass("active");
+          $(this).siblings().slideToggle(300);
+        });
+        $(".Label .tab").click(function (ev) {
+          ev.preventDefault();
+          $(this).parent().toggleClass("active");
+          $(this).siblings().slideToggle(300);
+        });
+        // Blog archive year expansion.
+        $(".BlogArchive .intervalToggle").click(function (ev) {
+          ev.preventDefault();
+          if ($(this).parent().hasClass("collapsed")) {
+            $(this).parent().removeClass("collapsed");
+            $(this).parent().addClass("expanded");
+          } else {
+            $(this).parent().removeClass("expanded");
+            $(this).parent().addClass("collapsed");
+          }
+        });
+        // Reverse order of months.
+        $(".BlogArchive .intervalToggle + div").each(function (_, items) {
+          var year = $(this);
+          year.children().each(function (_, month) {
+            year.prepend(month);
+          });
+        });
+        // Set anchors to open in new tab.
+        $(".post-content img")
+          .parent()
+          .each(function (_, node) {
+            if (node.nodeName == "A") {
+              $(this).attr("target", "_blank");
+            }
+          });
+        // Process search requests.
+        $(".searchBox input").on("keypress", function (ev) {
+          if (ev.which == 13) {
+            window.location.href =
+              "https://www.google.com/search?q=site%3A" +
+              window.location.hostname +
+              "%20" +
+              encodeURIComponent($(this).val());
+          }
+        });
+      });
+
+      $.fn.labelWidgetShowMore = function () {
+        if (!this.length) return;
+        // Fetch feed containing labels
+        var promise = $.getJSON(
+          "/feeds/posts/summary?alt=json&max-results=0"
+        );
+        // For each label widget
+        this.each(function () {
+          var $widget = $(this);
+          var open = false;
+          var $viewMoreContent = $widget.find(".adb-label-view-more-content");
+          var $viewMoreToggle = $widget.find(".adb-label-view-more-toggle");
+          var $list = $viewMoreContent.find("ul");
+          // Function to set new open/closed state
+          function setOpenClosed(_open) {
+            open = _open;
+            var text = $viewMoreToggle.data(open ? "open" : "closed");
+            $viewMoreContent.toggle(open);
+            $viewMoreToggle.text(text).toggleClass("active", open);
+          }
+          // Toggle handler
+          $viewMoreToggle.on("click", function () {
+            setOpenClosed(!open);
+          });
+          // Load data
+          promise.then(function (data) {
+            $.each(data.feed.category, function (index, category) {
+              $(
+                '<li><a href="/search/label/' +
+                  category.term +
+                  '">' +
+                  category.term +
+                  "</a></li>"
+              ).appendTo($list);
+            });
+            // Set toggle text
+            setOpenClosed(false);
+          });
+        });
+      };
+
+      $.fn.fixedScroll = function (scrollBounds) {
+        if (!this.length) return;
+
+        var $elements = this;
+
+        $(window).on("scroll", function () {
+          var page = document.documentElement;
+          var body = document.body;
+          // How much the page or body can scroll
+          var scrollHeight = page.scrollHeight || body.scrollHeight;
+          // How much the page or body has scrolled
+          var scrollTop = page.scrollTop || body.scrollTop;
+          // Whether the page has scrolled past the top bound
+          var scrollStart = scrollTop > scrollBounds.top;
+
+          $elements.each(function () {
+            var $element = $(this);
+            var elementHeight = $element.height();
+            // Whether the fixed element has scrolled past the bottom bound
+            var scrollEnd =
+              scrollHeight - scrollTop < scrollBounds.bottom + elementHeight;
+            $element.toggleClass("scroll-start", scrollStart);
+            $element.toggleClass("scroll-end", scrollEnd);
+          });
+        });
+      };
+
+      $(function () {
+        // Enable show more link for Labels widget
+        $(".widget.Label").labelWidgetShowMore();
+        // Enable fixed sidebar
+        $(".col-right").fixedScroll({ top: 227, bottom: 643 });
+        // Enable pretty printed code snippets
+        $("pre:not(.no-pretty-print)").addClass("prettyprint");
+        PR.prettyPrint();
+      });
+    })();
+
+    var $popoutNavBtn = $(".adb-burger-box");
+    var $popoutNav = $(".popout-nav");
+    var $popoutOverlay = $(".popout-overlay");
+    var $closePopoutBtn = $("#close-popout");
+    var $popoutSearchBtn = $(".adb-search-box");
+    var $popoutSearch = $(".popout-search");
+    var $popoutSearchOverlay = $(".popout-search-overlay");
+    var $closeSearchPopoutBtn = $("#close-search-popout");
+    var $moreDropdownBtn = $(".more-dropdown");
+    var $dropdownIcon = $(".dropdown-icon");
+    var $dropdownMenu = $(".dropdown-nav");
+    var $copyLinkBtn = $(".copy-link");
+    var $copyToolTip = $(".copy-tooltip");
+
+    function moreDropdown() {
+      if ($moreDropdownBtn.attr("status") === "inactive") {
+        $moreDropdownBtn.attr("status", "active");
+        $dropdownIcon.css({ transform: "rotate(" + -180 + "deg)" });
+        $dropdownMenu.css({ display: "block" });
+      } else if ($moreDropdownBtn.attr("status") === "active") {
+        $moreDropdownBtn.attr("status", "inactive");
+        $dropdownIcon.css({ transform: "rotate(" + 0 + "deg)" });
+        $dropdownMenu.css({ display: "none" });
+      }
+    }
+
+    function openSidenav() {
+      $popoutNav.css({ left: 0 });
+      $popoutOverlay
+        .css({
+          opacity: 0.4,
+        })
+        .show();
+    }
+
+    function closeSidenav() {
+      $popoutNav.css({ left: -280 });
+      $popoutOverlay.css({ opacity: 0 });
+      setTimeout(function () {
+        $popoutOverlay.hide();
+      }, 200);
+    }
+
+    function openSideSearch() {
+      $popoutSearch.css({ right: 0 });
+      $popoutSearchOverlay
+        .css({
+          opacity: 0.4,
+        })
+        .show();
+    }
+
+    function closeSideSearch() {
+      $popoutSearch.css({ right: -280 });
+      $popoutSearchOverlay.css({ opacity: 0 });
+      setTimeout(function () {
+        $popoutSearchOverlay.hide();
+      }, 200);
+    }
+
+    function copyLink() {
+      const link = $copyLinkBtn.attr("value");
+      const textArea = document.createElement("textarea");
+      textArea.value = link;
+      document.body.append(textArea);
+      textArea.select();
+      textArea.setSelectionRange(0, 99999); /* For mobile devices */
+      const copied = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      $copyToolTip.css({ display: "block", opacity: 1 });
+      setTimeout(() => {$copyToolTip.css({ display: "none", opacity: 0 });}, 3000);
+    }
+
+
+    $popoutNavBtn.click(openSidenav);
+    $closePopoutBtn.click(closeSidenav);
+    $popoutOverlay.click(closeSidenav);
+    $popoutSearchBtn.click(openSideSearch);
+    $closeSearchPopoutBtn.click(closeSideSearch);
+    $popoutSearchOverlay.click(closeSideSearch);
+    $moreDropdownBtn.mouseenter(moreDropdown);
+    $dropdownMenu.mouseleave(moreDropdown);
+    $copyLinkBtn.click(copyLink);
+
+    //]]>
+</script>
+<!--N\xe1v\u0161t\u011bvn\xedky sv\xe9ho blogu m\xe1te povinnost upozornit na soubory cookie, kter\xe9 jsou na n\u011bm pou\u017e\xedv\xe1ny, a\xa0data, kter\xe1 jsou na n\u011bm shroma\u017e\u010fov\xe1na. Blogger m\xe1 pro v\xe1s k\xa0dispozici standardn\xed ozn\xe1men\xed, kter\xe9 m\u016f\u017eete na blogu vyu\u017e\xedt a\xa0p\u0159\xedpadn\u011b si ho p\u0159izp\u016fsobit nebo nahradit vlastn\xedm ozn\xe1men\xedm. Dal\u0161\xed podrobnosti najdete na adrese http://www.blogger.com/go/cookiechoices.-->
+<script defer='' src='/js/cookienotice.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function(event) {
+      window.cookieChoices && cookieChoices.showCookieConsentBar && cookieChoices.showCookieConsentBar(
+          (window.cookieOptions && cookieOptions.msg) || 'Tato str\xe1nka pou\u017e\xedv\xe1 k\xa0poskytov\xe1n\xed slu\u017eeb a\xa0anal\xfdze n\xe1v\u0161t\u011bvnosti soubory cookie od Googlu. Se spole\u010dnost\xed Google se sd\xedl\xed va\u0161e IP adresa a\xa0user-agent a\xa0d\xe1le metriky v\xfdkonu a\xa0zabezpe\u010den\xed, kter\xe9 maj\xed zajistit kvalitu slu\u017eeb, slou\u017e\xed ke generov\xe1n\xed statistiky o vyu\u017e\xedv\xe1n\xed a\xa0k\xa0rozpozn\xe1n\xed a\xa0\u0159e\u0161en\xed zneu\u017eit\xed.',
+          (window.cookieOptions && cookieOptions.close) || 'Rozum\xedm',
+          (window.cookieOptions && cookieOptions.learn) || 'Dal\u0161\xed informace',
+          (window.cookieOptions && cookieOptions.link) || 'https://www.blogger.com/go/blogspot-cookies');
+    });
+</script>
+
+<script type="text/javascript" src="https://www.blogger.com/static/v1/widgets/2410024450-widgets.js"></script>
+<script type='text/javascript'>
+    window['__wavt'] = 'AOuZoY4nWv6StrzvmFSEXOhPsfyXXg6nBQ:1723141552377';_WidgetManager._Init('//www.blogger.com/rearrange?blogID\x3d6755709643044947179','//android-developers.googleblog.com/','6755709643044947179');
+    _WidgetManager._SetDataContext([{'name': 'blog', 'data': {'blogId': '6755709643044947179', 'title': 'Android Developers Blog', 'url': 'https://android-developers.googleblog.com/', 'canonicalUrl': 'https://android-developers.googleblog.com/', 'homepageUrl': 'https://android-developers.googleblog.com/', 'searchUrl': 'https://android-developers.googleblog.com/search', 'canonicalHomepageUrl': 'https://android-developers.googleblog.com/', 'blogspotFaviconUrl': 'https://android-developers.googleblog.com/favicon.ico', 'bloggerUrl': 'https://www.blogger.com', 'hasCustomDomain': true, 'httpsEnabled': true, 'enabledCommentProfileImages': true, 'gPlusViewType': 'FILTERED_POSTMOD', 'adultContent': false, 'analyticsAccountNumber': 'UA-5831155-1', 'encoding': 'UTF-8', 'locale': 'en', 'localeUnderscoreDelimited': 'en', 'languageDirection': 'ltr', 'isPrivate': false, 'isMobile': false, 'isMobileRequest': false, 'mobileClass': '', 'isPrivateBlog': false, 'isDynamicViewsAvailable': true, 'feedLinks': '\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22Android Developers Blog - Atom\x22 href\x3d\x22https://android-developers.googleblog.com/feeds/posts/default\x22 /\x3e\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/rss+xml\x22 title\x3d\x22Android Developers Blog - RSS\x22 href\x3d\x22https://android-developers.googleblog.com/feeds/posts/default?alt\x3drss\x22 /\x3e\n\x3clink rel\x3d\x22service.post\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22Android Developers Blog - Atom\x22 href\x3d\x22https://www.blogger.com/feeds/6755709643044947179/posts/default\x22 /\x3e\n', 'meTag': '', 'adsenseHostId': 'ca-host-pub-1556223355139109', 'adsenseHasAds': false, 'adsenseAutoAds': false, 'boqCommentIframeForm': true, 'loginRedirectParam': '', 'view': '', 'dynamicViewsCommentsSrc': '//www.blogblog.com/dynamicviews/4224c15c4e7c9321/js/comments.js', 'dynamicViewsScriptSrc': '//www.blogblog.com/dynamicviews/4fc239077fad56d1', 'plusOneApiSrc': 'https://apis.google.com/js/platform.js', 'disableGComments': true, 'interstitialAccepted': false, 'sharing': {'platforms': [{'name': 'Get link', 'key': 'link', 'shareMessage': 'Get link', 'target': ''}, {'name': 'Facebook', 'key': 'facebook', 'shareMessage': 'Share to Facebook', 'target': 'facebook'}, {'name': 'BlogThis!', 'key': 'blogThis', 'shareMessage': 'BlogThis!', 'target': 'blog'}, {'name': 'Twitter', 'key': 'twitter', 'shareMessage': 'Share to Twitter', 'target': 'twitter'}, {'name': 'Pinterest', 'key': 'pinterest', 'shareMessage': 'Share to Pinterest', 'target': 'pinterest'}, {'name': 'Email', 'key': 'email', 'shareMessage': 'Email', 'target': 'email'}], 'disableGooglePlus': true, 'googlePlusShareButtonWidth': 0, 'googlePlusBootstrap': '\x3cscript type\x3d\x22text/javascript\x22\x3ewindow.___gcfg \x3d {\x27lang\x27: \x27en\x27};\x3c/script\x3e'}, 'hasCustomJumpLinkMessage': false, 'jumpLinkMessage': 'Read more', 'pageType': 'index', 'pageName': '', 'pageTitle': 'Android Developers Blog', 'metaDescription': 'News and insights on the Android platform, developer tools, and events.'}}, {'name': 'features', 'data': {}}, {'name': 'messages', 'data': {'edit': 'Edit', 'linkCopiedToClipboard': 'Link copied to clipboard!', 'ok': 'Ok', 'postLink': 'Post Link'}}, {'name': 'template', 'data': {'name': 'custom', 'localizedName': 'Custom', 'isResponsive': false, 'isAlternateRendering': false, 'isCustom': true}}, {'name': 'view', 'data': {'classic': {'name': 'classic', 'url': '?view\x3dclassic'}, 'flipcard': {'name': 'flipcard', 'url': '?view\x3dflipcard'}, 'magazine': {'name': 'magazine', 'url': '?view\x3dmagazine'}, 'mosaic': {'name': 'mosaic', 'url': '?view\x3dmosaic'}, 'sidebar': {'name': 'sidebar', 'url': '?view\x3dsidebar'}, 'snapshot': {'name': 'snapshot', 'url': '?view\x3dsnapshot'}, 'timeslide': {'name': 'timeslide', 'url': '?view\x3dtimeslide'}, 'isMobile': false, 'title': 'Android Developers Blog', 'description': 'News and insights on the Android platform, developer tools, and events.', 'url': 'https://android-developers.googleblog.com/', 'type': 'feed', 'isSingleItem': false, 'isMultipleItems': true, 'isError': false, 'isPage': false, 'isPost': false, 'isHomepage': true, 'isArchive': false, 'isLabelSearch': false}}]);
+    _WidgetManager._RegisterWidget('_BlogSearchView', new _WidgetInfo('BlogSearch2', 'header-popout-search', document.getElementById('BlogSearch2'), {}, 'displayModeFull'));
+    _WidgetManager._RegisterWidget('_BlogSearchView', new _WidgetInfo('BlogSearch1', 'header-search', document.getElementById('BlogSearch1'), {}, 'displayModeFull'));
+    _WidgetManager._RegisterWidget('_FeaturedPostView', new _WidgetInfo('FeaturedPost1', 'Body', document.getElementById('FeaturedPost1'), {}, 'displayModeFull'));
+    _WidgetManager._RegisterWidget('_BlogView', new _WidgetInfo('Blog1', 'Body', document.getElementById('Blog1'), {'cmtInteractionsEnabled': false, 'lightboxEnabled': true, 'lightboxModuleUrl': 'https://www.blogger.com/static/v1/jsbin/2318942983-lbx.js', 'lightboxCssUrl': 'https://www.blogger.com/static/v1/v-css/13464135-lightbox_bundle.css'}, 'displayModeFull'));
+    _WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML1', 'footer-subscribe', document.getElementById('HTML1'), {}, 'displayModeFull'));
+    _WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML2', 'footer-subscribe', document.getElementById('HTML2'), {}, 'displayModeFull'));
+</script>
+</body>
+</html>
