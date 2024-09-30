@@ -5,6 +5,12 @@ with [Android Developers blog](https://android-developers.googleblog.com/). App 
 using [Adaptive Apis](https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive)
 to maximaze user experience on all devices, with support of Dark Theme and Dynamic Colors.
 
+* `WorkManager` for downloading new posts on background
+* `ListDetailPaneScaffold` for list of posts and post detail
+* `MaterialTheme` for UI/UX
+* `Ktor` for http requests
+* `Jet-Article` for parsing html content
+
 ![Ilustration image](/images/image1.png)
 
 
