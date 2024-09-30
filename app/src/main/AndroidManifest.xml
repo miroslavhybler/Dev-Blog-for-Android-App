@@ -9,13 +9,14 @@
 
     <application
         android:name=".AndroidDevBlogApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:enableOnBackInvokedCallback="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.JetArticle">
+        android:theme="@style/Theme.JetArticle"
+        tools:ignore="DataExtractionRules,UnusedAttribute">
         <profileable
             android:shell="true"
             tools:targetApi="29" />

@@ -101,6 +101,7 @@ fun HomeScreenContent(
     navHostController: NavHostController,
 ) {
     val density = LocalDensity.current
+
     val postListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val selectedPost = remember(key1 = postData) {
@@ -165,7 +166,8 @@ fun HomeScreenContent(
                         ContentsPane(
                             data = selectedPost,
                             onSelected = { index, title ->
-                                navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                state.onNavigateBack()
+                                navigator.navigateBack()
                                 coroutineScope.launch {
                                     delay(timeMillis = 400)
                                     postListState.animateScrollToItem(
