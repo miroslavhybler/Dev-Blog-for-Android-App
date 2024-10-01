@@ -55,7 +55,6 @@ fun HomeListPane(
 ) {
 
     val posts by viewModel.posts.collectAsState()
-    val hasError by viewModel.hasError.collectAsState()
 
 
     HomeListPaneContent(
@@ -63,7 +62,6 @@ fun HomeListPane(
         data = posts,
         lazyListState = viewModel.lazyListState,
         navHostController = navHostController,
-        hasError = hasError,
     )
 }
 
@@ -74,7 +72,6 @@ private fun HomeListPaneContent(
     data: Result<List<PostItem>>?,
     lazyListState: LazyListState,
     navHostController: NavHostController,
-    hasError: Boolean,
 ) {
     val mainState = LocalHomeScreenState.current
     val context = LocalContext.current
@@ -130,21 +127,17 @@ private fun HomeListPaneContent(
                     }
                 ),
             ) {
-                if (
-                    hasError
-                    || (data?.isSuccess == true && postList.isNullOrEmpty())
-                    || data?.isFailure == true
-                ) {
+                if (data?.isFailure == true) {
                     item {
                         ErrorLayout(
-                            title = "Unable to load new posts",
-                            cause = data?.exceptionOrNull(),
+                            title = stringResource(R.string.error_unable_to_load_posts),
+                            cause = data.exceptionOrNull(),
                         )
                     }
 
                 }
 
-                if (data == null && !hasError) {
+                if (data == null) {
                     item {
                         Box(
                             modifier = Modifier.fillMaxWidth(),

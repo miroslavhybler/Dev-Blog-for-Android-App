@@ -22,6 +22,8 @@ class MainViewModel @Inject constructor(
 ) {
 
     fun load() {
-        viewModelScope.launch { coreRepo.loadPosts(isRefresh = false) }
+        viewModelScope.launch {
+            coreRepo.loadPosts(isRefresh = true)
+        }
     }
 }

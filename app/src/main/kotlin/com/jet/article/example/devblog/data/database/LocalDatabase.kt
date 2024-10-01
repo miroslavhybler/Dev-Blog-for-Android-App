@@ -59,6 +59,11 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
         @Query("SELECT EXISTS(SELECT id FROM posts WHERE url=:url)")
         fun contains(url: String): Boolean
 
+        @Query("SELECT * FROM posts WHERE url=:url")
+        fun getByUrl(url: String): PostItem
+
+        @Query("SELECT * FROM posts ORDER BY id DESC LIMIT 1")
+        fun getLastPost(): PostItem
 
         @Query("SELECT last_insert_rowid()")
         fun getLastPostId(): Int

@@ -2,9 +2,11 @@
 
 package com.jet.article.example.devblog
 
+import android.Manifest
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.core.content.ContextCompat
 
 
 /**
@@ -43,7 +46,7 @@ class AndroidDevBlogApp : Application(),
         const val notificationGroupId: String = "default-group"
         const val notificationNewPostsChannelId: String = "new-posts"
 
-        var isConnectedToInternet: Boolean by mutableStateOf(value = false)
+        var isConnectedToInternet: Boolean by mutableStateOf(value = true)
             private set
 
     }
@@ -99,16 +102,22 @@ class AndroidDevBlogApp : Application(),
 
 
     private fun initNetworkCallback() {
-        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(
-            NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build(),
-            networkCallback
-        )
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CHANGE_NETWORK_STATE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            connectivityManager.registerNetworkCallback(
+                NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .build(),
+                networkCallback
+            )
 
-        isConnectedToInternet = connectivityManager.activeNetwork != null
+            isConnectedToInternet = connectivityManager.activeNetwork != null
+        }
     }
 
 

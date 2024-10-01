@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.ui.util.fastForEach
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
@@ -25,7 +24,6 @@ import androidx.work.WorkerParameters
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.data.database.DatabaseRepo
-import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -69,44 +67,25 @@ public class ContentSyncWorker @AssistedInject public constructor(
                 request,
             )
         }
-
     }
 
 
     override suspend fun doWork(): Result {
         try {
-            val data = coreRepo.loadPostsFromRemote()
-            if (data.isFailure) {
+            val newlySavedPosts = coreRepo.loadPostsFromRemote()
+            val count = newlySavedPosts.getOrNull()
+
+            if (newlySavedPosts.isFailure || count == null) {
                 return Result.failure()
             }
 
-            val dao = databaseRepo.postDao
-            var newPost: PostItem? = null
-            val postList = data.getOrNull()
-
-            if (postList == null) {
-                return Result.failure()
-            }
-
-            postList.fastForEach { post ->
-                databaseRepo.withTransaction {
-                    if (!dao.contains(url = post.url)) {
-                        dao.insert(item = post)
-                        if (newPost == null) {
-                            newPost = post
-                        }
-                    }
-                }
-            }
-
-            if (newPost != null && !MainActivity.isActive) {
-                databaseRepo.withTransaction {
-                    tryShowNotification(
-                        title = newPost.title,
-                        content = newPost.description.take(n = 100) + "...",
-                        localPostId = dao.getLastPostId(),
-                    )
-                }
+            if (count > 0 && !MainActivity.isActive) {
+                val newPost = databaseRepo.postDao.getLastPost()
+                tryShowNotification(
+                    title = newPost.title,
+                    content = newPost.description.take(n = 100) + "...",
+                    localPostId = newPost.id,
+                )
             }
         } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()

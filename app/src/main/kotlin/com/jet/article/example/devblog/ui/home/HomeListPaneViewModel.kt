@@ -28,9 +28,6 @@ class HomeListPaneViewModel @Inject constructor(
     val posts: StateFlow<Result<List<PostItem>>?>
         get() = coreRepo.posts
 
-    val hasError: StateFlow<Boolean>
-        get() = coreRepo.hasErrorFromRemote
-
     /**
      *
      */

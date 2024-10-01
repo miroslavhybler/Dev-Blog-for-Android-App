@@ -192,6 +192,15 @@ val changelog: List<Changelog> = listOf(
             R.string.settings_changelog_1_0_1__3,
         )
     ),
+    Changelog(
+        version = "1.0.2",
+        dateFormatted = "01.10.2024",
+        titleRes = R.string.settings_changelog_title_1_0_2,
+        changes = listOf(
+            R.string.settings_changelog_1_0_2__0,
+            R.string.settings_changelog_1_0_2__1,
+        )
+    ),
 )
 
 

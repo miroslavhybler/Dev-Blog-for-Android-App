@@ -36,6 +36,9 @@
     <string name="settings_changelog_1_0_1__2">Updated side cases and error scenarios</string>
     <string name="settings_changelog_1_0_1__3">Other minor fixes</string>
 
+    <string name="settings_changelog_title_1_0_2">Bugfix of mismatched links🐞</string>
+    <string name="settings_changelog_1_0_2__0">Fixed loading list of posts, handling scenario there is featured post</string>
+    <string name="settings_changelog_1_0_2__1">Data are loaded from remote when app is opened independently on ContentSyncWorker</string>
 
     <string name="settings_about_title">About</string>
 
@@ -48,8 +51,10 @@
     <string name="report_on_mail">Report on Mail</string>
     <string name="report_on_github">Report on Github</string>
     <string name="post_empty_desc">Pick some post to read 🤓 or enjoy this animation if you like it 😁</string>
+
     <string name="general_error_description">App is showing data from source i do not control, this might happen 😕 Please report this bug to me, thanks.</string>
     <string name="general_error_label">Sorry for your inconvenience</string>
     <string name="error_unable_load_post">Unable to show the post</string>
     <string name="error_connection">No internet connection</string>
+    <string name="error_unable_to_load_posts">Unable to load new posts</string>
 </resources>
