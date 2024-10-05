@@ -16,6 +16,8 @@ import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.jet.article.example.devblog.R
 
 /**
+ * Using [about-libraries library](https://github.com/mikepenz/AboutLibraries) to show list of libraries
+ * used in the app.
  * @author Miroslav Hýbler <br>
  * created on 17.09.2024
  */
@@ -47,9 +49,10 @@ fun AboutLibsScreen(
 }
 
 
-
 @Composable
 @PreviewLightDark
 private fun AboutLibsScreenPreview() {
-    AboutLibsScreen(navHostController = rememberNavController())
+    AboutLibsScreen(
+        navHostController = rememberNavController(),
+    )
 }

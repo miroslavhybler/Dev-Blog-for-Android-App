@@ -39,6 +39,46 @@ import com.jet.article.example.devblog.ui.LocalDimensions
 
 
 /**
+ * List holding simple changelog of the app.
+ */
+private  val changelog: List<Changelog> = listOf(
+    Changelog(
+        version = "1.0.0",
+        dateFormatted = "23.09.2024",
+        titleRes = R.string.settings_changelog_title_1_0_0,
+        changes = listOf(
+            R.string.settings_changelog_1_0_0__0,
+            R.string.settings_changelog_1_0_0__1,
+            R.string.settings_changelog_1_0_0__2,
+        )
+    ),
+    Changelog(
+        version = "1.0.1",
+        dateFormatted = "29.09.2024",
+        titleRes = R.string.settings_changelog_title_1_0_1,
+        changes = listOf(
+            R.string.settings_changelog_1_0_1__0,
+            R.string.settings_changelog_1_0_1__1,
+            R.string.settings_changelog_1_0_1__2,
+            R.string.settings_changelog_1_0_1__3,
+        )
+    ),
+    Changelog(
+        version = "1.0.2",
+        dateFormatted = "01.10.2024",
+        titleRes = R.string.settings_changelog_title_1_0_2,
+        changes = listOf(
+            R.string.settings_changelog_1_0_2__0,
+            R.string.settings_changelog_1_0_2__1,
+        )
+    ),
+)
+
+
+/**
+ * Showing changelog of the app. Some really minor updates are not shown here as the changelog is
+ * rather for better orientation and as reminder that app is being actively developed.
+ * More details can be found on github repository.
  * @author Miroslav Hýbler <br>
  * created on 17.09.2024
  */
@@ -54,17 +94,15 @@ fun ChangelogScreen(
                 onNavigationIcon = navHostController::navigateUp,
             )
         },
-        content = { paddingValues ->
+        content =  { paddingValues ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues),
-                contentPadding = remember {
-                    PaddingValues(
-                        top = dimensions.topLinePadding,
-                        bottom = dimensions.bottomLinePadding,
-                    )
-                },
+                contentPadding = PaddingValues(
+                    top = dimensions.topLinePadding,
+                    bottom = dimensions.bottomLinePadding,
+                ),
                 reverseLayout = true,
                 verticalArrangement = Arrangement.spacedBy(space = 16.dp),
             ) {
@@ -80,6 +118,9 @@ fun ChangelogScreen(
 }
 
 
+/**
+ * Showing single changelog item
+ */
 @Composable
 private fun ChangelogItem(
     modifier: Modifier = Modifier,
@@ -160,47 +201,15 @@ private fun ChangelogItem(
 
 /**
  * @param version Version of the app
- * @param titleRes Title of the change sumarizing changes
- * @param changes List of changes for new [version]
+ * @param dateFormatted Formatted date string of [version] release
+ * @param titleRes Title of the change summarizing changes
+ * @param changes List of changes for new [version], must be localised string resources
  */
 data class Changelog constructor(
     val version: String,
     val dateFormatted: String,
     @StringRes val titleRes: Int,
     @StringRes val changes: List<Int>
-)
-
-val changelog: List<Changelog> = listOf(
-    Changelog(
-        version = "1.0.0",
-        dateFormatted = "23.09.2024",
-        titleRes = R.string.settings_changelog_title_1_0_0,
-        changes = listOf(
-            R.string.settings_changelog_1_0_0__0,
-            R.string.settings_changelog_1_0_0__1,
-            R.string.settings_changelog_1_0_0__2,
-        )
-    ),
-    Changelog(
-        version = "1.0.1",
-        dateFormatted = "29.09.2024",
-        titleRes = R.string.settings_changelog_title_1_0_1,
-        changes = listOf(
-            R.string.settings_changelog_1_0_1__0,
-            R.string.settings_changelog_1_0_1__1,
-            R.string.settings_changelog_1_0_1__2,
-            R.string.settings_changelog_1_0_1__3,
-        )
-    ),
-    Changelog(
-        version = "1.0.2",
-        dateFormatted = "01.10.2024",
-        titleRes = R.string.settings_changelog_title_1_0_2,
-        changes = listOf(
-            R.string.settings_changelog_1_0_2__0,
-            R.string.settings_changelog_1_0_2__1,
-        )
-    ),
 )
 
 

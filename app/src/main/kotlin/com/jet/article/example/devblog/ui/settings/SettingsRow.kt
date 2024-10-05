@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.ui.LocalDimensions
 
+
 @Composable
 fun SettingsRow(
     modifier: Modifier = Modifier,
@@ -42,6 +43,7 @@ fun SettingsRow(
         } else null
     )
 }
+
 
 @Composable
 fun SettingsRow(

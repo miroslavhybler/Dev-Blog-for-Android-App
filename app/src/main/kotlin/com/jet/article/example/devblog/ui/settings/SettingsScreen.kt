@@ -70,6 +70,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
 import com.jet.article.example.devblog.OnLifecycleEvent
 
+
 /**
  * @author Miroslav Hýbler <br>
  * created on 19.08.2024
@@ -79,6 +80,7 @@ val darkModeOptions: List<Int> = listOf(
     AppCompatDelegate.MODE_NIGHT_YES,
     AppCompatDelegate.MODE_NIGHT_NO,
 )
+
 
 @Composable
 fun SettingsScreen(
@@ -234,6 +236,11 @@ private fun SettingsScreenContent(
 }
 
 
+
+/**
+ * Bottom bar with link to github repository. Handling insets itself as it's supposed to be used
+ * as [Scaffold]'s botomBar.
+ */
 @Composable
 fun GithubBottomBar() {
     val dimensions = LocalDimensions.current

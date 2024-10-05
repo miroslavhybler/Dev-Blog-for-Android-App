@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit
 
 
 /**
- * Load index site on the background and loads articles from it
+ * Load index site on the background and loads articles from it. Should run every 2 days when
+ * device is connected to the internet. When new posts are loaded, notification is also shown.
  * @author Miroslav Hýbler <br>
  * created on 16.08.2024
  */
@@ -47,6 +48,10 @@ public class ContentSyncWorker @AssistedInject public constructor(
 ) {
 
     companion object {
+
+        /**
+         * Adds [ContentSyncWorker] into [WorkManager]
+         */
         fun register(context: Context) {
             val request = PeriodicWorkRequestBuilder<ContentSyncWorker>(
                 repeatInterval = 2,

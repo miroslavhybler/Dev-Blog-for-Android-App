@@ -15,6 +15,7 @@ import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.ui.LocalDimensions
 
 /**
+ * Full row switch.
  * @author Miroslav Hýbler <br>
  * created on 30.08.2024
  */

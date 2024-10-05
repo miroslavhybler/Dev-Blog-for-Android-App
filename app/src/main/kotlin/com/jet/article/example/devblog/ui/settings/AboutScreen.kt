@@ -35,6 +35,7 @@ import com.jet.article.example.devblog.ui.LocalDimensions
 
 
 /**
+ * Simple screen showing brief information about the app.
  * @author Miroslav Hýbler <br>
  * created on 17.09.2024
  */

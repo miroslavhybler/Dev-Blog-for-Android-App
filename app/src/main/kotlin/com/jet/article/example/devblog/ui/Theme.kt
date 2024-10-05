@@ -1,6 +1,8 @@
 @file:Suppress(
-    "RedundantVisibilityModifier", "DataClassPrivateConstructor",
-    "MemberVisibilityCanBePrivate", "ConstPropertyName"
+    "RedundantVisibilityModifier",
+    "DataClassPrivateConstructor",
+    "MemberVisibilityCanBePrivate",
+    "ConstPropertyName",
 )
 
 package com.jet.article.example.devblog.ui
@@ -114,11 +116,11 @@ object DevBlogAppTheme {
 
 
 /**
+ * See also [WindowSizeClass](https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes).
  * @param topLinePadding Extra content padding between topBar component and content.
  * @param bottomLinePadding Extra content padding between bottomBar component and content.
  * Is also used as extra bottom padding in scrollable containers too.
  * @param sidePadding Horizontal content padding from window edge
- * @see <a href="https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes">WindowSizeClass</a>
  * @author Miroslav Hýbler <br>
  * created on 04.11.2023
  */
@@ -146,9 +148,11 @@ public data class Dimensions private constructor(
 
 
         /**
-         * @see <a href="https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes">WindowSizeClass</a>
+         * See [WindowSizeClass](https://developer.android.com/develop/ui/compose/layouts/adaptive/window-size-classes).
          */
-        fun getForWindow(info: WindowAdaptiveInfo): Dimensions {
+        fun getForWindow(
+            info: WindowAdaptiveInfo
+        ): Dimensions {
             val width = info.windowSizeClass.windowWidthSizeClass
             val height = info.windowSizeClass.windowHeightSizeClass
 

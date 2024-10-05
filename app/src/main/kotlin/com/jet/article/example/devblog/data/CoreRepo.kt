@@ -51,9 +51,19 @@ class CoreRepo @Inject constructor(
         private const val TIME_OUT = 3_000
     }
 
+    /**
+     * Holding list of posts for [com.jet.article.example.devblog.ui.home.HomeListPane]
+     * @see loadPosts
+     * @see loadPostsFromRemote
+     * @see loadPostsFromLocal
+     */
     private val mPosts: MutableStateFlow<Result<List<PostItem>>?> = MutableStateFlow(value = null)
     val posts: StateFlow<Result<List<PostItem>>?> = mPosts.asStateFlow()
 
+
+    /**
+     * Http client for loading data
+     */
     private val ktorHttpClient: HttpClient = HttpClient(
         engineFactory = Android,
         block = {
@@ -79,6 +89,7 @@ class CoreRepo @Inject constructor(
                 result.isSuccess -> {
                     loadPostsFromLocal()
                 }
+
                 result.isFailure -> {
                     mPosts.value = Result.failure(
                         exception = result.exceptionOrNull() ?: UnknownError()
@@ -122,6 +133,9 @@ class CoreRepo @Inject constructor(
 
 
     /**
+     * Loads list of posts from remote source. Source is index side on [Constants.indexUrl] containing
+     * list of posts. Post are then parsed and converted via [ArticleParser] and [ArticleAnalyzer]
+     * into [PostItem].
      * @return Result of loading posts from remote source. Result data is count of newly saved posts.
      */
     @CheckResult
@@ -233,7 +247,8 @@ class CoreRepo @Inject constructor(
 
 
     /**
-     *
+     * Converts index site code into [HtmlArticleData] and then into [List] of [PostItem]
+     * @return Result of parsing
      */
     private suspend fun parsePosts(
         htmlCode: String
@@ -249,21 +264,26 @@ class CoreRepo @Inject constructor(
         ArticleAnalyzer.process(
             content = htmlCode,
             onTag = { tag ->
+                //needs to query links to the articles
                 if (tag.tag == "a" && tag.clazz == "adb-card__href") {
                     links.add(element = tag)
                 }
 
+                //Has reatured item outside the list, this needs to be removed
                 if (tag.tag == "div" && tag.clazz == "featured__wrapper") {
                     hasFeaturedItem = true
                 }
             }
         )
+
         val data = ArticleParser.parseWithInitialization(
             content = htmlCode,
             url = Constants.indexUrl,
         )
-
-        val finalData = data.getPostList(links = links, hasFeaturedItem = hasFeaturedItem)
+        val finalData = data.getPostList(
+            links = links,
+            hasFeaturedItem = hasFeaturedItem,
+        )
         return finalData
     }
 
@@ -294,7 +314,6 @@ class CoreRepo @Inject constructor(
                     return Result.success(value = fromCache)
                 }
             }
-
             val response: HttpResponse = ktorHttpClient.get(urlString = url)
             val body = response.bodyAsText()
 
@@ -316,9 +335,25 @@ class CoreRepo @Inject constructor(
         }
     }
 
-
     /**
-     *
+     * When html code is parsed, one [PostItem] consist of 4 [HtmlElement]:
+     * * Image
+     * * Title
+     * * Date
+     * * Description
+     * So, when featured item is presented, is removed by removing first 4 elements from list. Then
+     * remaining items are chunked into groups of 4. Each chunk contains data for creating [PostItem],
+     * excepts for link which is taken from [links] list.
+     * #### Example for [first post](https://android-developers.googleblog.com/search?updated-max=2024-09-30T09:00:00-07:00&max-results=10)
+     * * [Image](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikFIJcygIrGJJy0Mb-13Tn9-rk8d29RvMenYTGJj11JZVUr2nt0ZqC1xvElwyVuE_EL3JklDjn-b3muY58rCDXzM-NtSprpY3hAuvlHejDFepHbA39v2TijL-ZNcqqB9jm08Sn-rEZj2eg1Kl22IETuvqr6M9LdG02OMSxmDwCPJRCsWWtWRGUsSNxDjI/s1600/Android-Studio-Social%20%281%29.png)
+     * * Title: "Gemini in Android Studio: Code Completion Gains Powerful Model Improvements"
+     * * Date: "30 September 2024"
+     * * Description: "Posted by Sandhya Mohan  &#8211; Product Manager, Android Studio and Sarmad Hashmi &#8211; Software Engineer, Labs      The Android team believes AI ..."
+     * Converts [HtmlArticleData] into [List] of [PostItem].
+     * @param links List of links extracted from index site.
+     * @param hasFeaturedItem True when featured item is presented in the data. Dev blog sometimes
+     * has featured item on the top of the list, which needs to be removed.
+     * @return [Result] of conversion
      */
     private fun HtmlArticleData.getPostList(
         links: List<TagInfo>,
@@ -348,7 +383,6 @@ class CoreRepo @Inject constructor(
                 val date = processDate(date = dateString)!!
                 PostItem(
                     image = (sublist[0] as HtmlElement.Image).url,
-
                     title = ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
                         input = (sublist[1] as HtmlElement.TextBlock).text
                     ),
@@ -363,12 +397,17 @@ class CoreRepo @Inject constructor(
             }
             return Result.success(value = list)
         } catch (e: ClassCastException) {
+            //When class cast error occurs it means that html code of index site might change as the
+            //elements are differ from what is expected, or it could be a bug inside jet-article library.
             e.printStackTrace()
             return Result.failure(exception = ContentParseException(cause = e))
         } catch (e: NoSuchElementException) {
+            //Occurs when its not possible access lists items on index, mostly because list is empty.
             e.printStackTrace()
             return Result.failure(exception = ContentParseException(cause = e))
         } catch (e: IndexOutOfBoundsException) {
+            //When index out of bounds error occurs it means that last chunk is not 4 elements long,
+            //indicating that html code of index site might have changed or bug in jet-article library.
             e.printStackTrace()
             return Result.failure(exception = ContentParseException(cause = e))
         }
@@ -376,7 +415,9 @@ class CoreRepo @Inject constructor(
 
 
     /**
-     *
+     * Converts [date] into [SimpleDate] class. Date is obtained as formatted string, e.g. "3. March",
+     * so it needs to be converted into more usable format.
+     * @return [SimpleDate] or null
      */
     fun processDate(
         date: String

@@ -32,6 +32,7 @@ import com.jet.utils.dpToPx
 
 
 /**
+ * Empty screen for large screens, visible when no post is actually selected.
  * @author Miroslav Hýbler <br>
  * created on 19.08.2024
  */
