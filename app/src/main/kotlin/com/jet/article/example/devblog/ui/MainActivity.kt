@@ -1,4 +1,4 @@
-@file:OptIn(JetExperimental::class)
+@file:OptIn(JetExperimental::class, ExperimentalComposeUiApi::class)
 
 package com.jet.article.example.devblog.ui
 
@@ -13,6 +13,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
@@ -44,17 +48,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private val viewModel: MainViewModel by viewModels()
-    private var isSplashScreenOn: Boolean = true
+    private var isSplashScreenVisible: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenOn })
-        lifecycleScope.launch {
-            delay(timeMillis = 1000)
-            isSplashScreenOn = false
-        }
+        splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenVisible })
         super.onCreate(savedInstanceState)
-        viewModel.load()
+        viewModel.load(
+            onLoaded = {
+                isSplashScreenVisible = false
+                if (viewModel.settingsStorage.isFirstTimeLoad) {
+                    viewModel.settingsStorage.isFirstTimeLoad = false
+                }
+            }
+        )
+
         isActive = true
         setContent {
             val settings by viewModel.settings.collectAsState(
@@ -78,6 +86,8 @@ class MainActivity : ComponentActivity() {
                     }
                     val navHostController = rememberNavController()
                     NavHost(
+                        modifier = Modifier
+                            .semantics { testTagsAsResourceId = true },
                         navController = navHostController,
                         startDestination = Routes.main,
                     ) {

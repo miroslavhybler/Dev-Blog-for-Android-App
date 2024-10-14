@@ -26,8 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.trace
 import androidx.navigation.NavHostController
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.R
@@ -52,7 +54,7 @@ fun HomeListPane(
     onOpenPost: (index: Int, item: PostItem) -> Unit,
     viewModel: HomeListPaneViewModel,
     navHostController: NavHostController,
-) {
+) = trace(sectionName = "HomeListPane") {
 
     val posts by viewModel.posts.collectAsState()
 
@@ -72,7 +74,7 @@ private fun HomeListPaneContent(
     data: Result<List<PostItem>>?,
     lazyListState: LazyListState,
     navHostController: NavHostController,
-) {
+) = trace(sectionName = "HomeListPaneContent") {
     val mainState = LocalHomeScreenState.current
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
@@ -90,6 +92,8 @@ private fun HomeListPaneContent(
     }
 
     Scaffold(
+        modifier = Modifier
+            .testTag(tag = "home_list_pane"),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column() {
@@ -112,7 +116,9 @@ private fun HomeListPaneContent(
         },
         content = { paddingValues ->
             LazyColumn(
-                modifier = Modifier.animateContentSize(),
+                modifier = Modifier
+                    .testTag(tag = "test_posts")
+                    .animateContentSize(),
                 state = lazyListState,
                 contentPadding = paddingValues + PaddingValues(
                     start = dimensions.sidePadding,
@@ -158,7 +164,9 @@ private fun HomeListPaneContent(
                         key = { _, item -> item.id },
                     ) { index, item ->
                         HomeListItem(
-                            modifier = Modifier,
+                            modifier = if (index == 0) {
+                                Modifier.testTag("first_item")
+                            } else Modifier,
                             onOpenPost = onOpenPost,
                             item = item,
                             index = index,

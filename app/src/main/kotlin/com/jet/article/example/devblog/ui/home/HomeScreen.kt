@@ -305,9 +305,15 @@ val LocalMainScreenNavigator: ProvidableCompositionLocal<ThreePaneScaffoldNaviga
 val LocalHomeScreenState: ProvidableCompositionLocal<HomeScreenState> =
     compositionLocalOf(
         defaultFactory = {
-            error(
-                message = "LocalMainScreenStae was not initialized yet or you called it outside the scope." +
-                        " LocalMainScreenStae should be used only in MainScreen and it's content."
+            HomeScreenState(
+                initialRole = ListDetailPaneScaffoldRole.List,
+                initialIsEmptyPaneVisible = false,
+                initialIndex = -1,
+                initialUrl = "",
             )
+//            error(
+//                message = "LocalMainScreenStae was not initialized yet or you called it outside the scope." +
+//                        " LocalMainScreenStae should be used only in MainScreen and it's content."
+//            )
         }
     )

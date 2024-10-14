@@ -1,6 +1,7 @@
 package com.jet.article.example.devblog.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
@@ -38,9 +39,21 @@ class SettingsStorage @Inject constructor(
     private val preferences: DataStore<Preferences>
         get() = context.preferences
 
+
+
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
+        "app-preferences",
+        Context.MODE_PRIVATE
+    )
+
+    var isFirstTimeLoad: Boolean
+        get() = sharedPreferences.getBoolean("FISRT_TIME_LOAD", true)
+        set(value) =  sharedPreferences.edit().putBoolean("FISRT_TIME_LOAD", value).apply()
+
+
     val settings: Flow<Settings> = preferences.data.map(this::getSettings)
 
-    suspend fun saveSettings(settings: Settings) {
+            suspend fun saveSettings(settings: Settings) {
         preferences.edit {
             it[dynamicColorKey] = settings.isUsingDynamicColors
             it[darkModeKey] = settings.nightModeFlags

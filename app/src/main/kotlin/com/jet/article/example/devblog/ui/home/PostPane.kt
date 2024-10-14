@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -21,9 +22,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -50,9 +55,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
 import com.jet.article.data.HtmlArticleData
 import com.jet.article.example.devblog.R
@@ -62,6 +70,7 @@ import com.jet.article.example.devblog.composables.PostTopBar
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.rememberCurrentOffset
+import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.ui.JetHtmlArticleContent
 import com.jet.article.ui.Link
@@ -81,7 +90,7 @@ fun PostPane(
     data: Result<AdjustedPostData>?,
     onOpenContests: () -> Unit,
     listState: LazyListState,
-) {
+) = trace(sectionName = "PostPane") {
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
     val mainState = LocalHomeScreenState.current
@@ -206,6 +215,8 @@ fun PostPane(
                     data?.isFailure == true
                     || (data?.isSuccess == true && post?.postData?.elements.isNullOrEmpty())
                 ) {
+                    Log.d("mirek", "recompose error")
+
                     ErrorLayout(
                         modifier = Modifier
                             .statusBarsPadding()
@@ -219,8 +230,10 @@ fun PostPane(
                 }
 
                 if (post != null) {
+                    Log.d("mirek", "recompose post")
                     JetHtmlArticleContent(
                         modifier = Modifier
+                            .testTag(tag = "jet_html_article")
                             .fillMaxSize()
                             .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                         containerColor = Color.Transparent,
@@ -253,21 +266,24 @@ fun PostPane(
                     )
                 }
 
-                if (data == null) {
+                if (data == null || post == null) {
+                    Log.d("mirek", "recompose loading")
                     CircularProgressIndicator(
                         modifier = Modifier.align(alignment = Alignment.Center)
                     )
                 }
-                AnimatedVisibility(
-                    modifier = Modifier.align(alignment = Alignment.Center),
-                    visible = data == null,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut()
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(alignment = Alignment.Center)
-                    )
-                }
+//                AnimatedVisibility(
+//                    modifier = Modifier.align(alignment = Alignment.Center),
+//                    visible = data == null,
+//                    enter = fadeIn() + scaleIn(),
+//                    exit = fadeOut() + scaleOut()
+//                ) {
+//                    CircularProgressIndicator(
+//                        modifier = Modifier.align(alignment = Alignment.Center)
+//                    )
+//                }
+
+                Log.d("mirek", "recompose")
             }
         },
         floatingActionButton = {
@@ -278,6 +294,7 @@ fun PostPane(
                         || mainState.role == ListDetailPaneScaffoldRole.Extra)
             ) {
                 FloatingActionButton(
+                    modifier = Modifier.horizontalPadding(),
                     onClick = onOpenContests,
                 ) {
                     Icon(
@@ -288,4 +305,30 @@ fun PostPane(
             }
         }
     )
+}
+
+
+@Composable
+@PreviewLightDark
+private fun PostPanePreview1() {
+    DevBlogAppTheme {
+        PostPane(
+            data = null,
+            onOpenContests = {},
+            listState = rememberLazyListState(),
+        )
+    }
+}
+
+
+@Composable
+@PreviewLightDark
+private fun PostPanePreview2() {
+    DevBlogAppTheme {
+        PostPane(
+            data = Result.failure(exception = IllegalStateException()),
+            onOpenContests = {},
+            listState = rememberLazyListState(),
+        )
+    }
 }

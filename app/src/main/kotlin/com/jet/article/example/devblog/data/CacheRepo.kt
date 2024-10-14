@@ -1,3 +1,5 @@
+@file:Suppress("ConstPropertyName")
+
 package com.jet.article.example.devblog.data
 
 import android.content.Context
@@ -20,7 +22,7 @@ class CacheRepo @Inject constructor(
 ) {
 
     companion object {
-        const val maxNumberOfEntries: Int = 10
+        private const val maxNumberOfEntries: Int = 10
     }
 
     private val rootDir: File = File(context.cacheDir, "posts-cache")
@@ -88,5 +90,4 @@ class CacheRepo @Inject constructor(
             }
         }
     }
-
 }

@@ -1,5 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":baselineprofile")
+
+
+
 pluginManagement {
     repositories {
         google {
@@ -11,6 +15,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url = "https://jitpack.io")
     }
 }
 dependencyResolutionManagement {
@@ -24,4 +29,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "DevBlog for Android"
 include(":app")
- 
+include(":benchmark")

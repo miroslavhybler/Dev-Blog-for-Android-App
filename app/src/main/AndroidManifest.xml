@@ -17,7 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JetArticle"
         tools:ignore="DataExtractionRules,UnusedAttribute">
-
         <profileable
             android:shell="true"
             tools:targetApi="29" />

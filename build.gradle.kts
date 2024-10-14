@@ -11,4 +11,5 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.google.devtools.ksp) apply false
     alias(libs.plugins.google.dagger.hilt) apply false
+    alias(libs.plugins.androidx.baselineprofile) apply false
 }

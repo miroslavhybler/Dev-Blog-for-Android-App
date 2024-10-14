@@ -4,9 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.activity.SystemBarStyle
-import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,7 +20,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -31,24 +28,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlArticleData
-import com.jet.article.data.HtmlElement
-import com.jet.article.data.TagInfo
 import com.jet.article.example.devblog.data.ExcludeOption
-import com.jet.article.example.devblog.data.Month
 import com.jet.article.example.devblog.data.SettingsStorage
-import com.jet.article.example.devblog.data.SimpleDate
 import com.jet.article.example.devblog.ui.LocalDimensions
-import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.utils.pxToDp
 
 

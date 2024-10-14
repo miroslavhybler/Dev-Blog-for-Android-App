@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.dagger.hilt)
     id("com.mikepenz.aboutlibraries.plugin")
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
@@ -41,6 +42,11 @@ android {
             matchingFallbacks += listOf("release")
             isDebuggable = false
         }
+        create("benchmark1") {
+            initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -57,7 +63,11 @@ android {
 
 dependencies {
 
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
+    //debugImplementation(files("libs/jet-article-debug.aar"))
+   // implementation(files("libs/jet-article-debug.aar"))
+    implementation(files("libs/jet-article-release.aar"))
     implementation(libs.jet.utils)
     implementation(libs.jet.lint)
 
@@ -98,6 +108,8 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.storage)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":baselineprofile"))
     debugImplementation(libs.ui.tooling)
     ksp(libs.androidx.room.compiler)
 
@@ -113,4 +125,15 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
+
+
+    /** Tests */
+    implementation(libs.androidx.runtime.tracing)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
