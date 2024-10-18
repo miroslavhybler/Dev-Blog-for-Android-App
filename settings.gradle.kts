@@ -1,9 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-include(":baselineprofile")
-
-
-
 pluginManagement {
     repositories {
         google {
@@ -29,4 +25,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "DevBlog for Android"
 include(":app")
+include(":tests-names")
+include(":baselineprofile")
 include(":benchmark")

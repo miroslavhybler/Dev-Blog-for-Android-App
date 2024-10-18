@@ -9,6 +9,7 @@ import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+import com.jet.article.example.devblog.shared.Tracing
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,9 +55,9 @@ class BaselineProfileGenerator {
             pressHome()
             startActivityAndWait()
 
-            val firstPost = device.ensureObject(tag = "first_item")
+            val firstPost = device.ensureObject(tag = Tracing.Tag.firstPostItem)
             firstPost.click()
-            val jetHtmlArticle = device.ensureObject(tag = "jet_html_article")
+            val jetHtmlArticle = device.ensureObject(tag = Tracing.Tag.jetHtmlArticle)
             repeat(2) {
                 jetHtmlArticle.fling(
                     Direction.DOWN,
@@ -66,7 +67,6 @@ class BaselineProfileGenerator {
             }
         }
     }
-
 
 
     /**
@@ -88,7 +88,6 @@ class BaselineProfileGenerator {
         this.wait(Until.hasObject(testTag), delay)
         val obj = this.findObject(testTag)
 
-        return obj ?: throw NullPointerException("No Ui element for tag $tag")
+        return obj ?: throw NullPointerException("No Ui element found for tag $tag")
     }
-
 }

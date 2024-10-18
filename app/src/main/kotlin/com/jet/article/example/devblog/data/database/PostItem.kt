@@ -1,10 +1,13 @@
 package com.jet.article.example.devblog.data.database
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.SimpleDate
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 /**
  * @param title Title of the post
@@ -26,9 +29,14 @@ data class PostItem constructor(
         val description: String,
         @ColumnInfo(name = "image_url", typeAffinity = ColumnInfo.TEXT)
         val image: String,
+        @ColumnInfo("is_unread", typeAffinity = ColumnInfo.INTEGER, defaultValue = "0")
+        val isUnread: Boolean,
 ) {
 
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "id", typeAffinity = ColumnInfo.INTEGER)
         var id: Int = 0
+
+
+        var isUnreadState: Boolean by mutableStateOf(value= isUnread)
 }

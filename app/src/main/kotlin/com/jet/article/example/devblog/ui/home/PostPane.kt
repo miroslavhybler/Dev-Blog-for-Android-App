@@ -8,12 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.Animatable
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,11 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,8 +61,10 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
 import com.jet.article.example.devblog.composables.PostTopBar
 import com.jet.article.example.devblog.data.AdjustedPostData
+import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.rememberCurrentOffset
+import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.ui.JetHtmlArticleContent
@@ -90,7 +85,8 @@ fun PostPane(
     data: Result<AdjustedPostData>?,
     onOpenContests: () -> Unit,
     listState: LazyListState,
-) = trace(sectionName = "PostPane") {
+    selectedPost: PostItem?,
+) = trace(sectionName = Tracing.Section.postPane) {
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
     val mainState = LocalHomeScreenState.current
@@ -215,8 +211,6 @@ fun PostPane(
                     data?.isFailure == true
                     || (data?.isSuccess == true && post?.postData?.elements.isNullOrEmpty())
                 ) {
-                    Log.d("mirek", "recompose error")
-
                     ErrorLayout(
                         modifier = Modifier
                             .statusBarsPadding()
@@ -230,10 +224,9 @@ fun PostPane(
                 }
 
                 if (post != null) {
-                    Log.d("mirek", "recompose post")
                     JetHtmlArticleContent(
                         modifier = Modifier
-                            .testTag(tag = "jet_html_article")
+                            .testTag(tag = Tracing.Tag.jetHtmlArticle)
                             .fillMaxSize()
                             .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                         containerColor = Color.Transparent,
@@ -249,6 +242,22 @@ fun PostPane(
                         verticalArrangement = Arrangement.spacedBy(space = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         linkClickCallback = linkCallback,
+                        header = {
+                            if (selectedPost?.isUnread == true) {
+                                //Using isUnread instead of isUnreadState on purpose, post is marked
+                                //as read when opened, so this will keep the mark visible
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                ) {
+                                    NewPostMark(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                    )
+                                }
+                            }
+                        },
                         image = { image ->
                             CustomHtmlImage(
                                 modifier = Modifier.animateContentSize(),
@@ -316,6 +325,7 @@ private fun PostPanePreview1() {
             data = null,
             onOpenContests = {},
             listState = rememberLazyListState(),
+            selectedPost = null,
         )
     }
 }
@@ -329,6 +339,7 @@ private fun PostPanePreview2() {
             data = Result.failure(exception = IllegalStateException()),
             onOpenContests = {},
             listState = rememberLazyListState(),
+            selectedPost = null,
         )
     }
 }

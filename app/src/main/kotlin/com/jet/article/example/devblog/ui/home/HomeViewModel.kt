@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,18 +32,29 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow(value = null)
     val postData: StateFlow<Result<AdjustedPostData>?> = mPostData.asStateFlow()
 
+    private val mSelectedPost: MutableStateFlow<PostItem?> = MutableStateFlow(value = null)
+    val selectedPost: StateFlow<PostItem?> = mSelectedPost.asStateFlow()
 
     fun loadPost(
-        url: String,
+        item: PostItem,
         isRefresh: Boolean = false,
     ) {
+        mSelectedPost.value = item
         viewModelScope.launch {
-            mPostData.value = coreRepo.loadPostDetail(url = url, isRefresh = isRefresh)
+            mPostData.value = coreRepo.loadPostDetail(url = item.url, isRefresh = isRefresh)
+        }
+
+        if (item.isUnreadState) {
+            viewModelScope.launch() {
+                item.isUnreadState = false
+                databaseRepo.updateReadedPost(id = item.id)
+            }
         }
     }
 
 
     fun onBack() {
         mPostData.value = null
+        mSelectedPost.value = null
     }
 }

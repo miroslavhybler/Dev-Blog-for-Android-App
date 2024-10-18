@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
-    id("com.android.library") version "8.7.0" apply false
-    id("com.android.test") version "8.7.0" apply false
+    id("com.android.library") version "8.7.1" apply false
+    id("com.android.test") version "8.7.1" apply false
 
     id("org.jetbrains.kotlin.android") version "2.0.0" apply false
     id("org.jetbrains.dokka") version "1.9.20" apply false
@@ -12,4 +12,5 @@ plugins {
     alias(libs.plugins.google.devtools.ksp) apply false
     alias(libs.plugins.google.dagger.hilt) apply false
     alias(libs.plugins.androidx.baselineprofile) apply false
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.jet.article.example.devblog.data.AdjustedPostData
+import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.utils.dpToPx
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ fun HomeScreen(
 ) {
     val state = rememberHomeScreenState()
     val postData by viewModel.postData.collectAsState()
+    val selectedPost by viewModel.selectedPost.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>(
         scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
@@ -87,6 +89,7 @@ fun HomeScreen(
         navigator = navigator,
         navHostController = navHostController,
         onCloseExtra = ::onBack,
+        selectedPostItem=selectedPost,
     )
 }
 
@@ -95,7 +98,8 @@ fun HomeScreen(
 fun HomeScreenContent(
     state: HomeScreenState,
     postData: Result<AdjustedPostData>?,
-    onLoad: (url: String) -> Unit,
+    selectedPostItem: PostItem?,
+    onLoad: (item: PostItem) -> Unit,
     navigator: ThreePaneScaffoldNavigator<Nothing>,
     onCloseExtra: () -> Unit,
     navHostController: NavHostController,
@@ -125,12 +129,10 @@ fun HomeScreenContent(
                     AnimatedPane {
                         HomeListPane(
                             onOpenPost = { index, item ->
-                                //     coroutineScope.launch {
                                 state.openPost(url = item.url, index = index)
-                                onLoad(item.url)
-                                //           delay(timeMillis = 200)
+                                onLoad(item)
                                 navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
-                                //         }
+
                             },
                             viewModel = hiltViewModel(),
                             navHostController = navHostController,
@@ -152,6 +154,7 @@ fun HomeScreenContent(
                                     },
                                     data = postData,
                                     listState = postListState,
+                                    selectedPost=selectedPostItem,
                                 )
                             }
 

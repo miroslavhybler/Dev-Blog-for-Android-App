@@ -1,3 +1,6 @@
+import com.android.tools.r8.internal.ks
+import kotlin.collections.set
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
@@ -20,11 +23,6 @@ android {
         versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] = "${projectDir.path}/room-schemas"
-            }
-        }
     }
 
     buildTypes {
@@ -59,6 +57,9 @@ android {
         compose = true
         buildConfig = true
     }
+    ksp {
+        arg(k = "room.schemaLocation", v = "${projectDir.path}/room-schemas")
+    }
 }
 
 dependencies {
@@ -66,8 +67,9 @@ dependencies {
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     //debugImplementation(files("libs/jet-article-debug.aar"))
-   // implementation(files("libs/jet-article-debug.aar"))
+    // implementation(files("libs/jet-article-debug.aar"))
     implementation(files("libs/jet-article-release.aar"))
+    implementation(project(":tests-names"))
     implementation(libs.jet.utils)
     implementation(libs.jet.lint)
 

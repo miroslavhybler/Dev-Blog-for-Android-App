@@ -57,4 +57,5 @@
     <string name="error_unable_load_post">Unable to show the post</string>
     <string name="error_connection">No internet connection</string>
     <string name="error_unable_to_load_posts">Unable to load new posts</string>
+    <string name="general_new">NEW</string>
 </resources>

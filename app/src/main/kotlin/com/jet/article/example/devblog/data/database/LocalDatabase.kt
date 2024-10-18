@@ -1,6 +1,7 @@
 package com.jet.article.example.devblog.data.database
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Insert
@@ -22,8 +23,12 @@ import com.jet.article.example.devblog.data.SimpleDate
     entities = [
         PostItem::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    autoMigrations = [
+        //Added isUnread flag to postItem
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 @TypeConverters(
     value = [
@@ -67,6 +72,10 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
 
         @Query("SELECT last_insert_rowid()")
         fun getLastPostId(): Int
+
+
+        @Query("UPDATE posts SET is_unread=0 WHERE id=:id")
+        fun updateReaded(id: Int)
     }
 
 

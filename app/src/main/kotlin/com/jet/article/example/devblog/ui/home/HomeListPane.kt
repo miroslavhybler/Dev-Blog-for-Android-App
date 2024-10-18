@@ -39,6 +39,7 @@ import com.jet.article.example.devblog.composables.NoConnectionLayout
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
+import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.utils.plus
 
@@ -54,10 +55,9 @@ fun HomeListPane(
     onOpenPost: (index: Int, item: PostItem) -> Unit,
     viewModel: HomeListPaneViewModel,
     navHostController: NavHostController,
-) = trace(sectionName = "HomeListPane") {
+) = trace(sectionName = Tracing.Section.homeListPane) {
 
     val posts by viewModel.posts.collectAsState()
-
 
     HomeListPaneContent(
         onOpenPost = onOpenPost,
@@ -74,9 +74,8 @@ private fun HomeListPaneContent(
     data: Result<List<PostItem>>?,
     lazyListState: LazyListState,
     navHostController: NavHostController,
-) = trace(sectionName = "HomeListPaneContent") {
+) = trace(sectionName = Tracing.Section.homeListPaneContent) {
     val mainState = LocalHomeScreenState.current
-    val context = LocalContext.current
     val dimensions = LocalDimensions.current
     val windowInfo = currentWindowAdaptiveInfo()
     val windowWidth = windowInfo.windowSizeClass.windowWidthSizeClass
@@ -93,7 +92,7 @@ private fun HomeListPaneContent(
 
     Scaffold(
         modifier = Modifier
-            .testTag(tag = "home_list_pane"),
+            .testTag(tag = Tracing.Tag.homeListPane),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             Column() {
@@ -117,7 +116,7 @@ private fun HomeListPaneContent(
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
-                    .testTag(tag = "test_posts")
+                    .testTag(tag = Tracing.Tag.posts)
                     .animateContentSize(),
                 state = lazyListState,
                 contentPadding = paddingValues + PaddingValues(
@@ -165,7 +164,7 @@ private fun HomeListPaneContent(
                     ) { index, item ->
                         HomeListItem(
                             modifier = if (index == 0) {
-                                Modifier.testTag("first_item")
+                                Modifier.testTag( tag = Tracing.Tag.firstPostItem)
                             } else Modifier,
                             onOpenPost = onOpenPost,
                             item = item,

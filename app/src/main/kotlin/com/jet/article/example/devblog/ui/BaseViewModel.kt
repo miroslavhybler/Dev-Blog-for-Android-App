@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import com.jet.article.example.devblog.data.CoreRepo
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.data.database.DatabaseRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -22,6 +23,9 @@ abstract class BaseViewModel constructor(
 
     @Inject
     lateinit var coreRepo: CoreRepo
+
+    @Inject
+    lateinit var databaseRepo: DatabaseRepo
 
     protected val context: Context
         get() = getApplication()

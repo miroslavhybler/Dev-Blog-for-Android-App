@@ -13,15 +13,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
@@ -120,10 +125,20 @@ private fun HomeListItemColumn(
                 bottom = 16.dp,
             )
     ) {
-        CustomHtmlImage(
-            modifier = Modifier,
-            url = item.image,
-        )
+        Box(modifier = Modifier.wrapContentSize()) {
+            CustomHtmlImage(
+                modifier = Modifier,
+                url = item.image,
+            )
+
+            if (item.isUnreadState) {
+                NewPostMark(
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .padding(start = 12.dp, top = 8.dp)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(height = 4.dp))
 
@@ -133,7 +148,6 @@ private fun HomeListItemColumn(
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onBackground,
         )
-
 
         HtmlTextBlock(
             modifier = Modifier,
@@ -163,7 +177,7 @@ private fun HomeListItemRow(
     containerColor: Color,
 ) {
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = { onOpenPost(index, item) })
@@ -171,45 +185,82 @@ private fun HomeListItemRow(
                 color = containerColor,
                 shape = MaterialTheme.shapes.medium,
             )
-            .padding(
-                start = 6.dp,
-                end = 6.dp,
-                top = 8.dp,
-                bottom = 8.dp,
-            )
     ) {
-        HtmlImage(
-            modifier = Modifier.size(size = 48.dp),
-            url = item.image,
-            contentScale = ContentScale.Crop,
-        )
-
-        Spacer(modifier = Modifier.width(width = 12.dp))
-
-        Column(modifier = Modifier.weight(weight = 1f)) {
-            Text(
-                modifier = Modifier,
-                text = item.date.getDateString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 1,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(
+                    start = 6.dp,
+                    end = 6.dp,
+                    top = 8.dp,
+                    bottom = 8.dp,
+                )
+        ) {
+            HtmlImage(
+                modifier = Modifier.size(size = 48.dp),
+                url = item.image,
+                contentScale = ContentScale.Crop,
             )
-            HtmlTextBlock(
-                modifier = Modifier,
-                text = item.title,
-                key = index,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                color = contentColor,
-            )
-            HtmlTextBlock(
-                modifier = Modifier,
-                text = item.description,
-                key = index,
-                style = MaterialTheme.typography.bodySmall,
-                color = contentColor,
-                maxLines = 1,
+
+            Spacer(modifier = Modifier.width(width = 12.dp))
+
+            Column(modifier = Modifier.weight(weight = 1f)) {
+                Text(
+                    modifier = Modifier,
+                    text = item.date.getDateString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1,
+                )
+                HtmlTextBlock(
+                    modifier = Modifier,
+                    text = item.title,
+                    key = index,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    color = contentColor,
+                )
+                HtmlTextBlock(
+                    modifier = Modifier,
+                    text = item.description,
+                    key = index,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor,
+                    maxLines = 1,
+                )
+            }
+        }
+
+        if (item.isUnreadState) {
+            NewPostMark(
+                modifier = Modifier
+                    .align(alignment = Alignment.TopStart)
+                    .padding(start = 12.dp, top = 8.dp)
             )
         }
+    }
+}
+
+@Composable
+fun NewPostMark(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .wrapContentSize()
+            .background(
+                color = MaterialTheme.colorScheme.tertiary,
+                shape = CircleShape,
+            )
+    ) {
+        Text(
+            modifier = Modifier
+                .align(alignment = Alignment.Center)
+                .padding(horizontal = 8.dp, vertical = 2.dp),
+            text = stringResource(R.string.general_new),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onTertiary,
+        )
     }
 }

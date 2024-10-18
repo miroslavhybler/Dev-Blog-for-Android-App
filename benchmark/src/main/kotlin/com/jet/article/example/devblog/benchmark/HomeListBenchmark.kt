@@ -5,14 +5,12 @@ package com.jet.article.example.devblog.benchmark
 import android.graphics.Point
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
-import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.TraceSectionMetric
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
+import com.jet.article.example.devblog.shared.Tracing
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -26,24 +24,27 @@ import org.junit.runner.RunWith
 class HomeListBenchmark : BaseBenchMark() {
 
     @Test
-    fun openHomeAndScrollList() = benchmarkRule.measureRepeated(
-        packageName = "com.jet.article.example.devblog",
+    fun openHomeAndScrollList() = benchmark(
         metrics = listOf(
             StartupTimingMetric(),
-            TraceSectionMetric("HomeListPane", TraceSectionMetric.Mode.Sum),
+            TraceSectionMetric(
+                sectionName = Tracing.Section.homeListPane,
+                mode = TraceSectionMetric.Mode.Sum,
+            ),
         ),
-        iterations = 5,
-        startupMode = StartupMode.WARM,
-        compilationMode = CompilationMode.Full(),
     ) {
         pressHome()
         startActivityAndWait()
-        val feed = device.ensureObject(tag="test_posts")
-        feed.setGestureMargin(device.displayWidth / 5)
+        val postsLazyColumn = device.ensureObject(tag = Tracing.Tag.posts)
+        postsLazyColumn.setGestureMargin(device.displayWidth / 5)
         repeat(2) {
-            feed.drag(Point(feed.visibleCenter.x, feed.visibleBounds.top))
+            postsLazyColumn.drag(
+                Point(
+                    postsLazyColumn.visibleCenter.x,
+                    postsLazyColumn.visibleBounds.top
+                )
+            )
             Thread.sleep(500)
         }
     }
-
 }

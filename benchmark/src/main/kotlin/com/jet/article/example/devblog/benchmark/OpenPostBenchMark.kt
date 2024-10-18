@@ -2,18 +2,13 @@
 
 package com.jet.article.example.devblog.benchmark
 
-import android.graphics.Point
-import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
-import androidx.benchmark.macro.MacrobenchmarkScope
-import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.TraceSectionMetric
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
-import androidx.test.uiautomator.Until
+import com.jet.article.example.devblog.shared.Tracing
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -39,22 +34,23 @@ class OpenPostBenchMark : BaseBenchMark() {
         metrics = listOf(
             StartupTimingMetric(),
             TraceSectionMetric(
-                "PostPane",
-                TraceSectionMetric.Mode.Sum,
+                sectionName = Tracing.Section.postPane,
+                mode = TraceSectionMetric.Mode.Sum,
             ),
         ),
-        iterations = 1,
     ) {
         pressHome()
         startActivityAndWait()
-        val firstPost = device.ensureObject(tag = "first_item")
+        //Waiting for first post item to appear
+        val firstPost = device.ensureObject(tag = Tracing.Tag.firstPostItem)
+        //Performing click, opening PostPane with selected post
         firstPost.click()
-        val jetHtmlArticle = device.ensureObject(tag = "jet_html_article")
+        //Waiting for post to be loaded and displayed
+        val jetHtmlArticle = device.ensureObject(tag = Tracing.Tag.jetHtmlArticle)
+
+        //Scrolling down in PostPane, simulation of reading post
         repeat(2) {
-            jetHtmlArticle.fling(
-                Direction.DOWN,
-                1024,
-            )
+            jetHtmlArticle.fling(Direction.DOWN, 1024,)
             Thread.sleep(500)
         }
     }

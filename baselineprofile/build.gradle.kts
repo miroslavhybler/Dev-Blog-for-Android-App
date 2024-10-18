@@ -37,6 +37,8 @@ baselineProfile {
 }
 
 dependencies {
+    implementation(project(":tests-names"))
+
     implementation(libs.androidx.junit)
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.uiautomator)
