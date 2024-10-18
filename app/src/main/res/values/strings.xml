@@ -40,6 +40,11 @@
     <string name="settings_changelog_1_0_2__0">Fixed loading list of posts, handling scenario there is featured post</string>
     <string name="settings_changelog_1_0_2__1">Data are loaded from remote when app is opened independently on ContentSyncWorker</string>
 
+    <string name="settings_changelog_title_1_0_3">Performance improvements ⚡️</string>
+    <string name="settings_changelog_1_0_3__0">Added baseline profiles for opening article user flow</string>
+    <string name="settings_changelog_1_0_3__1">Added benchmarks for performance analysis</string>
+    <string name="settings_changelog_1_0_3__2">Added "new" mark for unread posts</string>
+
     <string name="settings_about_title">About</string>
 
 

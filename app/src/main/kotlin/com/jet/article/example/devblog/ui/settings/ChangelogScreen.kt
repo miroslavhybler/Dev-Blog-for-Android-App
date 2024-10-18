@@ -43,13 +43,22 @@ import com.jet.article.example.devblog.ui.LocalDimensions
  */
 private  val changelog: List<Changelog> = listOf(
     Changelog(
-        version = "1.0.0",
-        dateFormatted = "23.09.2024",
-        titleRes = R.string.settings_changelog_title_1_0_0,
+        version = "1.0.3",
+        dateFormatted = "18.10.2024",
+        titleRes = R.string.settings_changelog_title_1_0_3,
         changes = listOf(
-            R.string.settings_changelog_1_0_0__0,
-            R.string.settings_changelog_1_0_0__1,
-            R.string.settings_changelog_1_0_0__2,
+            R.string.settings_changelog_1_0_3__0,
+            R.string.settings_changelog_1_0_3__1,
+            R.string.settings_changelog_1_0_3__2,
+        )
+    ),
+    Changelog(
+        version = "1.0.2",
+        dateFormatted = "01.10.2024",
+        titleRes = R.string.settings_changelog_title_1_0_2,
+        changes = listOf(
+            R.string.settings_changelog_1_0_2__0,
+            R.string.settings_changelog_1_0_2__1,
         )
     ),
     Changelog(
@@ -64,12 +73,13 @@ private  val changelog: List<Changelog> = listOf(
         )
     ),
     Changelog(
-        version = "1.0.2",
-        dateFormatted = "01.10.2024",
-        titleRes = R.string.settings_changelog_title_1_0_2,
+        version = "1.0.0",
+        dateFormatted = "23.09.2024",
+        titleRes = R.string.settings_changelog_title_1_0_0,
         changes = listOf(
-            R.string.settings_changelog_1_0_2__0,
-            R.string.settings_changelog_1_0_2__1,
+            R.string.settings_changelog_1_0_0__0,
+            R.string.settings_changelog_1_0_0__1,
+            R.string.settings_changelog_1_0_0__2,
         )
     ),
 )
@@ -103,7 +113,6 @@ fun ChangelogScreen(
                     top = dimensions.topLinePadding,
                     bottom = dimensions.bottomLinePadding,
                 ),
-                reverseLayout = true,
                 verticalArrangement = Arrangement.spacedBy(space = 16.dp),
             ) {
                 items(items = changelog) {
