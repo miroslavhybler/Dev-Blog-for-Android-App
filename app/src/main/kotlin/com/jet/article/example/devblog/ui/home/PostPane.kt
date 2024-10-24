@@ -86,6 +86,7 @@ fun PostPane(
     onOpenContests: () -> Unit,
     listState: LazyListState,
     selectedPost: PostItem?,
+    onRefresh: (PostItem) -> Unit,
 ) = trace(sectionName = Tracing.Section.postPane) {
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
@@ -220,6 +221,9 @@ fun PostPane(
                             .align(alignment = Alignment.TopCenter),
                         title = stringResource(R.string.error_unable_load_post),
                         cause = data.exceptionOrNull(),
+                        onRefresh={
+                            onRefresh(selectedPost ?: return@ErrorLayout)
+                        }
                     )
                 }
 
@@ -275,32 +279,19 @@ fun PostPane(
                     )
                 }
 
-                if (data == null || post == null) {
-                    Log.d("mirek", "recompose loading")
+                if (data == null) {
                     CircularProgressIndicator(
                         modifier = Modifier.align(alignment = Alignment.Center)
                     )
                 }
-//                AnimatedVisibility(
-//                    modifier = Modifier.align(alignment = Alignment.Center),
-//                    visible = data == null,
-//                    enter = fadeIn() + scaleIn(),
-//                    exit = fadeOut() + scaleOut()
-//                ) {
-//                    CircularProgressIndicator(
-//                        modifier = Modifier.align(alignment = Alignment.Center)
-//                    )
-//                }
-
-                Log.d("mirek", "recompose")
             }
         },
         floatingActionButton = {
-            //TODO check if titles are empty & scroll to top action
             if (
                 post != null
                 && (mainState.role == ListDetailPaneScaffoldRole.Detail
                         || mainState.role == ListDetailPaneScaffoldRole.Extra)
+                && post.contest.isNotEmpty()
             ) {
                 FloatingActionButton(
                     modifier = Modifier.horizontalPadding(),
@@ -326,6 +317,7 @@ private fun PostPanePreview1() {
             onOpenContests = {},
             listState = rememberLazyListState(),
             selectedPost = null,
+            onRefresh= {},
         )
     }
 }
@@ -340,6 +332,7 @@ private fun PostPanePreview2() {
             onOpenContests = {},
             listState = rememberLazyListState(),
             selectedPost = null,
-        )
+            onRefresh= {},
+            )
     }
 }

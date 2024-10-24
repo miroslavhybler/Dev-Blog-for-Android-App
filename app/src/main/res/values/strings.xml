@@ -62,5 +62,8 @@
     <string name="error_unable_load_post">Unable to show the post</string>
     <string name="error_connection">No internet connection</string>
     <string name="error_unable_to_load_posts">Unable to load new posts</string>
+    <string name="error_request_title">Request failed</string>
+    <string name="error_request_desc">Try repeat request later</string>
+    <string name="content_desc_repeat_request">Repeat request</string>
     <string name="general_new">NEW</string>
 </resources>

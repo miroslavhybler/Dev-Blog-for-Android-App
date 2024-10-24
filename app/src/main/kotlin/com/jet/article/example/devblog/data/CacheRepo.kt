@@ -25,7 +25,7 @@ class CacheRepo @Inject constructor(
         private const val maxNumberOfEntries: Int = 10
     }
 
-    private val rootDir: File = File(context.cacheDir, "posts-cache")
+    private val rootDir: File = File(context.filesDir, "posts-cache")
         get() {
             if (!field.exists()) {
                 field.mkdirs()

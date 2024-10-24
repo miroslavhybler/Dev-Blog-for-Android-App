@@ -33,4 +33,12 @@ class HomeListPaneViewModel @Inject constructor(
      */
     val lazyListState: LazyListState = LazyListState()
 
+
+    fun loadPosts(
+        isRefresh: Boolean = false,
+    ) {
+        viewModelScope.launch {
+            coreRepo.loadPosts(isRefresh=isRefresh)
+        }
+    }
 }

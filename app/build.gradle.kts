@@ -33,6 +33,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
         create("benchmark") {
             initWith(buildTypes.getByName("release"))
@@ -111,7 +112,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.storage)
     implementation(libs.androidx.profileinstaller)
-    "baselineProfile"(project(":baselineprofile"))
+    baselineProfile(project(":baselineprofile"))
     debugImplementation(libs.ui.tooling)
     ksp(libs.androidx.room.compiler)
 

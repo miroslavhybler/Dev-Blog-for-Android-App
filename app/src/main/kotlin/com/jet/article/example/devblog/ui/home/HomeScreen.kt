@@ -89,7 +89,10 @@ fun HomeScreen(
         navigator = navigator,
         navHostController = navHostController,
         onCloseExtra = ::onBack,
-        selectedPostItem=selectedPost,
+        selectedPostItem = selectedPost,
+        onRefreshDetail = { item ->
+            viewModel.loadPost(item = item, isRefresh = true)
+        }
     )
 }
 
@@ -103,6 +106,7 @@ fun HomeScreenContent(
     navigator: ThreePaneScaffoldNavigator<Nothing>,
     onCloseExtra: () -> Unit,
     navHostController: NavHostController,
+    onRefreshDetail: (PostItem) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -154,7 +158,8 @@ fun HomeScreenContent(
                                     },
                                     data = postData,
                                     listState = postListState,
-                                    selectedPost=selectedPostItem,
+                                    selectedPost = selectedPostItem,
+                                    onRefresh = onRefreshDetail,
                                 )
                             }
 

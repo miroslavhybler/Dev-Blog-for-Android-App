@@ -41,7 +41,10 @@ class HomeViewModel @Inject constructor(
     ) {
         mSelectedPost.value = item
         viewModelScope.launch {
-            mPostData.value = coreRepo.loadPostDetail(url = item.url, isRefresh = isRefresh)
+            mPostData.value = coreRepo.loadPostDetail(
+                url = item.url,
+                isRefresh = isRefresh,
+            )
         }
 
         if (item.isUnreadState) {

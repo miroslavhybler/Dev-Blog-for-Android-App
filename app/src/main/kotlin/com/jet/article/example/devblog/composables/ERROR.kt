@@ -3,6 +3,7 @@ package com.jet.article.example.devblog.composables
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,10 +39,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jet.article.example.devblog.AndroidDevBlogApp
+import com.jet.article.example.devblog.NotConnectedToInternetException
 import com.jet.article.example.devblog.R
+import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.openEmail
 import com.jet.article.example.devblog.openWeb
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 
 /**
  * @author Miroslav Hýbler<br>
@@ -85,22 +91,201 @@ fun ErrorLayout(
     title: String,
     cause: Throwable?,
     useBackground: Boolean = true,
+    onRefresh: () -> Unit,
 ) {
-    if (!AndroidDevBlogApp.isConnectedToInternet) {
-        ErrorLayoutNoConnection(
-            modifier = modifier,
-        )
-    } else {
-        ErrorLayoutThrowable(
-            modifier = modifier,
-            title = title,
-            cause = cause,
-            useBackground = useBackground,
-        )
+    when {
+        !AndroidDevBlogApp.isConnectedToInternet
+                || cause is NotConnectedToInternetException
+                || cause?.cause is NotConnectedToInternetException -> {
+            ErrorLayoutNoConnection(
+                modifier = modifier,
+            )
+        }
+
+        cause is RequestNotSucesfullException ||
+                cause?.cause is RequestNotSucesfullException -> {
+            ErrorRequest(
+                cause = (cause as? RequestNotSucesfullException)
+                    ?: cause.cause as RequestNotSucesfullException,
+                onRefresh = onRefresh,
+            )
+        }
+
+        cause is ClientRequestException
+                || cause?.cause is ClientRequestException -> {
+            ErrorRequest(
+                cause = (cause as? ClientRequestException)
+                    ?: cause.cause as ClientRequestException,
+                onRefresh = onRefresh,
+            )
+        }
+
+        cause is ServerResponseException
+                || cause?.cause is ServerResponseException -> {
+            ErrorRequest(
+                cause = (cause as? ServerResponseException)
+                    ?: cause.cause as ServerResponseException,
+                onRefresh = onRefresh,
+            )
+        }
+
+        else -> {
+            ErrorLayoutOtherThrowable(
+                modifier = modifier,
+                title = title,
+                cause = cause,
+                useBackground = useBackground,
+            )
+        }
     }
-
-
 }
+
+
+@Composable
+private fun ErrorRequest(
+    modifier: Modifier = Modifier,
+    cause: RequestNotSucesfullException,
+    onRefresh: () -> Unit,
+) {
+    ErrorRequestBase(
+        modifier = modifier,
+        cause = cause,
+        onRefresh = onRefresh,
+        code = cause.code,
+    )
+}
+
+
+@Composable
+private fun ErrorRequest(
+    modifier: Modifier = Modifier,
+    cause: ClientRequestException,
+    onRefresh: () -> Unit,
+) {
+    ErrorRequestBase(
+        modifier = modifier,
+        cause = cause,
+        onRefresh = onRefresh,
+        code = null,
+    )
+}
+
+
+@Composable
+private fun ErrorRequest(
+    modifier: Modifier = Modifier,
+    cause: ServerResponseException,
+    onRefresh: () -> Unit,
+) {
+    ErrorRequestBase(
+        modifier = modifier,
+        cause = cause,
+        onRefresh = onRefresh,
+        code = null,
+    )
+}
+
+
+@Composable
+private fun ErrorRequestBase(
+    modifier: Modifier = Modifier,
+    cause: Throwable,
+    onRefresh: () -> Unit,
+    code: Int?,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentSize()
+            .background(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = MaterialTheme.shapes.large,
+            ),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start,
+    ) {
+//        Icon(
+//            modifier = Modifier
+//                .padding(top = innerPadding)
+//                .size(size = 48.dp),
+//            painter = painterResource(id = R.drawable.ic_bug),
+//            contentDescription = null,
+//            tint = MaterialTheme.colorScheme.onErrorContainer,
+//        )
+
+//        Spacer(modifier = Modifier.height(height = 24.dp))
+
+        Text(
+            modifier = Modifier
+                .padding(
+                    top = innerPadding,
+                    start = innerPadding,
+                    end = innerPadding,
+                ),
+            text = buildString {
+                append(stringResource(id = R.string.error_request_title))
+                if (code != null) {
+                    append(" ($code)")
+                }
+            },
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onErrorContainer,
+        )
+
+        Text(
+            modifier = Modifier
+                .padding(horizontal = innerPadding),
+            text = stringResource(id = R.string.error_request_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onErrorContainer,
+            textAlign = TextAlign.Center,
+        )
+
+
+        Row {
+            Column(modifier = Modifier.weight(weight = 1f)) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = innerPadding),
+                    text = cause::class.java.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 8.sp,
+                    lineHeight = 10.sp,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    textAlign = TextAlign.Start,
+                    maxLines = 1,
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = innerPadding),
+                    text = cause.message ?: "No message",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 8.sp,
+                    lineHeight = 10.sp,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    textAlign = TextAlign.Start,
+                    maxLines = 1,
+                )
+            }
+
+            IconButton(
+                modifier = Modifier.align(alignment = Alignment.Top),
+                onClick = onRefresh,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_refresh),
+                    contentDescription = stringResource(id = R.string.content_desc_repeat_request),
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            }
+        }
+
+    }
+}
+
 
 @Composable
 private fun ErrorLayoutNoConnection(
@@ -135,7 +320,7 @@ private fun ErrorLayoutNoConnection(
 
 
 @Composable
-private fun ErrorLayoutThrowable(
+private fun ErrorLayoutOtherThrowable(
     modifier: Modifier = Modifier,
     title: String,
     cause: Throwable?,
@@ -147,6 +332,7 @@ private fun ErrorLayoutThrowable(
         MaterialTheme.colorScheme.onErrorContainer
     else
         MaterialTheme.colorScheme.error
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -203,6 +389,19 @@ private fun ErrorLayoutThrowable(
                 textAlign = TextAlign.Start,
                 maxLines = 1,
             )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = innerPadding),
+                text = cause.message ?: "No message",
+                style = MaterialTheme.typography.labelSmall,
+                fontSize = 8.sp,
+                lineHeight = 10.sp,
+                color = contentColor,
+                textAlign = TextAlign.Start,
+                maxLines = 1,
+            )
+
         }
 
         Spacer(modifier = Modifier.height(height = 16.dp))
@@ -217,7 +416,18 @@ private fun ErrorLayoutThrowable(
                 context.openEmail(
                     email = "miroslav.hybler.development@gmail.com",
                     subject = "Dev Blog for Android Bug",
-                    text = cause?.stackTraceToString() ?: "",
+                    text = buildString {
+
+                        appendLine("Android: ${Build.VERSION.SDK_INT} (${Build.VERSION.RELEASE})")
+                        appendLine("${Build.MANUFACTURER} ${Build.MODEL}}")
+                        appendLine()
+
+                        val stackTrace = cause?.stackTraceToString()
+                        if (stackTrace != null) {
+                            appendLine("Stack trace:")
+                            appendLine(stackTrace)
+                        }
+                    },
                 )
             },
             onClickLabel = stringResource(id = R.string.content_desc_report_on_mail),
@@ -331,6 +541,7 @@ private fun ErrorLayoutPreview() {
     DevBlogAppTheme {
         Column(
             Modifier
+                .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.spacedBy(space = 32.dp)
         ) {
@@ -341,7 +552,16 @@ private fun ErrorLayoutPreview() {
                 modifier = Modifier
             )
 
-            ErrorLayoutThrowable(
+
+            ErrorRequest(
+                cause = RequestNotSucesfullException(
+                    message = "404",
+                    code = 404,
+                ),
+                onRefresh = {},
+            )
+
+            ErrorLayoutOtherThrowable(
                 title = "Something went wrong",
                 cause = IllegalStateException()
             )

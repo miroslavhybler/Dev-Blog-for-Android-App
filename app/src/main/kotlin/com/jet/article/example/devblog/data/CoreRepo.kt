@@ -13,13 +13,18 @@ import com.jet.article.data.TagInfo
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.Constants
 import com.jet.article.example.devblog.ContentParseException
+import com.jet.article.example.devblog.NotConnectedToInternetException
+import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.parseWithInitialization
+import com.jet.article.example.devblog.ui.home.TitleWithOriginalIndex
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.cache.InvalidCacheStateException
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -118,14 +123,31 @@ class CoreRepo @Inject constructor(
             isCachingResult = true,
         )
         val htmlCode = postResult.getOrNull()
+        val exception = postResult.exceptionOrNull()
         return@withContext when {
             postResult.isSuccess && htmlCode != null -> {
-                parsePostDetail(htmlCode = htmlCode, url = url)
+                parsePostDetail(htmlCode = htmlCode, url = url,)
+            }
+
+            exception != null -> {
+                Result.failure(
+                    exception = IllegalStateException(exception)
+                )
+            }
+
+            !AndroidDevBlogApp.isConnectedToInternet -> {
+                Result.failure(
+                    exception = IllegalStateException(
+                        "Connection lost while making request"
+                    )
+                )
             }
 
             else -> {
                 Result.failure(
-                    exception = postResult.exceptionOrNull() ?: UnknownError()
+                    exception = NullPointerException(
+                        "Html code of post detail is null and error cause is not provided"
+                    )
                 )
             }
         }
@@ -149,7 +171,7 @@ class CoreRepo @Inject constructor(
             isCachingResult = false,
         )
         val htmlCode = indexSiteCodeResult.getOrNull()
-
+        val exception = indexSiteCodeResult.exceptionOrNull()
         return@withContext when {
             indexSiteCodeResult.isSuccess && htmlCode != null -> {
                 val posts = parsePosts(htmlCode = htmlCode)
@@ -164,9 +186,13 @@ class CoreRepo @Inject constructor(
                     )
             }
 
+            exception != null -> {
+                return@withContext Result.failure(exception = exception)
+            }
+
             else -> {
                 return@withContext Result.failure(
-                    exception = NullPointerException("Html code is null")
+                    exception = NullPointerException("Html code and case are both null")
                 )
             }
         }
@@ -228,13 +254,21 @@ class CoreRepo @Inject constructor(
                     exception = NullPointerException("Unable to get date")
                 )
             }
-
+            val data = original.copy(elements = newElements)
             return Result.success(
                 value = AdjustedPostData(
-                    postData = original.copy(elements = newElements),
+                    postData = data,
                     headerImage = headerImage,
                     date = simpleDate,
                     title = title,
+                    contest = data.elements.mapIndexedNotNull { index, element ->
+                        if (element is HtmlElement.Title) {
+                            TitleWithOriginalIndex(
+                                title = element,
+                                originalIndex = index,
+                            )
+                        } else null
+                    }
                 )
             )
         } catch (e: NoSuchElementException) {
@@ -308,19 +342,49 @@ class CoreRepo @Inject constructor(
         isCachingResult: Boolean = true,
     ): Result<String> {
         return try {
-            if (isCachingResult && !isRefresh) {
-                val fromCache = cacheRepo.getCachedResponse(url = url)
-                if (fromCache != null) {
-                    return Result.success(value = fromCache)
+            val isConnected = AndroidDevBlogApp.isConnectedToInternet
+
+            if (isCachingResult) {
+                //We can load from cache
+                if (!isRefresh || !isConnected) {
+                    //Request is not refresh request or we are not connected to the internet
+                    //Only chance to show post is try to load it from cache
+                    val fromCache = cacheRepo.getCachedResponse(url = url)
+                    if (fromCache != null) {
+                        return Result.success(value = fromCache)
+                    }
                 }
             }
+
+            if (!isConnected) {
+                return Result.failure(
+                    exception = NotConnectedToInternetException()
+                )
+            }
+
             val response: HttpResponse = ktorHttpClient.get(urlString = url)
             val body = response.bodyAsText()
 
             if (isCachingResult) {
                 cacheRepo.saveToCache(url = url, content = body)
             }
-            Result.success(value = body)
+
+            when (response.status.value) {
+                in 200..300 -> Result.success(value = body)
+                else -> Result.failure(
+                    exception = RequestNotSucesfullException(
+                        "${response.status.value}",
+                        response.status.value,
+                    )
+                )
+            }
+
+        } catch (e: ClientRequestException) {
+            e.printStackTrace()
+            Result.failure(exception = e)
+        } catch (e: ServerResponseException) {
+            e.printStackTrace()
+            Result.failure(exception = e)
         } catch (e: InvalidCacheStateException) {
             e.printStackTrace()
             Result.failure(exception = e)

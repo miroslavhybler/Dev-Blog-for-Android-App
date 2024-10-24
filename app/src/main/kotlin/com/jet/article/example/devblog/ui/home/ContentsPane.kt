@@ -29,29 +29,16 @@ fun ContentsPane(
     onSelected: (index: Int, element: HtmlElement.Title) -> Unit,
 ) {
 
-    val list = remember(key1 = data) {
-        data?.postData?.elements?.mapIndexedNotNull { index, element ->
-            if (element is HtmlElement.Title) {
-                TitleWithOriginalIndex(
-                    title = element,
-                    originalIndex = index,
-                )
-            } else null
-        } ?: emptyList()
-    }
-
-
     Scaffold(
         topBar = {
             TitleTopBar(text = "Contents")
         },
         content = { paddingValues ->
-
             LazyColumn(
                 modifier = Modifier
                     .padding(paddingValues = paddingValues)
             ) {
-                itemsIndexed(items = list) { index, item ->
+                itemsIndexed(items = data?.contest ?: emptyList()) { index, item ->
                     Text(
                         modifier = Modifier
                             .fillParentMaxWidth()

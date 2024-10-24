@@ -64,6 +64,9 @@ fun HomeListPane(
         data = posts,
         lazyListState = viewModel.lazyListState,
         navHostController = navHostController,
+        onRefresh = {
+           viewModel.loadPosts(isRefresh = true)
+        }
     )
 }
 
@@ -74,6 +77,7 @@ private fun HomeListPaneContent(
     data: Result<List<PostItem>>?,
     lazyListState: LazyListState,
     navHostController: NavHostController,
+    onRefresh: () -> Unit,
 ) = trace(sectionName = Tracing.Section.homeListPaneContent) {
     val mainState = LocalHomeScreenState.current
     val dimensions = LocalDimensions.current
@@ -137,6 +141,7 @@ private fun HomeListPaneContent(
                         ErrorLayout(
                             title = stringResource(R.string.error_unable_to_load_posts),
                             cause = data.exceptionOrNull(),
+                            onRefresh = onRefresh
                         )
                     }
 

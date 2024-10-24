@@ -20,6 +20,6 @@ android {
         jvmTarget = "1.8"
     }
     kotlin {
-        jvmToolchain(8)
+        jvmToolchain(jdkVersion = 8)
     }
 }
