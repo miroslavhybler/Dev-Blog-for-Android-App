@@ -45,6 +45,11 @@
     <string name="settings_changelog_1_0_3__1">Added benchmarks for performance analysis</string>
     <string name="settings_changelog_1_0_3__2">Added "new" mark for unread posts</string>
 
+    <string name="settings_changelog_title_1_0_4">Edge cases ⚠️</string>
+    <string name="settings_changelog_1_0_4__0">Better Api edge cases error handling, separate UI for unexpected api errors and expected errors from html parsing</string>
+    <string name="settings_changelog_1_0_4__1">Loaded articles are now saved in files dir instead of cache dir</string>
+    <string name="settings_changelog_1_0_4__2">Added ability to refresh data by pull refresh</string>
+
     <string name="settings_about_title">About</string>
 
 

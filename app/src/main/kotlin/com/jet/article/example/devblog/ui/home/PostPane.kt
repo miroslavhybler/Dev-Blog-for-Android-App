@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -30,6 +34,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +55,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -160,11 +168,15 @@ fun PostPane(
         }
     }
 
+    var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = data) {
         if (data != null && data.isSuccess && data.getOrNull()?.postData?.url != lastUrl) {
             listState.scrollToItem(index = 0, scrollOffset = 0)
             lastUrl = data.getOrNull()?.postData?.url
+        }
+        if (isRefreshing) {
+            isRefreshing = false
         }
     }
 
@@ -195,8 +207,8 @@ fun PostPane(
                     .onSizeChanged { newSize ->
                         headerImageHeight = newSize.height.toFloat()
                     },
-                title = remember(key1 = post?.title?.key) {
-                    post?.title?.text ?: ""
+                title = remember(key1 = selectedPost?.id) {
+                    selectedPost?.title ?: ""
                 },
                 scrollBehavior = scrollBehavior,
                 backgroundAlpha = topBarAlpha,
@@ -206,84 +218,116 @@ fun PostPane(
         content = { paddingValues ->
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
             ) {
-                if (
-                    data?.isFailure == true
-                    || (data?.isSuccess == true && post?.postData?.elements.isNullOrEmpty())
-                ) {
-                    ErrorLayout(
-                        modifier = Modifier
-                            .statusBarsPadding()
-                            .padding(paddingValues = paddingValues)
-                            .padding(top = dimensions.topLinePadding)
-                            .horizontalPadding()
-                            .align(alignment = Alignment.TopCenter),
-                        title = stringResource(R.string.error_unable_load_post),
-                        cause = data.exceptionOrNull(),
-                        onRefresh={
-                            onRefresh(selectedPost ?: return@ErrorLayout)
-                        }
-                    )
-                }
-
-                if (post != null) {
-                    JetHtmlArticleContent(
-                        modifier = Modifier
-                            .testTag(tag = Tracing.Tag.jetHtmlArticle)
-                            .fillMaxSize()
-                            .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
-                        containerColor = Color.Transparent,
-                        listState = listState,
-                        contentPadding = paddingValues + PaddingValues(
-                            start = dimensions.topLinePadding,
-                            top = dimensions.topLinePadding,
-                            end = dimensions.sidePadding,
-                            //56.dp from FabPrimaryTokens.ContainerHeight
-                            bottom = dimensions.bottomLinePadding + 56.dp,
+                PullToRefreshBox(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = paddingValues.calculateTopPadding(),
+                            start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                            end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
                         ),
-                        data = post.postData,
-                        verticalArrangement = Arrangement.spacedBy(space = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        linkClickCallback = linkCallback,
-                        header = {
-                            if (selectedPost?.isUnread == true) {
-                                //Using isUnread instead of isUnreadState on purpose, post is marked
-                                //as read when opened, so this will keep the mark visible
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight()
-                                ) {
-                                    NewPostMark(
-                                        modifier = Modifier
-                                            .align(alignment = Alignment.TopStart)
-                                    )
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        selectedPost?.let {
+                            isRefreshing = true
+                            onRefresh(it)
+                        }
+                    },
+                ) {
+                    if (
+                        data?.isFailure == true
+                        || (data?.isSuccess == true && post?.postData?.elements.isNullOrEmpty())
+                    ) {
+                        //Vertical scroll for the refresh to enable refresh in error case
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(state = rememberScrollState())
+                                .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
+
+                        ) {
+                            ErrorLayout(
+                                modifier = Modifier
+                                    .statusBarsPadding()
+                                    .padding(top = dimensions.topLinePadding)
+                                    .horizontalPadding()
+                                    .align(alignment = Alignment.TopCenter),
+                                title = stringResource(R.string.error_unable_load_post),
+                                cause = data.exceptionOrNull(),
+                                onRefresh = {
+                                    onRefresh(selectedPost ?: return@ErrorLayout)
                                 }
-                            }
-                        },
-                        image = { image ->
-                            CustomHtmlImage(
-                                modifier = Modifier.animateContentSize(),
-                                image = image,
                             )
                         }
-                    )
+                    }
 
+
+                    if (post != null) {
+                        JetHtmlArticleContent(
+                            modifier = Modifier
+                                .testTag(tag = Tracing.Tag.jetHtmlArticle)
+                                .fillMaxSize()
+                                .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+                            containerColor = Color.Transparent,
+                            listState = listState,
+                            contentPadding = PaddingValues(
+                                start = dimensions.topLinePadding,
+                                top = dimensions.topLinePadding,
+                                end = dimensions.sidePadding,
+                                //56.dp from FabPrimaryTokens.ContainerHeight
+                                bottom = paddingValues.calculateBottomPadding() + dimensions.bottomLinePadding + 56.dp,
+                            ),
+                            data = post.postData,
+                            verticalArrangement = Arrangement.spacedBy(space = 24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            linkClickCallback = linkCallback,
+                            header = {
+                                if (selectedPost?.isUnread == true) {
+                                    //Using isUnread instead of isUnreadState on purpose, post is marked
+                                    //as read when opened, so this will keep the mark visible
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight()
+                                    ) {
+                                        NewPostMark(
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                        )
+                                    }
+                                }
+                            },
+                            image = { image ->
+                                CustomHtmlImage(
+                                    modifier = Modifier.animateContentSize(),
+                                    image = image,
+                                )
+                            }
+                        )
+                    }
+
+
+
+                    if (data == null) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(alignment = Alignment.Center)
+                        )
+                    }
+                }
+
+                //Image background of the topbar
+                post?.headerImage?.let { headerImage ->
                     CustomHtmlImage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(height = density.pxToDp(px = headerImageHeight))
                             .animateContentSize(),
-                        image = post.headerImage,
+                        image = headerImage,
                     )
                 }
 
-                if (data == null) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(alignment = Alignment.Center)
-                    )
-                }
             }
         },
         floatingActionButton = {
@@ -305,6 +349,7 @@ fun PostPane(
             }
         }
     )
+
 }
 
 
@@ -317,7 +362,7 @@ private fun PostPanePreview1() {
             onOpenContests = {},
             listState = rememberLazyListState(),
             selectedPost = null,
-            onRefresh= {},
+            onRefresh = {},
         )
     }
 }
@@ -332,7 +377,7 @@ private fun PostPanePreview2() {
             onOpenContests = {},
             listState = rememberLazyListState(),
             selectedPost = null,
-            onRefresh= {},
-            )
+            onRefresh = {},
+        )
     }
 }

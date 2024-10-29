@@ -56,7 +56,7 @@ private val innerPadding: Dp = 24.dp
 
 
 @Composable
-fun NoConnectionLayout(
+fun SmallNoConnectionLayout(
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -94,7 +94,7 @@ fun ErrorLayout(
     onRefresh: () -> Unit,
 ) {
     when {
-        !AndroidDevBlogApp.isConnectedToInternet
+        AndroidDevBlogApp.isConnectedToInternet
                 || cause is NotConnectedToInternetException
                 || cause?.cause is NotConnectedToInternetException -> {
             ErrorLayoutNoConnection(
@@ -546,7 +546,7 @@ private fun ErrorLayoutPreview() {
             verticalArrangement = Arrangement.spacedBy(space = 32.dp)
         ) {
 
-            NoConnectionLayout()
+            SmallNoConnectionLayout()
 
             ErrorLayoutNoConnection(
                 modifier = Modifier
