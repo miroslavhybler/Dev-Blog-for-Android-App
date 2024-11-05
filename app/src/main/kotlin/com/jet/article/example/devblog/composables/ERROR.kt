@@ -94,7 +94,7 @@ fun ErrorLayout(
     onRefresh: () -> Unit,
 ) {
     when {
-        AndroidDevBlogApp.isConnectedToInternet
+        !AndroidDevBlogApp.isConnectedToInternet
                 || cause is NotConnectedToInternetException
                 || cause?.cause is NotConnectedToInternetException -> {
             ErrorLayoutNoConnection(
