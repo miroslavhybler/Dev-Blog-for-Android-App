@@ -4,21 +4,26 @@ package com.jet.article.example.devblog.ui.home
 
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
@@ -56,24 +61,35 @@ fun HomeScreen(
     val postData by viewModel.postData.collectAsState()
     val selectedPost by viewModel.selectedPost.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>(
-        scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
-    )
+        scaffoldDirective = PaneScaffoldDirective(
+            maxHorizontalPartitions = directive.maxHorizontalPartitions,
+            maxVerticalPartitions = 2,
+            defaultPanePreferredWidth = directive.defaultPanePreferredWidth,
+            verticalPartitionSpacerSize = directive.verticalPartitionSpacerSize,
+            horizontalPartitionSpacerSize = directive.horizontalPartitionSpacerSize,
+            excludedBounds = directive.excludedBounds,
+            ),
+
+        )
 
     fun onBack() {
-        state.onNavigateBack()
-        navigator.navigateBack()
+        coroutineScope.launch {
+            state.onNavigateBack()
+            navigator.navigateBack()
 
-        if (state.role == ListDetailPaneScaffoldRole.List) {
-            viewModel.onBack()
-            coroutineScope.launch {
-                delay(timeMillis = 200)
-                state.isEmptyPaneVisible = true
+            if (state.role == ListDetailPaneScaffoldRole.List) {
+                viewModel.onBack()
+                coroutineScope.launch {
+                    delay(timeMillis = 200)
+                    state.isEmptyPaneVisible = true
+                }
             }
-        }
 
-        if (state.role == ListDetailPaneScaffoldRole.Detail && postData == null) {
-            navigator.navigateTo(pane = ListDetailPaneScaffoldRole.List)
+            if (state.role == ListDetailPaneScaffoldRole.Detail && postData == null) {
+                navigator.navigateTo(pane = ListDetailPaneScaffoldRole.List)
+            }
         }
     }
     BackHandler(
@@ -133,13 +149,36 @@ fun HomeScreenContent(
                     AnimatedPane {
                         HomeListPane(
                             onOpenPost = { index, item ->
-                                state.openPost(url = item.url, index = index)
-                                onLoad(item)
-                                navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                coroutineScope.launch() {
+                                    state.openPost(url = item.url, index = index)
+                                    onLoad(item)
+                                    navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                }
 
                             },
                             viewModel = hiltViewModel(),
                             navHostController = navHostController,
+                        )
+                    }
+                },
+                paneExpansionDragHandle = { state ->
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    LaunchedEffect(key1 = selectedPost) {
+                        if (selectedPost == null) {
+                            state.clear()
+                        }
+                    }
+
+                    if (selectedPost != null) {
+                        VerticalDragHandle(
+                            modifier = Modifier
+                                .paneExpansionDraggable(
+                                    state = state,
+                                    minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
+                                    interactionSource = interactionSource,
+                                ),
+                            interactionSource = interactionSource,
                         )
                     }
                 },
@@ -149,11 +188,13 @@ fun HomeScreenContent(
                             postData != null -> {
                                 PostPane(
                                     onOpenContests = {
-                                        if (state.role == ListDetailPaneScaffoldRole.Extra) {
-                                            onCloseExtra()
-                                        } else {
-                                            state.openContest()
-                                            navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Extra)
+                                        coroutineScope.launch() {
+                                            if (state.role == ListDetailPaneScaffoldRole.Extra) {
+                                                onCloseExtra()
+                                            } else {
+                                                state.openContest()
+                                                navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Extra)
+                                            }
                                         }
                                     },
                                     data = postData,
@@ -174,9 +215,10 @@ fun HomeScreenContent(
                         ContentsPane(
                             data = selectedPost,
                             onSelected = { index, title ->
-                                state.onNavigateBack()
-                                navigator.navigateBack()
                                 coroutineScope.launch {
+                                    state.onNavigateBack()
+                                    navigator.navigateBack()
+
                                     delay(timeMillis = 400)
                                     postListState.animateScrollToItem(
                                         index = index,

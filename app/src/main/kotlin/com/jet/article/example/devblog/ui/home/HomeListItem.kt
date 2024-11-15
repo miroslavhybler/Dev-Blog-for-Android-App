@@ -195,7 +195,8 @@ private fun HomeListItemRow(
                     end = 6.dp,
                     top = 8.dp,
                     bottom = 8.dp,
-                )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             HtmlImage(
                 modifier = Modifier.size(size = 48.dp),
@@ -205,7 +206,11 @@ private fun HomeListItemRow(
 
             Spacer(modifier = Modifier.width(width = 12.dp))
 
-            Column(modifier = Modifier.weight(weight = 1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(weight = 1f),
+            ) {
+
                 Text(
                     modifier = Modifier,
                     text = item.date.getDateString(),
@@ -220,7 +225,9 @@ private fun HomeListItemRow(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     color = contentColor,
-                )
+
+                    )
+
                 HtmlTextBlock(
                     modifier = Modifier,
                     text = item.description,
