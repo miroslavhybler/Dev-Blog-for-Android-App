@@ -147,7 +147,7 @@ suspend fun ArticleParser.parseWithInitialization(
     initialize(
         areImagesEnabled = true,
         isLoggingEnabled = false,
-        isSimpleTextFormatAllowed = true,
+        isTextFormattingEnabled = true,
         isQueringTextOutsideTextTags = true,
     )
     ExcludeOption.devBlogExcludeRules.forEach { option ->
@@ -159,7 +159,7 @@ suspend fun ArticleParser.parseWithInitialization(
         )
     }
 
-    return parse(content = content, url = url)
+    return parse(content = content, url = url,)
 }
 
 

@@ -242,7 +242,7 @@ class CoreRepo @Inject constructor(
                 .first { it is HtmlElement.TextBlock } as HtmlElement.TextBlock
 
 
-            val simpleDate = processDate(date = date.text)
+            val simpleDate = processDate(date = date.text.toString())
             val newElements = ArrayList(original.elements).apply {
                 remove(element = headerImage)
                 remove(element = title)
@@ -290,7 +290,7 @@ class CoreRepo @Inject constructor(
         ArticleParser.initialize(
             isLoggingEnabled = false,
             areImagesEnabled = true,
-            isSimpleTextFormatAllowed = true,
+            isTextFormattingEnabled = true,
             isQueringTextOutsideTextTags = true,
         )
         var hasFeaturedItem: Boolean = false
@@ -444,16 +444,16 @@ class CoreRepo @Inject constructor(
 
             val list = chunked.mapIndexed { index, sublist ->
                 val dateString = (sublist[2] as HtmlElement.TextBlock).text
-                val date = processDate(date = dateString)!!
+                val date = processDate(date = dateString.toString())!!
                 PostItem(
                     image = (sublist[0] as HtmlElement.Image).url,
                     title = ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                        input = (sublist[1] as HtmlElement.TextBlock).text
+                        input = (sublist[1] as HtmlElement.TextBlock).text.toString()
                     ),
                     date = date,
                     dateTimeStamp = date.timestamp,
                     description = ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                        input = (sublist[3] as HtmlElement.TextBlock).text,
+                        input = (sublist[3] as HtmlElement.TextBlock).text.toString(),
                     ),
                     url = links[index].tagAttributes["href"]
                         ?: throw NullPointerException("Unable to extract href from ${links[index]}"),

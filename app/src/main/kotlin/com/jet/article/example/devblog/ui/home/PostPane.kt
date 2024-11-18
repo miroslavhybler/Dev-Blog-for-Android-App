@@ -78,6 +78,7 @@ import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.ui.JetHtmlArticleContent
 import com.jet.article.ui.Link
 import com.jet.article.ui.LinkClickHandler
+import com.jet.article.ui.rememberJetHtmlArticleState
 import com.jet.utils.dpToPx
 import com.jet.utils.plus
 import com.jet.utils.pxToDp
@@ -122,9 +123,11 @@ fun PostPane(
                 .plus(other = statusBarPadding)
         )
     }
+    val state = rememberJetHtmlArticleState()
     var titleStartColor by remember { mutableStateOf(value = colorScheme.background) }
     val titleEndColor = colorScheme.onBackground
     val titleColor = remember { Animatable(initialValue = colorScheme.onBackground) }
+
     val linkCallback = remember {
         object : LinkClickHandler.LinkCallback() {
             override fun onOtherDomainLink(link: Link.OtherDomainLink) {
@@ -141,28 +144,24 @@ fun PostPane(
             override fun onSameDomainLink(link: Link.SameDomainLink) {
             }
 
-            override fun onUriLink(link: Link.UriLink, context: Context) {
+            override fun onUriLink(link: Link.UriLink) {
             }
 
             override fun onSectionLink(
                 link: Link.SectionLink,
-                lazyListState: LazyListState,
-                data: HtmlArticleData,
-                scrollOffset: Int,
             ) {
                 coroutineScope.launch {
-                    val i = data.elements.indexOfFirst { element ->
+                    val i = state.data.elements.indexOfFirst { element ->
                         element.id == link.rawLink.removePrefix(prefix = "#")
                     }
 
                     i.takeIf { index -> index != -1 }
                         ?.let { index ->
-                            lazyListState.animateScrollToItem(
+                            state.listState.animateScrollToItem(
                                 index = index,
                                 scrollOffset = scrollOffset
                             )
                         }
-
                 }
             }
         }
@@ -171,7 +170,16 @@ fun PostPane(
     var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = data) {
-        if (data != null && data.isSuccess && data.getOrNull()?.postData?.url != lastUrl) {
+        if (
+            data != null
+            && data.isSuccess
+            && data.getOrNull()?.postData?.url != lastUrl
+            && post != null
+        ) {
+            if (post.postData.linkHandler.callback == null) {
+                post.postData.linkHandler.callback = linkCallback
+            }
+            state.show(data = post.postData)
             listState.scrollToItem(index = 0, scrollOffset = 0)
             lastUrl = data.getOrNull()?.postData?.url
         }
@@ -270,8 +278,7 @@ fun PostPane(
                                 .testTag(tag = Tracing.Tag.jetHtmlArticle)
                                 .fillMaxSize()
                                 .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
-                            containerColor = Color.Transparent,
-                            listState = listState,
+                            state = state,
                             contentPadding = PaddingValues(
                                 start = dimensions.topLinePadding,
                                 top = dimensions.topLinePadding,
@@ -279,10 +286,8 @@ fun PostPane(
                                 //56.dp from FabPrimaryTokens.ContainerHeight
                                 bottom = paddingValues.calculateBottomPadding() + dimensions.bottomLinePadding + 56.dp,
                             ),
-                            data = post.postData,
                             verticalArrangement = Arrangement.spacedBy(space = 24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            linkClickCallback = linkCallback,
                             header = {
                                 if (selectedPost?.isUnread == true) {
                                     //Using isUnread instead of isUnreadState on purpose, post is marked
