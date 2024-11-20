@@ -126,7 +126,7 @@ class CoreRepo @Inject constructor(
         val exception = postResult.exceptionOrNull()
         return@withContext when {
             postResult.isSuccess && htmlCode != null -> {
-                parsePostDetail(htmlCode = htmlCode, url = url,)
+                parsePostDetail(htmlCode = htmlCode, url = url)
             }
 
             exception != null -> {
@@ -273,9 +273,7 @@ class CoreRepo @Inject constructor(
             )
         } catch (e: NoSuchElementException) {
             e.printStackTrace()
-            return Result.failure(
-                exception = NoSuchElementException("Unable to adjust html data")
-            )
+            return Result.failure(exception = e)
         }
     }
 

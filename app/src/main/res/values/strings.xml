@@ -11,8 +11,8 @@
     <string name="settings_dark_mode_label">Dark Mode</string>
     <string name="dark_mode_yes">Dark</string>
     <string name="dark_mode_no">Light</string>
-    <string name="setting_notifications_label">Notifications</string>
     <string name="dark_mode_system">System</string>
+    <string name="setting_notifications_label">Notifications</string>
     <string name="settings_version">Version:</string>
     <string name="settings_title">Settings &amp; about</string>
     <string name="settings_github">Available on Github</string>
@@ -49,6 +49,10 @@
     <string name="settings_changelog_1_0_4__0">Better Api edge cases error handling, separate UI for unexpected api errors and expected errors from html parsing</string>
     <string name="settings_changelog_1_0_4__1">Loaded articles are now saved in files dir instead of cache dir</string>
     <string name="settings_changelog_1_0_4__2">Added ability to refresh data by pull refresh</string>
+
+    <string name="settings_changelog_title_1_1_0">UX improvements 📱</string>
+    <string name="settings_changelog_1_1_0__0">Added VerticalDragHandle to HomeScreen to enable resize HomeListPane and PostPane</string>
+    <string name="settings_changelog_1_1_0__1">Better format of codes in posts on PostPane</string>
 
     <string name="settings_about_title">About</string>
 

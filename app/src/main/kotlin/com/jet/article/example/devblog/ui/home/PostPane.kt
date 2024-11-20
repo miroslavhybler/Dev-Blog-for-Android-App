@@ -106,7 +106,6 @@ fun PostPane(
         data?.getOrNull()
     }
     var lastUrl: String? by remember { mutableStateOf(value = null) }
-
     val colorEvaluator = remember { ArgbEvaluator() }
     val coroutineScope = rememberCoroutineScope()
     val scrollOffset by rememberCurrentOffset(state = listState)
@@ -312,7 +311,6 @@ fun PostPane(
                             }
                         )
                     }
-
 
 
                     if (data == null) {
