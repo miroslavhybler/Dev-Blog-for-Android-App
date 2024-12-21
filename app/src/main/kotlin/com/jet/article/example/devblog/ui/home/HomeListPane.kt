@@ -121,17 +121,6 @@ private fun HomeListPaneContent(
                     text = stringResource(id = R.string.app_name),
                     navHostController = navHostController,
                 )
-
-                AnimatedVisibility(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .align(alignment = Alignment.CenterHorizontally),
-                    visible = !isConnectedToInternet,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    SmallNoConnectionLayout()
-                }
             }
         },
         content = { paddingValues ->
@@ -209,6 +198,18 @@ private fun HomeListPaneContent(
                             )
                         }
                     }
+                }
+
+
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .align(alignment = Alignment.TopCenter),
+                    visible = !isConnectedToInternet,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    SmallNoConnectionLayout()
                 }
             }
         }
