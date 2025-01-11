@@ -70,7 +70,7 @@ fun HomeScreen(
             verticalPartitionSpacerSize = directive.verticalPartitionSpacerSize,
             horizontalPartitionSpacerSize = directive.horizontalPartitionSpacerSize,
             excludedBounds = directive.excludedBounds,
-            ),
+        ),
 
         )
 
@@ -126,7 +126,8 @@ fun HomeScreenContent(
 ) {
     val density = LocalDensity.current
 
-    val postListState = rememberLazyListState()
+    //LazyList state for single post, don't misunderstood it for post list
+    val postLazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val selectedPost = remember(key1 = postData) {
         postData?.getOrNull()
@@ -198,7 +199,7 @@ fun HomeScreenContent(
                                         }
                                     },
                                     data = postData,
-                                    listState = postListState,
+                                    listState = postLazyListState,
                                     selectedPost = selectedPostItem,
                                     onRefresh = onRefreshDetail,
                                 )
@@ -220,7 +221,7 @@ fun HomeScreenContent(
                                     navigator.navigateBack()
 
                                     delay(timeMillis = 400)
-                                    postListState.animateScrollToItem(
+                                    postLazyListState.animateScrollToItem(
                                         index = index,
                                         scrollOffset = density.dpToPx(dp = 24.dp).toInt(),
                                     )

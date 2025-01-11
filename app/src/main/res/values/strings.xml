@@ -12,6 +12,7 @@
     <string name="dark_mode_yes">Dark</string>
     <string name="dark_mode_no">Light</string>
     <string name="dark_mode_system">System</string>
+    <string name="setting_cellular_data_label">Cellular Data Enabled</string>
     <string name="setting_notifications_label">Notifications</string>
     <string name="settings_version">Version:</string>
     <string name="settings_title">Settings &amp; about</string>
@@ -75,4 +76,6 @@
     <string name="error_request_desc">Try repeat request later</string>
     <string name="content_desc_repeat_request">Repeat request</string>
     <string name="general_new">NEW</string>
+    <string name="contents_title">Contents</string>
+
 </resources>

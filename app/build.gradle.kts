@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.dagger.hilt)
-    id("com.mikepenz.aboutlibraries.plugin")
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.aboutLibraries)
 }
 
 android {
@@ -48,11 +48,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+    kotlin {
+        jvmToolchain(jdkVersion = 11)
     }
     buildFeatures {
         compose = true
@@ -68,8 +71,8 @@ dependencies {
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     //debugImplementation(files("libs/jet-article-debug.aar"))
-    // implementation(files("libs/jet-article-debug.aar"))
-    implementation(files("libs/jet-article-release.aar"))
+    debugImplementation(files("libs/jet-article-debug.aar"))
+    releaseImplementation(files("libs/jet-article-release.aar"))
     implementation(project(":tests-names"))
     implementation(libs.jet.utils)
     implementation(libs.jet.lint)

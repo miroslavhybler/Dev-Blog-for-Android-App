@@ -12,7 +12,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationChannelGroupCompat
@@ -26,11 +25,11 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.CachePolicy
 import com.jet.article.example.devblog.data.ContentSyncWorker
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import com.jet.article.example.devblog.data.SettingsStorage
 
 
 /**
@@ -52,41 +51,111 @@ class AndroidDevBlogApp : Application(),
         var isConnectedToInternet: Boolean by mutableStateOf(value = true)
             private set
 
+
+        /**
+         * Flag indicates if [networkCallback] is registered in [ConnectivityManager].
+         * True when [networkCallback] is registered, false otherwise.
+         * @since 1.1.1
+         */
+        private var isNetworkCallbackRegistered: Boolean = false
+
+        /**
+         * NetworkCallback used to manage [isConnectedToInternet] flag
+         */
+        private val networkCallback: ConnectivityManager.NetworkCallback =
+            object : ConnectivityManager.NetworkCallback() {
+
+                override fun onAvailable(network: Network) {
+                    isConnectedToInternet = true
+                }
+
+                override fun onLost(network: Network) {
+                    isConnectedToInternet = false
+                }
+
+                override fun onUnavailable() {
+                    isConnectedToInternet = false
+                }
+            }
+
+
+        /**
+         * Registers [networkCallback] to manage [isConnectedToInternet] flag, wifi network is preferred.
+         * @param context
+         * @param settings New user settings obtained from [SettingsStorage].
+         */
+        fun registerNetworkCallback(
+            context: Context,
+            settings: SettingsStorage.Settings,
+        ) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.CHANGE_NETWORK_STATE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                unregisterNetworkCallback(context = context)
+                val connectivityManager = context.getSystemService(
+                    CONNECTIVITY_SERVICE
+                ) as ConnectivityManager
+
+                connectivityManager.registerNetworkCallback(
+                    NetworkRequest.Builder()
+                        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                        .also { builder ->
+                            if (settings.isCellularDataUsageAllowed) {
+                                builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            }
+                        }
+                        .build(),
+                    networkCallback
+                )
+                isNetworkCallbackRegistered = true
+                isConnectedToInternet = connectivityManager.activeNetwork != null
+            }
+        }
+
+
+        /**
+         * Unregisters [networkCallback], should be called when application task is closed.
+         */
+        fun unregisterNetworkCallback(
+            context: Context,
+        ) {
+            if (!isNetworkCallbackRegistered) {
+                return
+            }
+
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.CHANGE_NETWORK_STATE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val connectivityManager =
+                    context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+                isNetworkCallbackRegistered = false
+            }
+        }
     }
+
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
-
-
-    /**
-     * NetworkCallback used to manage [isConnectedToInternet] flag
-     */
-    private val networkCallback: ConnectivityManager.NetworkCallback =
-        object : ConnectivityManager.NetworkCallback() {
-
-            override fun onAvailable(network: Network) {
-                isConnectedToInternet = true
-            }
-
-            override fun onLost(network: Network) {
-                isConnectedToInternet = false
-            }
-
-            override fun onUnavailable() {
-                isConnectedToInternet = false
-            }
-        }
 
 
     override fun onCreate() {
         super.onCreate()
         prepareNotificationsGroupAndChannel()
         ContentSyncWorker.register(context = this)
+        //Loading c++ jet-article library for parsing html
         System.loadLibrary("jet-article")
-        initNetworkCallback()
+
     }
 
 
@@ -103,30 +172,6 @@ class AndroidDevBlogApp : Application(),
                 }
             }
             .build()
-
-    }
-
-
-    /**
-     * Registers [networkCallback] to manage [isConnectedToInternet] flag, wifi network is preferred.
-     */
-    private fun initNetworkCallback() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CHANGE_NETWORK_STATE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-            connectivityManager.registerNetworkCallback(
-                NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                    .build(),
-                networkCallback
-            )
-
-            isConnectedToInternet = connectivityManager.activeNetwork != null
-        }
     }
 
 

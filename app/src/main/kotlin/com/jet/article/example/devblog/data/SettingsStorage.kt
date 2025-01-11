@@ -1,3 +1,5 @@
+@file:Suppress("RedundantConstructorKeyword")
+
 package com.jet.article.example.devblog.data
 
 import android.content.Context
@@ -32,13 +34,12 @@ class SettingsStorage @Inject constructor(
 
         private val dynamicColorKey = booleanPreferencesKey(name = "dymanic_colors")
         private val darkModeKey = intPreferencesKey(name = "dark_mode")
-
+        private val cellularDataKey = booleanPreferencesKey(name = "cellular_data_usage_allowed")
     }
 
 
     private val preferences: DataStore<Preferences>
         get() = context.preferences
-
 
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
@@ -48,31 +49,45 @@ class SettingsStorage @Inject constructor(
 
     var isFirstTimeLoad: Boolean
         get() = sharedPreferences.getBoolean("FISRT_TIME_LOAD", true)
-        set(value) =  sharedPreferences.edit().putBoolean("FISRT_TIME_LOAD", value).apply()
+        set(value) = sharedPreferences.edit().putBoolean("FISRT_TIME_LOAD", value).apply()
 
 
     val settings: Flow<Settings> = preferences.data.map(this::getSettings)
 
-            suspend fun saveSettings(settings: Settings) {
+
+    suspend fun saveSettings(settings: Settings) {
         preferences.edit {
             it[dynamicColorKey] = settings.isUsingDynamicColors
             it[darkModeKey] = settings.nightModeFlags
+            it[cellularDataKey] = settings.isCellularDataUsageAllowed
         }
     }
+
 
     private fun getSettings(preferences: Preferences): Settings {
         return Settings(
             isUsingDynamicColors = preferences[dynamicColorKey] == true,
-            nightModeFlags = preferences[darkModeKey] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            nightModeFlags = preferences[darkModeKey] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+            isCellularDataUsageAllowed = preferences[cellularDataKey] != false,
         )
     }
 
 
+    /**
+     * User settings for the app
+     * @param isUsingDynamicColors True when dynamic colors are enabled, false otherwise, this is
+     * available only for **Android 12 and bigger**.
+     * @param nightModeFlags [AppCompatDelegate.NightMode] flags for usage of dark mode.
+     * @param isCellularDataUsageAllowed True when cellular data usage is allowed, when false, app
+     * will download data only on WiFi. This param was added in version 1.1.1 with true as default
+     * value.
+     */
     @Keep
     data class Settings constructor(
         val isUsingDynamicColors: Boolean = false,
         @AppCompatDelegate.NightMode
         val nightModeFlags: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+        val isCellularDataUsageAllowed: Boolean = true,
     ) {
 
         companion object {

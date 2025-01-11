@@ -86,6 +86,7 @@ import kotlinx.coroutines.launch
 
 
 /**
+ * Showing single [PostItem] selected on [HomeListPane].
  * @author Miroslav Hýbler <br>
  * created on 13.08.2024
  */
@@ -122,7 +123,7 @@ fun PostPane(
                 .plus(other = statusBarPadding)
         )
     }
-    val state = rememberJetHtmlArticleState()
+    val state = rememberJetHtmlArticleState(listState = listState)
     var titleStartColor by remember { mutableStateOf(value = colorScheme.background) }
     val titleEndColor = colorScheme.onBackground
     val titleColor = remember { Animatable(initialValue = colorScheme.onBackground) }

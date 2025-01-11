@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.isAppDark
 import com.jet.article.example.devblog.rememberSystemBarsStyle
@@ -32,9 +33,10 @@ import com.jet.article.example.devblog.ui.settings.AboutScreen
 import com.jet.article.example.devblog.ui.settings.ChangelogScreen
 import com.jet.article.example.devblog.ui.settings.SettingsScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mir.oslav.jet.annotations.JetExperimental
+import javax.inject.Inject
 
 /**
  * @author Miroslav Hýbler <br>
@@ -50,10 +52,27 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var isSplashScreenVisible: Boolean = true
 
+    private var updateNetworkCallbackJob: Job? = null
+
+    @Inject
+    lateinit var settingsStorage: SettingsStorage
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenVisible })
         super.onCreate(savedInstanceState)
+
+        updateNetworkCallbackJob = lifecycleScope.launch {
+            settingsStorage.settings.collect { newSettings ->
+                //Updating network callback, moved to MainActivity from AndroidDevBlogApp for
+                //collection of settings can use activity's lifecycleScope
+                AndroidDevBlogApp.registerNetworkCallback(
+                    context = application,
+                    settings = newSettings,
+                )
+            }
+        }
+
         viewModel.load(
             onLoaded = {
                 isSplashScreenVisible = false
@@ -142,8 +161,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     override fun onDestroy() {
         isActive = false
+        updateNetworkCallbackJob?.cancel()
+        updateNetworkCallbackJob = null
+        AndroidDevBlogApp.unregisterNetworkCallback(context = application)
         super.onDestroy()
     }
 }

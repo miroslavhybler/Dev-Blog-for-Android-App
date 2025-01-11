@@ -14,6 +14,7 @@ import com.jet.article.example.devblog.composables.TitleTopBar
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.jet.article.example.devblog.R
+import com.jet.article.example.devblog.ui.DevBlogAppTheme
 
 /**
  * Using [about-libraries library](https://github.com/mikepenz/AboutLibraries) to show list of libraries
@@ -52,7 +53,9 @@ fun AboutLibsScreen(
 @Composable
 @PreviewLightDark
 private fun AboutLibsScreenPreview() {
-    AboutLibsScreen(
-        navHostController = rememberNavController(),
-    )
+    DevBlogAppTheme {
+        AboutLibsScreen(
+            navHostController = rememberNavController(),
+        )
+    }
 }

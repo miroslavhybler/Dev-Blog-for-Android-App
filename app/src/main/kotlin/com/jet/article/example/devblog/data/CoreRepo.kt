@@ -2,7 +2,6 @@
 
 package com.jet.article.example.devblog.data
 
-import android.content.Context
 import androidx.annotation.CheckResult
 import androidx.compose.ui.util.fastForEach
 import com.jet.article.ArticleAnalyzer
@@ -19,7 +18,6 @@ import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.parseWithInitialization
 import com.jet.article.example.devblog.ui.home.TitleWithOriginalIndex
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -47,7 +45,6 @@ import javax.inject.Singleton
  */
 @Singleton
 class CoreRepo @Inject constructor(
-    @ApplicationContext context: Context,
     private val databaseRepo: DatabaseRepo,
     private val cacheRepo: CacheRepo,
 ) {

@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.jet.article.example.devblog.baselineprofile"
-    compileSdk = 34
+    compileSdk = 35
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -18,10 +18,13 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    kotlin {
+        jvmToolchain(jdkVersion = 11)
+    }
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

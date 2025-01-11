@@ -22,7 +22,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
+    kotlin {
+        jvmToolchain(jdkVersion = 11)
+    }
     defaultConfig {
         minSdk = 24
         targetSdk = 35

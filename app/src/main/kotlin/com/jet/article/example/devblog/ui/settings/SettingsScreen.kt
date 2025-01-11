@@ -159,6 +159,14 @@ private fun SettingsScreenContent(
                     }
                 )
 
+                SettingsSwitch(
+                    modifier = Modifier,
+                    title = stringResource(R.string.setting_cellular_data_label),
+                    isChecked = settings.isCellularDataUsageAllowed,
+                    onCheckedChange = {
+                        onNewSettings(settings.copy(isCellularDataUsageAllowed = it))
+                    }
+                )
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     var areNotificationsEnabled by remember {
