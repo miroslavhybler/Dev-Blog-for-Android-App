@@ -41,7 +41,18 @@ import com.jet.article.example.devblog.ui.LocalDimensions
 /**
  * List holding simple changelog of the app.
  */
-private  val changelog: List<Changelog> = listOf(
+private val changelog: List<Changelog> = listOf(
+    Changelog(
+        version = "1.1.1",
+        dateFormatted = "12.01.2025",
+        titleRes = R.string.settings_changelog_title_1_1_1,
+        changes = listOf(
+            R.string.settings_changelog_1_1_1__0,
+            R.string.settings_changelog_1_1_1__1,
+            R.string.settings_changelog_1_1_1__2,
+            R.string.settings_changelog_1_1_1__3,
+        )
+    ),
     Changelog(
         version = "1.1.0",
         dateFormatted = "20.11.2024",
@@ -59,7 +70,7 @@ private  val changelog: List<Changelog> = listOf(
             R.string.settings_changelog_1_0_4__0,
             R.string.settings_changelog_1_0_4__1,
             R.string.settings_changelog_1_0_4__2,
-            )
+        )
     ),
     Changelog(
         version = "1.0.3",
@@ -123,7 +134,7 @@ fun ChangelogScreen(
                 onNavigationIcon = navHostController::navigateUp,
             )
         },
-        content =  { paddingValues ->
+        content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

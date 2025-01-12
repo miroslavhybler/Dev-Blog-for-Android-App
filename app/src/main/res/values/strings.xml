@@ -55,6 +55,13 @@
     <string name="settings_changelog_1_1_0__0">Added VerticalDragHandle to HomeScreen to enable resize HomeListPane and PostPane</string>
     <string name="settings_changelog_1_1_0__1">Better format of codes in posts on PostPane</string>
 
+    <string name="settings_changelog_title_1_1_1">More UX improvements 📈</string>
+    <string name="settings_changelog_1_1_1__0">Added ability to open and zoom images in post</string>
+    <string name="settings_changelog_1_1_1__1">Added ability to enable/disable cellular data usage</string>
+    <string name="settings_changelog_1_1_1__2">Fixed selection of post section from Contest screen</string>
+    <string name="settings_changelog_1_1_1__3">Other minor UI changes</string>
+
+
     <string name="settings_about_title">About</string>
 
 
