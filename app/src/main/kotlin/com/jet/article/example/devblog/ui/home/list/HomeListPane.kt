@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.jet.article.example.devblog.ui.home
+package com.jet.article.example.devblog.ui.home.list
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -52,6 +52,7 @@ import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
 import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.LocalDimensions
+import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
 
 
 /**

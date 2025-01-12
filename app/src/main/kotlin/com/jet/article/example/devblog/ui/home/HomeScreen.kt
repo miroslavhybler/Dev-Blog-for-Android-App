@@ -42,13 +42,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.data.database.PostItem
+import com.jet.article.example.devblog.ui.home.list.HomeListPane
+import com.jet.article.example.devblog.ui.home.post.ContentsPane
+import com.jet.article.example.devblog.ui.home.post.PostEmptyPane
+import com.jet.article.example.devblog.ui.home.post.PostPane
 import com.jet.utils.dpToPx
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 /**
- * Main screen showing lists of posts and post detail using [HomeListPane] and [PostPane].
+ * Main screen showing lists of posts and post detail using [com.jet.article.example.devblog.ui.home.list.HomeListPane] and [com.jet.article.example.devblog.ui.home.post.PostPane].
  * @author Miroslav Hýbler <br>
  * created on 14.08.2024
  */

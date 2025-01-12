@@ -1,4 +1,4 @@
-package com.jet.article.example.devblog.ui.home
+package com.jet.article.example.devblog.ui.home.list
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -31,6 +31,7 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
+import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
 import com.jet.article.ui.elements.HtmlImage
 import com.jet.article.ui.elements.HtmlTextBlock
 

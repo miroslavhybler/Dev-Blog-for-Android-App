@@ -247,7 +247,7 @@ private fun SettingsScreenContent(
 
 /**
  * Bottom bar with link to github repository. Handling insets itself as it's supposed to be used
- * as [Scaffold]'s botomBar.
+ * as [Scaffold]'s bottomBar.
  */
 @Composable
 fun GithubBottomBar() {

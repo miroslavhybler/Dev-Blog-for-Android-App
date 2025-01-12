@@ -17,7 +17,7 @@ import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.parseWithInitialization
-import com.jet.article.example.devblog.ui.home.TitleWithOriginalIndex
+import com.jet.article.example.devblog.ui.home.post.TitleWithOriginalIndex
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -54,7 +54,7 @@ class CoreRepo @Inject constructor(
     }
 
     /**
-     * Holding list of posts for [com.jet.article.example.devblog.ui.home.HomeListPane]
+     * Holding list of posts for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
      * @see loadPosts
      * @see loadPostsFromRemote
      * @see loadPostsFromLocal
@@ -78,7 +78,7 @@ class CoreRepo @Inject constructor(
 
 
     /**
-     * Loads list of posts for [com.jet.article.example.devblog.ui.home.HomeListPane]
+     * Loads list of posts for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
      * @param isRefresh When set to true, list is refreshed from remote source and saved to local database.
      * False by default.
      */

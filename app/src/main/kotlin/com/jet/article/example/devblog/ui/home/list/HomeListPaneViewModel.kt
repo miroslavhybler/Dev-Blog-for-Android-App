@@ -1,4 +1,4 @@
-package com.jet.article.example.devblog.ui.home
+package com.jet.article.example.devblog.ui.home.list
 
 import android.app.Application
 import androidx.compose.foundation.lazy.LazyListState
