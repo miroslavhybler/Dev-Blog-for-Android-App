@@ -97,6 +97,11 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.core.splashscreen)
 
+
+    implementation(libs.androidx.paging.runtime.ktx)
+    testImplementation(libs.androidx.paging.paging.common.ktx)
+    implementation(libs.androidx.paging.compose)
+
     implementation(libs.android.joda)
     implementation(libs.aboutlibraries.compose)
     implementation(libs.coil.compose)

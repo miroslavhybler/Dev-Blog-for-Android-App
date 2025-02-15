@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +27,7 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +41,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.ErrorLayout
@@ -68,28 +70,27 @@ fun HomeListPane(
     navHostController: NavHostController,
 ) = trace(sectionName = Tracing.Section.homeListPane) {
 
-    val posts by viewModel.posts.collectAsState()
+    val posts = viewModel.posts.collectAsLazyPagingItems()
 
     HomeListPaneContent(
         onOpenPost = onOpenPost,
         data = posts,
-        lazyListState = viewModel.lazyListState,
         navHostController = navHostController,
-        onRefresh = {
-            viewModel.loadPosts(isRefresh = true)
-        }
+        onRefresh = viewModel::refresh
     )
 }
+
+private const val errorLazyKey: Int = Int.MAX_VALUE
+private const val loadingLazyKey: Int = Int.MIN_VALUE - 1
 
 
 @Composable
 private fun HomeListPaneContent(
     onOpenPost: (index: Int, item: PostItem) -> Unit,
-    data: Result<List<PostItem>>?,
-    lazyListState: LazyListState,
+    data: LazyPagingItems<PostItem>,
     navHostController: NavHostController,
     onRefresh: () -> Unit,
-) = trace(sectionName = Tracing.Section.homeListPaneContent) {
+) {
     val mainState = LocalHomeScreenState.current
     val dimensions = LocalDimensions.current
     val windowInfo = currentWindowAdaptiveInfo()
@@ -101,55 +102,43 @@ private fun HomeListPaneContent(
 
     val isConnectedToInternet = AndroidDevBlogApp.isConnectedToInternet
 
-    val postList = remember(key1 = data) {
-        data?.getOrNull()
-    }
-    var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
 
-    LaunchedEffect(key1 = data) {
-        if (isRefreshing) {
-            isRefreshing = false
-        }
+    val isRefreshing by remember(key1 = data.loadState.refresh) {
+        derivedStateOf { data.loadState.refresh is LoadState.Loading }
     }
+
 
     Scaffold(
         modifier = Modifier
+            .fillMaxSize()
             .testTag(tag = Tracing.Tag.homeListPane),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            Column() {
-                MainTopBar(
-                    text = stringResource(id = R.string.app_name),
-                    navHostController = navHostController,
-                )
-            }
+            MainTopBar(
+                text = stringResource(id = R.string.app_name),
+                navHostController = navHostController,
+            )
+
         },
         content = { paddingValues ->
+
             PullToRefreshBox(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding(),
-                        start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                        end = paddingValues.calculateEndPadding(LocalLayoutDirection.current)
-                    ),
+                    .padding(paddingValues = paddingValues),
                 isRefreshing = isRefreshing,
-                onRefresh = {
-                    isRefreshing = true
-                    onRefresh()
-                },
+                onRefresh = onRefresh,
             ) {
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .testTag(tag = Tracing.Tag.posts)
-                        .animateContentSize(),
-                    state = lazyListState,
+                        .testTag(tag = Tracing.Tag.posts),
                     contentPadding = PaddingValues(
                         start = dimensions.sidePadding,
                         end = dimensions.sidePadding,
                         top = dimensions.topLinePadding,
-                        bottom = paddingValues.calculateBottomPadding() + dimensions.bottomLinePadding,
+                        bottom = dimensions.bottomLinePadding,
                     ),
                     verticalArrangement = Arrangement.spacedBy(
                         space = when {
@@ -158,21 +147,43 @@ private fun HomeListPaneContent(
                         }
                     ),
                 ) {
-                    if (data?.isFailure == true) {
-                        item {
+
+                    if (data.loadState.append is LoadState.Error) {
+                        item(key = errorLazyKey) {
                             ErrorLayout(
+                                modifier = Modifier.animateItem(),
                                 title = stringResource(R.string.error_unable_to_load_posts),
-                                cause = data.exceptionOrNull(),
+                                cause = (data.loadState.append as LoadState.Error).error,
                                 onRefresh = onRefresh
                             )
                         }
 
                     }
 
-                    if (data == null) {
-                        item {
+                    items(
+                        count = data.itemCount,
+                    ) { index ->
+                        data[index]?.let {
+                            HomeListItem(
+                                modifier = if (index == 0) {
+                                    Modifier
+                                        .testTag(tag = Tracing.Tag.firstPostItem)
+                                        .animateItem()
+                                } else Modifier
+                                    .animateItem(),
+                                onOpenPost = onOpenPost,
+                                item = it,
+                                index = index,
+                            )
+                        }
+                    }
+
+                    if (data.loadState.append is LoadState.Loading) {
+                        item(key = loadingLazyKey) {
                             Box(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateItem(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
@@ -183,24 +194,7 @@ private fun HomeListPaneContent(
                         }
                     }
 
-
-                    if (data?.isSuccess == true && !postList.isNullOrEmpty()) {
-                        itemsIndexed(
-                            items = postList,
-                            key = { _, item -> item.id },
-                        ) { index, item ->
-                            HomeListItem(
-                                modifier = if (index == 0) {
-                                    Modifier.testTag(tag = Tracing.Tag.firstPostItem)
-                                } else Modifier,
-                                onOpenPost = onOpenPost,
-                                item = item,
-                                index = index,
-                            )
-                        }
-                    }
                 }
-
 
                 AnimatedVisibility(
                     modifier = Modifier
@@ -208,12 +202,12 @@ private fun HomeListPaneContent(
                         .align(alignment = Alignment.TopCenter),
                     visible = !isConnectedToInternet,
                     enter = fadeIn(),
-                    exit = fadeOut()
+                    exit = fadeOut(),
                 ) {
                     SmallNoConnectionLayout()
                 }
             }
-        }
+        },
     )
 }
 

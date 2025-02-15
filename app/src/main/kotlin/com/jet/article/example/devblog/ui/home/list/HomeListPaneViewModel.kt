@@ -3,12 +3,17 @@ package com.jet.article.example.devblog.ui.home.list
 import android.app.Application
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.jet.article.example.devblog.data.PostsPagingSource
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 
@@ -25,20 +30,25 @@ class HomeListPaneViewModel @Inject constructor(
     settingsStorage = settingsStorage,
 ) {
 
-    val posts: StateFlow<Result<List<PostItem>>?>
-        get() = coreRepo.posts
+    private var currentSource: PostsPagingSource? = null
 
-    /**
-     *
-     */
-    val lazyListState: LazyListState = LazyListState()
-
-
-    fun loadPosts(
-        isRefresh: Boolean = false,
-    ) {
-        viewModelScope.launch {
-            coreRepo.loadPosts(isRefresh=isRefresh)
+    val posts: Flow<PagingData<PostItem>> = Pager(
+        config = PagingConfig(
+            pageSize = 7,
+            initialLoadSize = 7,
+            prefetchDistance = 2,
+        ),
+        pagingSourceFactory = {
+            PostsPagingSource(coreRepo = coreRepo).also {
+                currentSource = it
+            }
         }
+    ).flow.cachedIn(scope = viewModelScope)
+
+
+
+    fun refresh() {
+        currentSource?.invalidate()
+        currentSource = null
     }
 }

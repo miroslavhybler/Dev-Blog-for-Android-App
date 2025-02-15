@@ -21,10 +21,10 @@ class MainViewModel @Inject constructor(
     settingsStorage = settingsStorage,
 ) {
 
-    fun load(onLoaded: () -> Unit) {
-        viewModelScope.launch {
-            coreRepo.loadPosts(isRefresh = true)
-            onLoaded()
-        }
-    }
+//    fun load(onLoaded: () -> Unit) {
+//        viewModelScope.launch {
+//            coreRepo.loadPostsPage( )
+//            onLoaded()
+//        }
+//    }
 }

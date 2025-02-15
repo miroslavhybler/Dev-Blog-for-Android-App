@@ -50,7 +50,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private val viewModel: MainViewModel by viewModels()
-    private var isSplashScreenVisible: Boolean = true
+
+    //TODO show when first items are loaded
+    private var isSplashScreenVisible: Boolean = false
 
     private var updateNetworkCallbackJob: Job? = null
 
@@ -73,14 +75,14 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        viewModel.load(
-            onLoaded = {
-                isSplashScreenVisible = false
-                if (viewModel.settingsStorage.isFirstTimeLoad) {
-                    viewModel.settingsStorage.isFirstTimeLoad = false
-                }
-            }
-        )
+//        viewModel.load(
+//            onLoaded = {
+//                isSplashScreenVisible = false
+//                if (viewModel.settingsStorage.isFirstTimeLoad) {
+//                    viewModel.settingsStorage.isFirstTimeLoad = false
+//                }
+//            }
+//        )
 
         isActive = true
         setContent {

@@ -72,7 +72,7 @@
     <string name="content_desc_copy_stacktrace">Copy stacktrace to clipboard</string>
     <string name="report_on_mail">Report on Mail</string>
     <string name="report_on_github">Report on Github</string>
-    <string name="post_empty_desc">Pick some post to read 🤓 or enjoy this animation if you like it 😁</string>
+    <string name="post_empty_desc">Pick some post to read 🤓</string>
 
     <string name="general_error_description">App is showing data from source i do not control, this might happen 😕 Please report this bug to me, thanks.</string>
     <string name="general_error_label">Sorry for your inconvenience</string>
@@ -82,7 +82,7 @@
     <string name="error_request_title">Request failed</string>
     <string name="error_request_desc">Try repeat request later</string>
     <string name="content_desc_repeat_request">Repeat request</string>
-    <string name="general_new">NEW</string>
+    <string name="general_unread">UNREAD</string>
     <string name="contents_title">Contents</string>
 
 </resources>

@@ -266,7 +266,7 @@ fun NewPostMark(
             modifier = Modifier
                 .align(alignment = Alignment.Center)
                 .padding(horizontal = 8.dp, vertical = 2.dp),
-            text = stringResource(R.string.general_new),
+            text = stringResource(R.string.general_unread),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onTertiary,
         )

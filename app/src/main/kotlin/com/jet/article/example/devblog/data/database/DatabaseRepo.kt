@@ -22,9 +22,9 @@ class DatabaseRepo @Inject constructor(
         get() = database.postDao
 
 
-    suspend fun withTransaction(
-        block: suspend () -> Unit
-    ): Unit = database.withTransaction(block = block)
+    suspend fun <R> withTransaction(
+        block: suspend () -> R,
+    ): R = database.withTransaction(block = block)
 
 
     suspend fun updateReadedPost(id: Int) = withTransaction {

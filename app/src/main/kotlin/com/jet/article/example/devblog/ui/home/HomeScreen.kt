@@ -182,13 +182,19 @@ fun HomeScreenContent(
                                     state = state,
                                     minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
                                     interactionSource = interactionSource,
+                                    semanticsProperties = {
+
+                                    }
                                 ),
                             interactionSource = interactionSource,
                         )
                     }
                 },
                 detailPane = {
-                    AnimatedPane {
+                    AnimatedPane(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                    ) {
                         when {
                             postData != null -> {
                                 PostPane(

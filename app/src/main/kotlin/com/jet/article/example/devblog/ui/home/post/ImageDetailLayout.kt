@@ -28,6 +28,8 @@ import kotlin.math.abs
 
 
 /**
+ * Enables user to open image in full screen and zoom it. Some posts from dev blog contains gifs
+ * with showcases from android studio, these are hardly readable on phone screen without zooming.
  * @author Miroslav Hýbler <br>
  * created on 12.01.2025
  */

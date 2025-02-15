@@ -2,6 +2,7 @@
 
 package com.jet.article.example.devblog.data
 
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.compose.ui.util.fastForEach
 import com.jet.article.ArticleAnalyzer
@@ -35,6 +36,10 @@ import kotlinx.coroutines.withContext
 import mir.oslav.jet.annotations.JetExperimental
 import okio.IOException
 import java.net.UnknownHostException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,14 +58,13 @@ class CoreRepo @Inject constructor(
         private const val TIME_OUT = 3_000
     }
 
-    /**
-     * Holding list of posts for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
-     * @see loadPosts
-     * @see loadPostsFromRemote
-     * @see loadPostsFromLocal
-     */
-    private val mPosts: MutableStateFlow<Result<List<PostItem>>?> = MutableStateFlow(value = null)
-    val posts: StateFlow<Result<List<PostItem>>?> = mPosts.asStateFlow()
+    //2024-12-18T11:00:00-08:00
+    private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat(
+        "yyyy-MM-dd'T'HH:mm:ssXXX",
+        Locale.US,
+    ).also { format ->
+        format.timeZone = TimeZone.getTimeZone("GMT-08:00")
+    }
 
 
     /**
@@ -75,34 +79,6 @@ class CoreRepo @Inject constructor(
             }
         }
     )
-
-
-    /**
-     * Loads list of posts for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
-     * @param isRefresh When set to true, list is refreshed from remote source and saved to local database.
-     * False by default.
-     */
-    suspend fun loadPosts(
-        isRefresh: Boolean = false,
-    ): Unit = withContext(context = Dispatchers.Default) {
-        if (isRefresh && AndroidDevBlogApp.isConnectedToInternet) {
-            val result = loadPostsFromRemote()
-            when {
-                result.isSuccess -> {
-                    loadPostsFromLocal()
-                }
-
-                result.isFailure -> {
-                    mPosts.value = Result.failure(
-                        exception = result.exceptionOrNull() ?: UnknownError()
-                    )
-                }
-            }
-
-            return@withContext
-        }
-        loadPostsFromLocal()
-    }
 
 
     /**
@@ -195,6 +171,67 @@ class CoreRepo @Inject constructor(
         }
     }
 
+    /**
+     * Loads list of posts from remote source. Source is index side on [Constants.indexUrl] containing
+     * list of posts. Post are then parsed and converted via [ArticleParser] and [ArticleAnalyzer]
+     * into [PostItem].
+     * @return Result of loading posts from remote source. Result data is count of newly saved posts.
+     */
+    @CheckResult
+    suspend fun loadPostsFromRemote(
+        updatedMax: Date,
+        start: Int,
+        maxResults: Int,
+    ): Result<Int> = withContext(
+        context = Dispatchers.IO
+    ) {
+        val date = simpleDateFormat.format(updatedMax)
+
+        val url = buildString {
+            append(Constants.indexUrl)
+            append("search?")
+            append("updated-max=${date}")
+            append("&max-results=${maxResults}")
+            append("&start=${start}")
+            append("&reverse-paginate=true")
+            // append("&by-date=false")
+        }
+
+        //Posts are saved to room database, no  need to cache response for index site
+        val indexSiteCodeResult = loadHtmlFromUrl(
+            url = url,
+            isRefresh = true,
+            isCachingResult = false,
+        )
+        val htmlCode = indexSiteCodeResult.getOrNull()
+        val exception = indexSiteCodeResult.exceptionOrNull()
+        return@withContext when {
+            indexSiteCodeResult.isSuccess && htmlCode != null -> {
+                val posts = parsePosts(htmlCode = htmlCode)
+                val list = posts.getOrNull()
+
+                return@withContext if (posts.isSuccess && list != null) {
+                    val newlySaved = saveNewPosts(posts = list)
+                    Result.success(value = newlySaved)
+                } else
+                    Result.failure(
+                        exception = posts.exceptionOrNull()
+                            ?: IllegalStateException("Unknown error during loading post list from remote")
+                    )
+            }
+
+            exception != null -> {
+                return@withContext Result.failure(exception = exception)
+            }
+
+            else -> {
+                return@withContext Result.failure(
+                    exception = NullPointerException("Html code and case are both null")
+                )
+            }
+        }
+    }
+
 
     /**
      * Tries to save new posts to local database, only if there was no post saved before for
@@ -206,9 +243,10 @@ class CoreRepo @Inject constructor(
     ): Int {
         val dao = databaseRepo.postDao
         var count = 0
-        posts.fastForEach { post ->
-            databaseRepo.withTransaction {
+        databaseRepo.withTransaction {
+            posts.fastForEach { post ->
                 if (!dao.contains(url = post.url)) {
+                    Log.d("mirek", "saving: ${post.date} ${post.title}")
                     dao.insert(item = post)
                     count += 1
                 }
@@ -217,6 +255,34 @@ class CoreRepo @Inject constructor(
         return count
     }
 
+    suspend fun saveNewPostsPage(
+        posts: List<PostItem>,
+    ): List<PostItem> {
+        val dao = databaseRepo.postDao
+        var count = 0
+        val outList = ArrayList<PostItem>()
+        databaseRepo.withTransaction {
+            posts.fastForEach { post ->
+                if (!dao.contains(url = post.url)) {
+                    Log.d("mirek", "saving: ${post.date} ${post.title}")
+                    dao.insert(item = post)
+                    count += 1
+                }
+                outList.add(element = post)
+            }
+        }
+        return outList
+    }
+
+    suspend fun loadFromLocal(
+        page: Int,
+        limit: Int,
+    ): List<PostItem> = databaseRepo.withTransaction {
+        databaseRepo.postDao.getByDate(
+            limit = limit,
+            offset = page * limit,
+        )
+    }
 
     /**
      *
@@ -317,12 +383,13 @@ class CoreRepo @Inject constructor(
     }
 
 
-    /**
-     * Loads list of posts from local database.
-     */
-    private suspend fun loadPostsFromLocal() {
-        mPosts.value = Result.success(value = databaseRepo.postDao.getAll())
-    }
+//    /**
+//     * Loads list of posts from local database.
+//     */
+//    private suspend fun loadPostsFromLocal() {
+//        mPosts.value = Result.success(value = databaseRepo.postDao.getAll())
+//    }
+//
 
 
     /**

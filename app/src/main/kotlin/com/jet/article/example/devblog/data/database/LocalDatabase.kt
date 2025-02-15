@@ -57,17 +57,23 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
 
     @Dao
     interface PostDao : BaseDao<PostItem> {
-        @Query("SELECT * FROM posts ORDER BY date_timestamp DESC")
+        @Query("SELECT DISTINCT * FROM posts ORDER BY date_timestamp DESC")
         fun getAll(): List<PostItem>
+
+        @Query("SELECT DISTINCT * FROM posts  ORDER BY date_timestamp DESC LIMIT :limit OFFSET :offset")
+        fun get(limit: Int, offset: Int): List<PostItem>
+
+        @Query("SELECT DISTINCT * FROM posts ORDER BY date_timestamp DESC LIMIT :limit OFFSET :offset")
+        fun getByDate(limit: Int, offset: Int): List<PostItem>
 
 
         @Query("SELECT EXISTS(SELECT id FROM posts WHERE url=:url)")
         fun contains(url: String): Boolean
 
-        @Query("SELECT * FROM posts WHERE url=:url")
+        @Query("SELECT DISTINCT * FROM posts WHERE url=:url")
         fun getByUrl(url: String): PostItem
 
-        @Query("SELECT * FROM posts ORDER BY id DESC LIMIT 1")
+        @Query("SELECT DISTINCT * FROM posts ORDER BY id DESC LIMIT 1")
         fun getLastPost(): PostItem
 
         @Query("SELECT last_insert_rowid()")

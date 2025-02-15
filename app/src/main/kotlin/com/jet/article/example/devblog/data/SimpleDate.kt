@@ -1,15 +1,19 @@
 package com.jet.article.example.devblog.data
 
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.annotation.IntRange
+import androidx.annotation.Keep
 import java.time.LocalDate
+import java.util.Date
 
 
 /**
  * @author Miroslav Hýbler <br>
  * created on 12.09.2024
  */
-class SimpleDate constructor(
+@Keep
+data class SimpleDate constructor(
     val year: Int,
     val month: Month,
     @IntRange(from = 0, to = 31)
@@ -31,6 +35,15 @@ class SimpleDate constructor(
     fun getDateString(): String {
         return "$dayOfMonth ${month.displayName} $year"
     }
+
+
+    fun toDate(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month.value - 1, dayOfMonth, 0, 0)
+        val date = calendar.time
+        return date
+    }
+
 
     override fun compareTo(other: SimpleDate): Int {
         return when {

@@ -3,6 +3,7 @@
 package com.jet.article.example.devblog.data
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -27,6 +28,7 @@ import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.ui.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 
@@ -96,7 +98,12 @@ public class ContentSyncWorker @AssistedInject public constructor(
             e.printStackTrace()
         } finally {
             if (MainActivity.isActive) {
-                coreRepo.loadPosts()
+                @SuppressLint("CheckResult")
+                coreRepo.loadPostsFromRemote(
+                    updatedMax = Date(),
+                    start = 0,
+                    maxResults = 5,
+                )
             }
         }
         return Result.success()
