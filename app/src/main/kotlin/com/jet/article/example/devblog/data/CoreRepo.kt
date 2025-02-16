@@ -246,7 +246,6 @@ class CoreRepo @Inject constructor(
         databaseRepo.withTransaction {
             posts.fastForEach { post ->
                 if (!dao.contains(url = post.url)) {
-                    Log.d("mirek", "saving: ${post.date} ${post.title}")
                     dao.insert(item = post)
                     count += 1
                 }
@@ -264,7 +263,6 @@ class CoreRepo @Inject constructor(
         databaseRepo.withTransaction {
             posts.fastForEach { post ->
                 if (!dao.contains(url = post.url)) {
-                    Log.d("mirek", "saving: ${post.date} ${post.title}")
                     dao.insert(item = post)
                     count += 1
                 }

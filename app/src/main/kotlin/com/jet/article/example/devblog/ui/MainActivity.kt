@@ -2,7 +2,9 @@
 
 package com.jet.article.example.devblog.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,6 +15,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -47,6 +51,14 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         var isActive: Boolean = false
+
+
+        private var deeplink: String? by mutableStateOf(value = null)
+
+
+        fun onDeeplinkOpened() {
+            deeplink = null
+        }
     }
 
     private val viewModel: MainViewModel by viewModels()
@@ -59,10 +71,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingsStorage: SettingsStorage
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenVisible })
         super.onCreate(savedInstanceState)
+
 
         updateNetworkCallbackJob = lifecycleScope.launch {
             settingsStorage.settings.collect { newSettings ->
@@ -85,6 +99,9 @@ class MainActivity : ComponentActivity() {
 //        )
 
         isActive = true
+
+        checkDeeplink(intent = intent)
+
         setContent {
             val settings by viewModel.settings.collectAsState(
                 initial = SettingsStorage.Settings()
@@ -97,7 +114,8 @@ class MainActivity : ComponentActivity() {
                 darkTheme = isAppDark(settings = settings),
             ) {
                 CompositionLocalProvider(
-                    value = LocalDimensions provides dimensions,
+                    LocalDimensions provides dimensions,
+                    LocalDeepLink provides deeplink,
                 ) {
                     LaunchedEffect(key1 = systemBarsStyle) {
                         enableEdgeToEdge(
@@ -164,11 +182,29 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        checkDeeplink(intent = intent)
+    }
+
+
     override fun onDestroy() {
         isActive = false
         updateNetworkCallbackJob?.cancel()
         updateNetworkCallbackJob = null
         AndroidDevBlogApp.unregisterNetworkCallback(context = application)
         super.onDestroy()
+    }
+
+
+    private fun checkDeeplink(intent: Intent) {
+        deeplink = if (
+            intent.action == Intent.ACTION_VIEW
+            && intent.data != null
+            && (intent.data?.path?.length ?: 0) > 1
+        ) {
+            //Path must be longer that one because path "/" is not url to post detail but for the index
+            intent.data!!.toString()
+        } else null
     }
 }

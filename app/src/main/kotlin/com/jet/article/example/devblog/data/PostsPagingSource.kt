@@ -1,15 +1,10 @@
 package com.jet.article.example.devblog.data
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.NotConnectedToInternetException
 import com.jet.article.example.devblog.data.database.PostItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import java.util.Date
 
 
@@ -23,21 +18,25 @@ class PostsPagingSource constructor(
 
     var lastDate: Date = Date()
 
+    //TODO take look at https://developer.android.com/topic/libraries/architecture/paging/v3-network-db
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, PostItem> {
         val page = params.key ?: 0
-        Log.d("mirek", "load: page: $page")
-        if (!AndroidDevBlogApp.isConnectedToInternet) {
-            return LoadResult.Error(throwable = NotConnectedToInternetException())
+        val remoteResult = if (AndroidDevBlogApp.isConnectedToInternet) {
+            coreRepo.loadPostsFromRemote(
+                updatedMax = lastDate,
+                maxResults = params.loadSize,
+                start = page * params.loadSize,
+            )
+        } else {
+            Result.failure(exception = NotConnectedToInternetException())
         }
 
-        val result = coreRepo.loadPostsFromRemote(
-            updatedMax = lastDate,
-            maxResults = params.loadSize,
-            start = page * params.loadSize,
-        )
-        return if (result.isSuccess) {
+        return if (
+            remoteResult.isSuccess
+            || remoteResult.exceptionOrNull() is NotConnectedToInternetException
+        ) {
             val posts = coreRepo.loadFromLocal(page = page, limit = params.loadSize)
             val newLastDate = if (!posts.isEmpty()) posts.last().date.toDate() else null
             val nextKey = page + 1 //else null // endless
@@ -51,7 +50,7 @@ class PostsPagingSource constructor(
                 nextKey = nextKey
             )
         } else {
-            LoadResult.Error(throwable = result.exceptionOrNull() ?: UnknownError())
+            LoadResult.Error(throwable = remoteResult.exceptionOrNull() ?: UnknownError())
         }
     }
 

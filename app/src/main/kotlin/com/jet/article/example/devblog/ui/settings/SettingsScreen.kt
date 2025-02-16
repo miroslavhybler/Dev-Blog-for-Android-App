@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Paint.Align
 import android.os.Build
+import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -69,6 +70,7 @@ import com.jet.utils.plus
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
 import com.jet.article.example.devblog.OnLifecycleEvent
+import com.jet.article.example.devblog.opendDeeplinkSettings
 
 
 /**
@@ -198,6 +200,15 @@ private fun SettingsScreenContent(
                     )
                 }
 
+
+                SettingsRow(
+                    title = stringResource(id = R.string.setting_deeplink_label),
+                    subtitle = stringResource(id=R.string.setting_deeplink_desc),
+                    onClick = context::opendDeeplinkSettings,
+                    icon = null,
+                )
+
+
                 Spacer(modifier = Modifier.weight(weight = 1f))
 
                 SettingsRow(
@@ -242,7 +253,6 @@ private fun SettingsScreenContent(
         }
     )
 }
-
 
 
 /**

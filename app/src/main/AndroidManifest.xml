@@ -29,8 +29,21 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.JetArticle"
             android:windowSoftInputMode="adjustResize">
+            <!-- autoVerify is false since i don't owe the domain, deeplink suport muse be prompted by user -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="android-developers.googleblog.com"
+                    android:scheme="https" />
+
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

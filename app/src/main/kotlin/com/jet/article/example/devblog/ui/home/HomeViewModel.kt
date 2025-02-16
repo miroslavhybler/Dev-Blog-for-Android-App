@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
     private val mSelectedPost: MutableStateFlow<PostItem?> = MutableStateFlow(value = null)
     val selectedPost: StateFlow<PostItem?> = mSelectedPost.asStateFlow()
 
-    fun loadPost(
+    fun loadPostDetail(
         item: PostItem,
         isRefresh: Boolean = false,
     ) {
@@ -52,6 +52,21 @@ class HomeViewModel @Inject constructor(
                 item.isUnreadState = false
                 databaseRepo.updateReadedPost(id = item.id)
             }
+        }
+    }
+
+
+    fun loadPostFromDeeplink(
+        url: String,
+        isRefresh: Boolean = false,
+        onFinal: suspend () -> Unit,
+    ) {
+        viewModelScope.launch {
+            mPostData.value = coreRepo.loadPostDetail(
+                url = url,
+                isRefresh = isRefresh,
+            )
+            onFinal()
         }
     }
 

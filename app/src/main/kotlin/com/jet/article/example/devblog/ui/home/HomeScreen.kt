@@ -42,6 +42,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.data.database.PostItem
+import com.jet.article.example.devblog.ui.LocalDeepLink
+import com.jet.article.example.devblog.ui.MainActivity
 import com.jet.article.example.devblog.ui.home.list.HomeListPane
 import com.jet.article.example.devblog.ui.home.post.ContentsPane
 import com.jet.article.example.devblog.ui.home.post.PostEmptyPane
@@ -61,6 +63,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     navHostController: NavHostController,
 ) {
+    val deeplink = LocalDeepLink.current
+
     val state = rememberHomeScreenState()
     val postData by viewModel.postData.collectAsState()
     val selectedPost by viewModel.selectedPost.collectAsState()
@@ -96,6 +100,22 @@ fun HomeScreen(
             }
         }
     }
+
+
+    LaunchedEffect(key1 = deeplink) {
+        if (deeplink != null) {
+            viewModel.loadPostFromDeeplink(
+                url = deeplink,
+                onFinal = {
+                    state.openPost(url = deeplink, index = 0)
+                    navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                    MainActivity.onDeeplinkOpened()
+                },
+            )
+        }
+    }
+
+
     BackHandler(
         enabled = state.role != ListDetailPaneScaffoldRole.List
     ) {
@@ -105,13 +125,13 @@ fun HomeScreen(
     HomeScreenContent(
         state = state,
         postData = postData,
-        onLoad = viewModel::loadPost,
+        onLoad = viewModel::loadPostDetail,
         navigator = navigator,
         navHostController = navHostController,
         onCloseExtra = ::onBack,
         selectedPostItem = selectedPost,
         onRefreshDetail = { item ->
-            viewModel.loadPost(item = item, isRefresh = true)
+            viewModel.loadPostDetail(item = item, isRefresh = true)
         }
     )
 }

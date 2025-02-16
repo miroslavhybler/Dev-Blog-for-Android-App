@@ -4,6 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.activity.SystemBarStyle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -159,7 +161,7 @@ suspend fun ArticleParser.parseWithInitialization(
         )
     }
 
-    return parse(content = content, url = url,)
+    return parse(content = content, url = url)
 }
 
 
@@ -283,9 +285,24 @@ fun Context.openEmail(
 }
 
 
+fun Context.opendDeeplinkSettings() {
+    val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
+    } else {
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+    }
+
+    val intent = Intent(action)
+        .setData("package:${packageName}".toUri())
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    startActivity(intent)
+}
+
+
 fun Context.openNotificationSettings() {
     val intent = Intent()
-    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.putExtra("app_package", packageName)
     intent.putExtra("app_uid", applicationInfo.uid)

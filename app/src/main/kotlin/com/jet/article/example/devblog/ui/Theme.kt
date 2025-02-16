@@ -190,6 +190,11 @@ val LocalDimensions: ProvidableCompositionLocal<Dimensions> = compositionLocalOf
 )
 
 
+val LocalDeepLink: ProvidableCompositionLocal<String?> = compositionLocalOf(
+    defaultFactory = { null },
+)
+
+
 data object Routes {
     const val main: String = "main"
     const val settings: String = "settings"
