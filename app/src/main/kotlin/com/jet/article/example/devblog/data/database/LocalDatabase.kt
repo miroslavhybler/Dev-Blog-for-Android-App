@@ -5,7 +5,6 @@ import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Insert
-import androidx.room.ProvidedTypeConverter
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -57,14 +56,15 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
 
     @Dao
     interface PostDao : BaseDao<PostItem> {
+
         @Query("SELECT DISTINCT * FROM posts ORDER BY date_timestamp DESC")
         fun getAll(): List<PostItem>
 
         @Query("SELECT DISTINCT * FROM posts  ORDER BY date_timestamp DESC LIMIT :limit OFFSET :offset")
         fun get(limit: Int, offset: Int): List<PostItem>
 
-        @Query("SELECT DISTINCT * FROM posts ORDER BY date_timestamp DESC LIMIT :limit OFFSET :offset")
-        fun getByDate(limit: Int, offset: Int): List<PostItem>
+        @Query("SELECT DISTINCT * FROM posts ORDER BY date_timestamp DESC LIMIT :count OFFSET :offset")
+        fun getByDate(count: Int, offset: Int): List<PostItem>
 
 
         @Query("SELECT EXISTS(SELECT id FROM posts WHERE url=:url)")

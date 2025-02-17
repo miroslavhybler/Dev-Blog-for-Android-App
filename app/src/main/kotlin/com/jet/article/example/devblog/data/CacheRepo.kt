@@ -22,6 +22,9 @@ class CacheRepo @Inject constructor(
 ) {
 
     companion object {
+        /**
+         * Max number of entries in the cache so cache would not increase infinitely.
+         */
         private const val maxNumberOfEntries: Int = 10
     }
 
@@ -43,7 +46,7 @@ class CacheRepo @Inject constructor(
 
 
     /**
-     *
+     *  @return Html code of page with [url] or null if not found
      */
     fun getCachedResponse(url: String): String? {
         val key = getCacheKey(url = url)
@@ -55,7 +58,7 @@ class CacheRepo @Inject constructor(
 
 
     /**
-     *
+     * Saves html response [content] with [url] as a key into a files.
      */
     fun saveToCache(url: String, content: String) {
         val key = getCacheKey(url = url)
@@ -77,13 +80,14 @@ class CacheRepo @Inject constructor(
 
 
     /**
-     *
+     * Invalidates local cache to hold max [maxNumberOfEntries] of cached responses so cache is not
+     * increasing infinitely. If there is more files, oldest ones are deleted.
      */
     private fun invalidateCache() {
-        val files = entries.sortedByDescending { it.lastModified() }
+        val files = entries.sortedByDescending(File::lastModified)
 
         if (files.size > maxNumberOfEntries) {
-            //Keep 20 latest items in cache
+            //Keep 10 latest items in cache
             val toBeDeleted = files.drop(n = maxNumberOfEntries)
             toBeDeleted.forEach { file ->
                 file.delete()

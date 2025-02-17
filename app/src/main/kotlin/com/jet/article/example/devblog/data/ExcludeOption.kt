@@ -1,6 +1,7 @@
 package com.jet.article.example.devblog.data
 
 /**
+ * Specifion option to exclude certain elements of html code.
  * @author Miroslav Hýbler <br>
  * created on 09.08.2024
  */

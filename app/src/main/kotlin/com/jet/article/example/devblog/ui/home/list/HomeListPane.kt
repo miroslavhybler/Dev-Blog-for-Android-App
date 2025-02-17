@@ -121,7 +121,6 @@ private fun HomeListPaneContent(
 
         },
         content = { paddingValues ->
-
             PullToRefreshBox(
                 modifier = Modifier
                     .fillMaxSize()

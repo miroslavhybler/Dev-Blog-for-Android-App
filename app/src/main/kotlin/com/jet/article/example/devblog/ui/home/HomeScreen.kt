@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Main screen showing lists of posts and post detail using [com.jet.article.example.devblog.ui.home.list.HomeListPane] and [com.jet.article.example.devblog.ui.home.post.PostPane].
+ * @see MainActivity for more info about [LocalDeepLink]
  * @author Miroslav Hýbler <br>
  * created on 14.08.2024
  */
@@ -82,6 +83,10 @@ fun HomeScreen(
 
         )
 
+    /**
+     * Called from [BackHandler] or when user clicks on the navigation icon in TopBar to handle
+     * back navigation.
+     */
     fun onBack() {
         coroutineScope.launch {
             state.onNavigateBack()
@@ -107,6 +112,8 @@ fun HomeScreen(
             viewModel.loadPostFromDeeplink(
                 url = deeplink,
                 onFinal = {
+                    //When opening deeplink we don't know if it's in the list or no, so we reset
+                    //it to 0.
                     state.openPost(url = deeplink, index = 0)
                     navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
                     MainActivity.onDeeplinkOpened()

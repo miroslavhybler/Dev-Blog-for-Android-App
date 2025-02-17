@@ -2,7 +2,6 @@
 
 package com.jet.article.example.devblog.data
 
-import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.compose.ui.util.fastForEach
 import com.jet.article.ArticleAnalyzer
@@ -29,9 +28,6 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import mir.oslav.jet.annotations.JetExperimental
 import okio.IOException
@@ -45,6 +41,8 @@ import javax.inject.Singleton
 
 
 /**
+ * Repository holding functionality for loading post list from index site of [Android Developer blog](https://android-developers.googleblog.com/)
+ * and single posts by url.
  * @author Miroslav Hýbler <br>
  * created on 20.08.2024
  */
@@ -58,7 +56,11 @@ class CoreRepo @Inject constructor(
         private const val TIME_OUT = 3_000
     }
 
-    //2024-12-18T11:00:00-08:00
+    /**
+     * Used to format date into string.
+     * E.g. 2024-12-18T11:00:00-08:00
+     * @since 1.1.2
+     */
     private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat(
         "yyyy-MM-dd'T'HH:mm:ssXXX",
         Locale.US,
@@ -68,7 +70,8 @@ class CoreRepo @Inject constructor(
 
 
     /**
-     * Http client for loading data
+     * Http client for network calls
+     * @since 1.0.0
      */
     private val ktorHttpClient: HttpClient = HttpClient(
         engineFactory = Android,
@@ -85,6 +88,7 @@ class CoreRepo @Inject constructor(
      * Loads single post detail by given [url]
      * @param url Url of the post
      * @param isRefresh When true, post is refreshed from remote source. False by default.
+     * @since 1.0.0
      */
     suspend fun loadPostDetail(
         url: String,
@@ -132,6 +136,7 @@ class CoreRepo @Inject constructor(
      * list of posts. Post are then parsed and converted via [ArticleParser] and [ArticleAnalyzer]
      * into [PostItem].
      * @return Result of loading posts from remote source. Result data is count of newly saved posts.
+     * @since 1.0.0
      */
     @CheckResult
     suspend fun loadPostsFromRemote(): Result<Int> = withContext(
@@ -183,7 +188,7 @@ class CoreRepo @Inject constructor(
         start: Int,
         maxResults: Int,
     ): Result<Int> = withContext(
-        context = Dispatchers.IO
+        context = Dispatchers.IO,
     ) {
         val date = simpleDateFormat.format(updatedMax)
 
@@ -235,8 +240,10 @@ class CoreRepo @Inject constructor(
 
     /**
      * Tries to save new posts to local database, only if there was no post saved before for
-     * given url
+     * given url.
+     * @param posts List of posts to be saved, most likely posts loded with [loadPostsFromRemote]
      * @return Count of saved posts
+     * @since 1.0.0
      */
     suspend fun saveNewPosts(
         posts: List<PostItem>,
@@ -254,36 +261,29 @@ class CoreRepo @Inject constructor(
         return count
     }
 
-    suspend fun saveNewPostsPage(
-        posts: List<PostItem>,
-    ): List<PostItem> {
-        val dao = databaseRepo.postDao
-        var count = 0
-        val outList = ArrayList<PostItem>()
-        databaseRepo.withTransaction {
-            posts.fastForEach { post ->
-                if (!dao.contains(url = post.url)) {
-                    dao.insert(item = post)
-                    count += 1
-                }
-                outList.add(element = post)
-            }
-        }
-        return outList
-    }
 
+    /**
+     * Used for paging, loads posts from local database.
+     * @param count Number of posts to load
+     * @param page Page number
+     * @since 1.1.2
+     */
     suspend fun loadFromLocal(
         page: Int,
-        limit: Int,
+        count: Int,
     ): List<PostItem> = databaseRepo.withTransaction {
         databaseRepo.postDao.getByDate(
-            limit = limit,
-            offset = page * limit,
+            count = count,
+            offset = page * count,
         )
     }
 
+
     /**
-     *
+     * Parses [htmlCode] of post detail into [AdjustedPostData]
+     * @param htmlCode Html code of post detail
+     * @param url Original url of the post
+     * @since 1.0.0
      */
     private suspend fun parsePostDetail(
         htmlCode: String,
@@ -342,6 +342,7 @@ class CoreRepo @Inject constructor(
     /**
      * Converts index site code into [HtmlArticleData] and then into [List] of [PostItem]
      * @return Result of parsing
+     * @since 1.0.0
      */
     private suspend fun parsePosts(
         htmlCode: String
@@ -381,20 +382,14 @@ class CoreRepo @Inject constructor(
     }
 
 
-//    /**
-//     * Loads list of posts from local database.
-//     */
-//    private suspend fun loadPostsFromLocal() {
-//        mPosts.value = Result.success(value = databaseRepo.postDao.getAll())
-//    }
-//
-
-
     /**
      * Loads html code from given [url]
-     * @param isRefresh
+     * @param url Url of the page
+     * @param isRefresh True when request is refresh and needs to be loaded from remote source even
+     * when it was cached before.
      * @param isCachingResult Flag indicates that response is cached locally and should be returned from cache.
      * True by default.
+     * @since 1.0.0
      */
     private suspend fun loadHtmlFromUrl(
         url: String,
@@ -478,6 +473,7 @@ class CoreRepo @Inject constructor(
      * @param hasFeaturedItem True when featured item is presented in the data. Dev blog sometimes
      * has featured item on the top of the list, which needs to be removed.
      * @return [Result] of conversion
+     * @since 1.0.0
      */
     private fun HtmlArticleData.getPostList(
         links: List<TagInfo>,
@@ -540,9 +536,12 @@ class CoreRepo @Inject constructor(
 
 
     /**
-     * Converts [date] into [SimpleDate] class. Date is obtained as formatted string, e.g. "3. March",
-     * so it needs to be converted into more usable format.
+     * Converts [date] into [SimpleDate] class. Date is obtained as formatted string, e.g. "3 March 2025",
+     * so it needs to be converted into more usable format. This is needed bacouse [date] is obtained
+     * formatted.
+     * @param date String in format "3 March 2025"
      * @return [SimpleDate] or null
+     * @since 1.0.0
      */
     fun processDate(
         date: String

@@ -37,7 +37,7 @@ class PostsPagingSource constructor(
             remoteResult.isSuccess
             || remoteResult.exceptionOrNull() is NotConnectedToInternetException
         ) {
-            val posts = coreRepo.loadFromLocal(page = page, limit = params.loadSize)
+            val posts = coreRepo.loadFromLocal(page = page, count = params.loadSize)
             val newLastDate = if (!posts.isEmpty()) posts.last().date.toDate() else null
             val nextKey = page + 1 //else null // endless
             val previousKey = if (page == 0) null else page - 1

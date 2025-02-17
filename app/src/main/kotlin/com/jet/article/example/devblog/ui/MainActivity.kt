@@ -50,9 +50,19 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     companion object {
+
+        /**
+         * True when [MainActivity] was created and is running (both, on foreground or hanging in
+         * Task Manager.
+         */
         var isActive: Boolean = false
 
 
+        /**
+         * Holding current deeplink from intent. If null, there is no deeplink. Value is provided
+         * by [LocalDeepLink] for composable screens. When link is opened and handled by the app,
+         * don't forget to call [MainActivity.onDeeplinkOpened] to clear the value.
+         */
         private var deeplink: String? by mutableStateOf(value = null)
 
 
@@ -182,6 +192,10 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    /**
+     * Activity is using `android:launchMode="singleTask"` in manifest, so onNewIntent is called
+     * with intent holding a deeplink when activity is already running.
+     */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         checkDeeplink(intent = intent)
@@ -197,6 +211,11 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    /**
+     * Checks if [intent] contains a deeplink which can be a link to concrete post or just to
+     * developer blog index page.
+     * @param intent Intent to extract deeplink from.
+     */
     private fun checkDeeplink(intent: Intent) {
         deeplink = if (
             intent.action == Intent.ACTION_VIEW

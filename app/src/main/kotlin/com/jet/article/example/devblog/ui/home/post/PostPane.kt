@@ -95,6 +95,7 @@ const val SHARED_IMAGE_KEY: String = "image"
 
 /**
  * Showing single [PostItem] selected on [com.jet.article.example.devblog.ui.home.list.HomeListPane].
+ * [AdjustedPostData] are parsed from Html using [com.jet.article.ArticleParser] in [com.jet.article.example.devblog.data.CoreRepo].
  * @author Miroslav Hýbler <br>
  * created on 13.08.2024
  */

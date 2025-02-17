@@ -27,14 +27,25 @@ class HomeViewModel @Inject constructor(
     settingsStorage = settingsStorage,
 ) {
 
-
+    /**
+     * Holding detail of [mSelectedPost] for [com.jet.article.example.devblog.ui.home.post.PostPane].
+     */
     private val mPostData: MutableStateFlow<Result<AdjustedPostData>?> =
         MutableStateFlow(value = null)
     val postData: StateFlow<Result<AdjustedPostData>?> = mPostData.asStateFlow()
 
+
+    /**
+     * Holding a [PostItem] that was opened by user on [com.jet.article.example.devblog.ui.home.list.HomeListPane].
+     * Is used to control [androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold]'s handle and
+     * to provide
+     */
     private val mSelectedPost: MutableStateFlow<PostItem?> = MutableStateFlow(value = null)
     val selectedPost: StateFlow<PostItem?> = mSelectedPost.asStateFlow()
 
+    /**
+     * Loads [PostItem] detail and updates [PostItem.isUnread] flag.
+     */
     fun loadPostDetail(
         item: PostItem,
         isRefresh: Boolean = false,
@@ -56,6 +67,10 @@ class HomeViewModel @Inject constructor(
     }
 
 
+    /**
+     * Loads post detail from deeplink [url]
+     * @param url Url to post detail that was passed as a deeplink into the app
+     */
     fun loadPostFromDeeplink(
         url: String,
         isRefresh: Boolean = false,
