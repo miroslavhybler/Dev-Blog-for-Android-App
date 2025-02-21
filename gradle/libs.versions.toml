@@ -12,6 +12,7 @@ datastorePreferencesCore = "1.1.2"
 paging = "3.3.6"
 paletteKtx = "1.0.0"
 roomVersion = "2.6.1"
+jetUtils = "1.1.2"
 githubJetLint = "1.0.2"
 androidxCoreKtx = "1.15.0"
 androidxLifecycleRuntimeKtx = "2.8.7"
@@ -27,7 +28,6 @@ junitKtx = "1.2.1"
 compose = "1.7.7"
 agp = "8.8.1"
 adaptiveAndroid = "1.0.0"
-jetUtils = "1.1.2"
 navigationRuntimeKtx = "2.8.7"
 ksp = "2.1.0-1.0.29"
 junitVersion = "1.2.1"
@@ -55,6 +55,8 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 androidx-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltCompilerVersion" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompilerVersion" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltCompilerVersion" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 androidx-paging-paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
@@ -63,8 +65,8 @@ androidx-tracing-perfetto = { module = "androidx.tracing:tracing-perfetto", vers
 androidx-runtime-tracing = { module = "androidx.compose.runtime:runtime-tracing", version.ref = "compose" }
 androidx-tracing-perfetto-binary = { module = "androidx.tracing:tracing-perfetto-binary", version.ref = "tracingPerfettoBinary" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 jet-utils = { module = "com.github.miroslavhybler:jet-utils", version.ref = "jetUtils" }
+jet-lint = { module = "com.github.miroslavhybler:jet-lint", version.ref = "githubJetLint" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
@@ -79,7 +81,6 @@ androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", versi
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
-jet-lint = { module = "com.github.miroslavhybler:jet-lint", version.ref = "githubJetLint" }
 junit = { module = "junit:junit", version.ref = "junit" }
 ktor-client-logging-jvm = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktorVersion" }
 ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorVersion" }

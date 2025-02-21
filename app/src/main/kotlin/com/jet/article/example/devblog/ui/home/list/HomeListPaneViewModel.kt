@@ -49,6 +49,5 @@ class HomeListPaneViewModel @Inject constructor(
 
     fun refresh() {
         currentSource?.invalidate()
-        currentSource = null
     }
 }

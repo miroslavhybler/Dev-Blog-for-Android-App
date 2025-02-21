@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.NotConnectedToInternetException
 import com.jet.article.example.devblog.data.database.PostItem
+import com.jet.article.example.devblog.ui.MainActivity
 import java.util.Date
 
 
@@ -33,13 +34,17 @@ class PostsPagingSource constructor(
             Result.failure(exception = NotConnectedToInternetException())
         }
 
+        if (MainActivity.isSplashScreenVisible) {
+            MainActivity.onDataLoaded()
+        }
+
         return if (
             remoteResult.isSuccess
             || remoteResult.exceptionOrNull() is NotConnectedToInternetException
         ) {
             val posts = coreRepo.loadFromLocal(page = page, count = params.loadSize)
             val newLastDate = if (!posts.isEmpty()) posts.last().date.toDate() else null
-            val nextKey = page + 1 //else null // endless
+            val nextKey = if (!posts.isEmpty()) page + 1 else null // endless
             val previousKey = if (page == 0) null else page - 1
             if (newLastDate != null) {
                 this@PostsPagingSource.lastDate = newLastDate
@@ -55,9 +60,6 @@ class PostsPagingSource constructor(
     }
 
     override fun getRefreshKey(state: PagingState<Int, PostItem>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            val closestPage = state.closestPageToPosition(anchorPosition)
-            closestPage?.nextKey?.minus(1) ?: closestPage?.prevKey?.plus(1)
-        }
+        return 0
     }
 }

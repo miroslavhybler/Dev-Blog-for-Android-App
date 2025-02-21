@@ -38,6 +38,7 @@ import com.jet.article.example.devblog.ui.settings.ChangelogScreen
 import com.jet.article.example.devblog.ui.settings.SettingsScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mir.oslav.jet.annotations.JetExperimental
 import javax.inject.Inject
@@ -65,19 +66,38 @@ class MainActivity : ComponentActivity() {
          */
         private var deeplink: String? by mutableStateOf(value = null)
 
+        /**
+         * True when splash screen should be visible.
+         */
+        var isSplashScreenVisible: Boolean = true
+            private set
 
         fun onDeeplinkOpened() {
             deeplink = null
+        }
+
+
+        /**
+         * Should be called when data for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
+         * are loaded. This is needed to hide splashscreen and handle the case of "Double SplashScreen"
+         * issue.
+         */
+        fun onDataLoaded() {
+            isSplashScreenVisible = false
         }
     }
 
     private val viewModel: MainViewModel by viewModels()
 
-    //TODO show when first items are loaded
-    private var isSplashScreenVisible: Boolean = false
 
+    /**
+     * [Job] for updating network callback in [AndroidDevBlogApp] based on actual settings. Callback
+     * has to be updated because of [SettingsStorage.Settings.isCellularDataUsageAllowed] flag may
+     * change.
+     */
     private var updateNetworkCallbackJob: Job? = null
 
+    
     @Inject
     lateinit var settingsStorage: SettingsStorage
 
@@ -87,6 +107,15 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenVisible })
         super.onCreate(savedInstanceState)
 
+
+        lifecycleScope.launch {
+            delay(timeMillis = 1_000)
+            //Just in case that onDataLoaded() will not be called after 1 sec (this can be due
+            //to bad connection) so we will hide splashscreen even when data are not loaded yet
+            if (!isSplashScreenVisible) {
+                isSplashScreenVisible = true
+            }
+        }
 
         updateNetworkCallbackJob = lifecycleScope.launch {
             settingsStorage.settings.collect { newSettings ->
