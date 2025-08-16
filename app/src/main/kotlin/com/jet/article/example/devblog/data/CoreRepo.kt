@@ -514,6 +514,7 @@ class CoreRepo @Inject constructor(
                     url = links[index].tagAttributes["href"]
                         ?: throw NullPointerException("Unable to extract href from ${links[index]}"),
                     isUnread = true,
+                    isFavorite = false,
                 )
             }
             return Result.success(value = list)

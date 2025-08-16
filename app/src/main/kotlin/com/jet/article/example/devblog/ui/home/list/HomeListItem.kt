@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -24,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
@@ -44,6 +48,7 @@ import com.jet.article.ui.elements.HtmlTextBlock
 fun HomeListItem(
     modifier: Modifier = Modifier,
     onOpenPost: (index: Int, item: PostItem) -> Unit,
+    onToggleFavorite: (item: PostItem) -> Unit,
     item: PostItem,
     index: Int,
 ) {
@@ -83,6 +88,7 @@ fun HomeListItem(
                     index = index,
                     containerColor = containerColor,
                     contentColor = contentColor,
+                    onToggleFavorite = onToggleFavorite,
                 )
             }
 
@@ -94,6 +100,7 @@ fun HomeListItem(
                     index = index,
                     containerColor = containerColor,
                     contentColor = contentColor,
+                    onToggleFavorite = onToggleFavorite,
                 )
             }
         }
@@ -110,6 +117,7 @@ private fun HomeListItemColumn(
     index: Int,
     containerColor: Color,
     contentColor: Color,
+    onToggleFavorite: (item: PostItem) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -139,6 +147,22 @@ private fun HomeListItemColumn(
                         .padding(start = 12.dp, top = 8.dp)
                 )
             }
+
+//TODO            IconButton(
+//                modifier = Modifier
+//                    .align(alignment = Alignment.TopEnd)
+//                    .padding(end = 12.dp, top = 8.dp),
+//                onClick = { onToggleFavorite(item) },
+//            ) {
+//                Icon(
+//                    painter = painterResource(
+//                        id = if (item.isFavoriteState) R.drawable.ic_favorite_outlined
+//                        else
+//                            R.drawable.ic_favorite_outlined
+//                    ),
+//                    contentDescription = null
+//                )
+//            }
         }
 
         Spacer(modifier = Modifier.height(height = 4.dp))
@@ -176,6 +200,7 @@ private fun HomeListItemRow(
     index: Int,
     contentColor: Color,
     containerColor: Color,
+    onToggleFavorite: (item: PostItem) -> Unit,
 ) {
 
     Box(

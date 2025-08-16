@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class,
+)
 
 package com.jet.article.example.devblog.ui.home.post
 
@@ -64,10 +67,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
+import com.jet.article.ArticleParser
+import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
@@ -79,18 +85,19 @@ import com.jet.article.example.devblog.rememberCurrentOffset
 import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.LocalDimensions
+import com.jet.article.example.devblog.ui.LocalTtsClient
 import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
 import com.jet.article.example.devblog.ui.home.list.NewPostMark
 import com.jet.article.ui.JetHtmlArticleContent
 import com.jet.article.ui.Link
 import com.jet.article.ui.LinkClickHandler
 import com.jet.article.ui.rememberJetHtmlArticleState
+import com.jet.tts.TextTts
+import com.jet.tts.Utterance
+import com.jet.tts.rememberTtsState
 import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
 import kotlinx.coroutines.launch
-
-
-const val SHARED_IMAGE_KEY: String = "image"
 
 
 /**
@@ -107,10 +114,15 @@ fun PostPane(
     selectedPost: PostItem?,
     onRefresh: (PostItem) -> Unit,
 ) = trace(sectionName = Tracing.Section.postPane) {
+
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
     val mainState = LocalHomeScreenState.current
     val density = LocalDensity.current
+    val ttsClient = LocalTtsClient.current
+
+    val ttsState = rememberTtsState()
+
     val colorScheme = MaterialTheme.colorScheme
     val post = remember(key1 = data) {
         data?.getOrNull()
@@ -166,9 +178,10 @@ fun PostPane(
 
                     i.takeIf { index -> index != -1 }
                         ?.let { index ->
+                            //Tries to scroll to the right section given by element id
                             state.listState.animateScrollToItem(
                                 index = index,
-                                scrollOffset = scrollOffset
+                                scrollOffset = scrollOffset,
                             )
                         }
                 }
@@ -177,7 +190,6 @@ fun PostPane(
     }
 
     var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
-
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
 
     LaunchedEffect(key1 = data) {
@@ -197,6 +209,41 @@ fun PostPane(
         if (isRefreshing) {
             isRefreshing = false
         }
+    }
+
+    LaunchedEffect(key1 = post) {
+        val mPost = post ?: return@LaunchedEffect
+        //Adding content from post to TTS State so text can be spoken
+
+        mPost.postData.elements.forEach { element ->
+            when (element) {
+                is HtmlElement.Title -> {
+                    ttsState["${element.key}"] =
+                        ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
+                            input = element.text
+                        )
+                }
+
+                is HtmlElement.TextBlock -> {
+                    ttsState["${element.key}"] =
+                        ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
+                            input = element.text.toString()
+                        )
+                }
+
+                else -> return@forEach
+            }
+        }
+
+//TODO use for speaking
+//TODO scroll is working but there is problem with contentPadding
+//        ttsState.values.sortedBy(selector = Utterance::sequence)
+//            .forEachIndexed { index, utterance ->
+//                if (index == 0)
+//                    ttsClient.flushAndSpeak(utterance = utterance)
+//                else
+//                    ttsClient.add(utterance = utterance)
+//            }
     }
 
     LaunchedEffect(
@@ -240,7 +287,6 @@ fun PostPane(
             )
         },
         content = { paddingValues ->
-
             SharedTransitionLayout {
                 AnimatedContent(
                     targetState = selectedImageUrl,
@@ -329,6 +375,18 @@ fun PostPane(
                                                 }
                                             }
                                         },
+                                        text = { text ->
+                                            //TODO custom title too
+                                            TextTts(
+                                                text = text.text,
+                                                utteranceId = "${text.key}",
+                                                ttsClient = ttsClient,
+                                                scrollableState = state.listState,
+                                                highlightStyle = TextStyle(
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                )
+                                            )
+                                        },
                                         image = { image ->
                                             CustomHtmlImage(
                                                 modifier = Modifier
@@ -398,6 +456,9 @@ fun PostPane(
                     }
                 }
             }
+        },
+        bottomBar = {
+            //TODO  PostBottomBar()
         }
     )
 }

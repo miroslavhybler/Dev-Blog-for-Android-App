@@ -32,9 +32,9 @@ class SettingsStorage @Inject constructor(
     companion object {
         private val Context.preferences: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-        private val dynamicColorKey = booleanPreferencesKey(name = "dymanic_colors")
+        private val dynamicColorKey: Preferences.Key<Boolean>  = booleanPreferencesKey(name = "dymanic_colors")
         private val darkModeKey = intPreferencesKey(name = "dark_mode")
-        private val cellularDataKey = booleanPreferencesKey(name = "cellular_data_usage_allowed")
+        private val cellularDataKey: Preferences.Key<Boolean>  = booleanPreferencesKey(name = "cellular_data_usage_allowed")
     }
 
 
@@ -46,11 +46,6 @@ class SettingsStorage @Inject constructor(
         "app-preferences",
         Context.MODE_PRIVATE
     )
-
-    var isFirstTimeLoad: Boolean
-        get() = sharedPreferences.getBoolean("FISRT_TIME_LOAD", true)
-        set(value) = sharedPreferences.edit().putBoolean("FISRT_TIME_LOAD", value).apply()
-
 
     val settings: Flow<Settings> = preferences.data.map(this::getSettings)
 

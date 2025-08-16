@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
  * @author Miroslav Hýbler <br>
  * created on 14.08.2024
  */
+//TODO try to work with post tags
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,

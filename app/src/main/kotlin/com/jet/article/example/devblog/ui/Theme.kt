@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.isCompat
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
+import com.jet.tts.TtsClient
 import com.jet.utils.theme.MaterialColors
 
 private val Green80: Color = Color(color = 0xFF13B041)
@@ -195,11 +196,16 @@ val LocalDeepLink: ProvidableCompositionLocal<String?> = compositionLocalOf(
 )
 
 
+val LocalTtsClient: ProvidableCompositionLocal<TtsClient> = compositionLocalOf(
+    defaultFactory = { error("TtsClient not provided") }
+)
+
+
 data object Routes {
     const val main: String = "main"
     const val settings: String = "settings"
     const val aboutLibs: String = "settings/about-libs"
-    const val channelLog: String = "settings/channel-log"
+    const val changeLog: String = "settings/channel-log"
     const val about: String = "settings/about"
 }
 

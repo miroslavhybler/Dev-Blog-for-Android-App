@@ -14,6 +14,7 @@ import com.jet.article.example.devblog.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -46,8 +47,20 @@ class HomeListPaneViewModel @Inject constructor(
     ).flow.cachedIn(scope = viewModelScope)
 
 
-
     fun refresh() {
         currentSource?.invalidate()
+    }
+
+
+    fun toggleFavoriteItem(
+        item: PostItem
+    ) {
+        viewModelScope.launch {
+            databaseRepo.updatePostIsFavorite(
+                id = item.id,
+                isFavorite = !item.isFavoriteState,
+            )
+            item.isFavoriteState = !item.isFavoriteState
+        }
     }
 }

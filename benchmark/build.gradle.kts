@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.jet.article.example.devblog.benchmark"
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -27,7 +27,7 @@ android {
     }
     defaultConfig {
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"

@@ -274,7 +274,7 @@ fun Context.openEmail(
     startActivity(
         Intent.createChooser(
             Intent(Intent.ACTION_SENDTO)
-                .setData(Uri.parse("mailto:"))
+                .setData("mailto:".toUri())
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra(Intent.EXTRA_SUBJECT, subject)
                 .putExtra(Intent.EXTRA_TEXT, text)
@@ -301,11 +301,12 @@ fun Context.opendDeeplinkSettings() {
 
 
 fun Context.openNotificationSettings() {
-    val intent = Intent()
-    intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    intent.putExtra("app_package", packageName)
-    intent.putExtra("app_uid", applicationInfo.uid)
-    intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
-    startActivity(intent)
+    startActivity(
+        Intent()
+            .setAction("android.settings.APP_NOTIFICATION_SETTINGS")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra("app_package", packageName)
+            .putExtra("app_uid", applicationInfo.uid)
+            .putExtra("android.provider.extra.APP_PACKAGE", packageName)
+    )
 }

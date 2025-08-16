@@ -22,11 +22,13 @@ import com.jet.article.example.devblog.data.SimpleDate
     entities = [
         PostItem::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
     autoMigrations = [
         //Added isUnread flag to postItem
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        //Added isFavorite flag to postItem
+        AutoMigration(from = 2, to = 3),
     ]
 )
 @TypeConverters(
@@ -82,6 +84,9 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
 
         @Query("UPDATE posts SET is_unread=0 WHERE id=:id")
         fun updateReaded(id: Int)
+
+        @Query("UPDATE posts SET is_favorite=:isFavorite WHERE id=:id")
+        fun updateIsFavorite(id: Int, isFavorite: Boolean)
     }
 
 

@@ -76,7 +76,8 @@ fun HomeListPane(
         onOpenPost = onOpenPost,
         data = posts,
         navHostController = navHostController,
-        onRefresh = viewModel::refresh
+        onRefresh = viewModel::refresh,
+        onToggleFavorite = viewModel::toggleFavoriteItem,
     )
 }
 
@@ -90,6 +91,7 @@ private fun HomeListPaneContent(
     data: LazyPagingItems<PostItem>,
     navHostController: NavHostController,
     onRefresh: () -> Unit,
+    onToggleFavorite: (postItem: PostItem) -> Unit,
 ) {
     val mainState = LocalHomeScreenState.current
     val dimensions = LocalDimensions.current
@@ -173,6 +175,7 @@ private fun HomeListPaneContent(
                                 onOpenPost = onOpenPost,
                                 item = it,
                                 index = index,
+                                onToggleFavorite = onToggleFavorite,
                             )
                         }
                     }

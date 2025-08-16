@@ -15,6 +15,7 @@ import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
+import com.mikepenz.aboutlibraries.ui.compose.libraryColors
 
 /**
  * Using [about-libraries library](https://github.com/mikepenz/AboutLibraries) to show list of libraries

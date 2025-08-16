@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
         if (item.isUnreadState) {
             viewModelScope.launch() {
                 item.isUnreadState = false
-                databaseRepo.updateReadedPost(id = item.id)
+                databaseRepo.updateReadPost(id = item.id)
             }
         }
     }

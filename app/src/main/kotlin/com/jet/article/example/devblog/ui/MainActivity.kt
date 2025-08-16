@@ -4,7 +4,6 @@ package com.jet.article.example.devblog.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,11 +35,14 @@ import com.jet.article.example.devblog.ui.settings.AboutLibsScreen
 import com.jet.article.example.devblog.ui.settings.AboutScreen
 import com.jet.article.example.devblog.ui.settings.ChangelogScreen
 import com.jet.article.example.devblog.ui.settings.SettingsScreen
+import com.jet.tts.TtsClient
+import com.jet.tts.rememberTtsClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mir.oslav.jet.annotations.JetExperimental
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
      */
     private var updateNetworkCallbackJob: Job? = null
 
-    
+
     @Inject
     lateinit var settingsStorage: SettingsStorage
 
@@ -142,6 +144,13 @@ class MainActivity : ComponentActivity() {
         checkDeeplink(intent = intent)
 
         setContent {
+            val ttsClient = rememberTtsClient(
+                onInitialized = { client ->
+                    client.setLanguage(language = Locale.getDefault())
+                    client.highlightMode =
+                        TtsClient.HighlightMode.SPOKEN_RANGE_FROM_BEGINNING_INCLUDING_PREVIOUS_UTTERANCES
+                }
+            )
             val settings by viewModel.settings.collectAsState(
                 initial = SettingsStorage.Settings()
             )
@@ -155,6 +164,7 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(
                     LocalDimensions provides dimensions,
                     LocalDeepLink provides deeplink,
+                    LocalTtsClient provides ttsClient,
                 ) {
                     LaunchedEffect(key1 = systemBarsStyle) {
                         enableEdgeToEdge(
@@ -197,7 +207,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = Routes.channelLog,
+                            route = Routes.changeLog,
                             enterTransition = { fadeIn() },
                             exitTransition = { fadeOut() },
                         ) {

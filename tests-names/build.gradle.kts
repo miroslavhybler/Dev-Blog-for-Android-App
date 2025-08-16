@@ -6,7 +6,7 @@ plugins {
 android {
 
     namespace = "com.jet.article.example.devblog.shared"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
         testOptions.targetSdk = 35

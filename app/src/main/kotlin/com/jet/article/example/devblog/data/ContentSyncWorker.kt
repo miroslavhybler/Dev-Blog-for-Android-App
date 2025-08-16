@@ -69,9 +69,9 @@ public class ContentSyncWorker @AssistedInject public constructor(
             val workManager = WorkManager.getInstance(context)
 
             workManager.enqueueUniquePeriodicWork(
-                "update-post-list",
-                ExistingPeriodicWorkPolicy.KEEP,
-                request,
+                uniqueWorkName = "update-post-list",
+                existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
+                request = request,
             )
         }
     }

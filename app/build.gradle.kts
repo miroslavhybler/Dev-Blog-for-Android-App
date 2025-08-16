@@ -5,22 +5,22 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.google.devtools.ksp)
-    alias(libs.plugins.google.dagger.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.aboutLibraries)
 }
 
 android {
     namespace = "com.jet.article.example.devblog"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 11
-        versionName = "1.1.2"
+        targetSdk = 36
+        versionCode = 12
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":tests-names"))
     implementation(libs.jet.utils)
     implementation(libs.jet.lint)
+    implementation(libs.jet.tts)
 
     implementation(libs.androidx.core.core.ktx)
     implementation(libs.androidx.lifecycle.lifecycle.runtime.ktx)
@@ -124,6 +125,9 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     ksp(libs.androidx.room.compiler)
 
+    /** InApp updates*/
+    implementation(libs.app.update.ktx)
+
     /** KTOR */
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.serialization)
@@ -133,7 +137,6 @@ dependencies {
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.common)
     ksp(libs.google.dagger.hilt.compiler)
-    ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.work)
 

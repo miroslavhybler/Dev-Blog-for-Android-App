@@ -27,7 +27,14 @@ class DatabaseRepo @Inject constructor(
     ): R = database.withTransaction(block = block)
 
 
-    suspend fun updateReadedPost(id: Int) = withTransaction {
+
+    suspend fun updateReadPost(id: Int): Unit = withTransaction {
         postDao.updateReaded(id = id)
+    }
+
+
+    suspend fun updatePostIsFavorite(id: Int, isFavorite: Boolean) : Unit= withTransaction {
+        postDao.updateIsFavorite(id = id, isFavorite = isFavorite)
+
     }
 }
