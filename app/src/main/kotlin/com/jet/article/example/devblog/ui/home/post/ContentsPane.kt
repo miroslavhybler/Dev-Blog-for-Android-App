@@ -52,7 +52,7 @@ fun ContentsPane(
                             .padding(vertical = 16.dp),
                         text = "${index + 1}. - ${
                             ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                                input = item.title.text
+                                input = item.title.text.toString(),
                             )
                         }",
                         style = MaterialTheme.typography.titleMedium,

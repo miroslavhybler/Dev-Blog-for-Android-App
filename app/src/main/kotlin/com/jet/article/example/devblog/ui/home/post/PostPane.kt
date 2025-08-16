@@ -220,7 +220,7 @@ fun PostPane(
                 is HtmlElement.Title -> {
                     ttsState["${element.key}"] =
                         ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                            input = element.text
+                            input = element.text.toString(),
                         )
                 }
 
@@ -234,16 +234,6 @@ fun PostPane(
                 else -> return@forEach
             }
         }
-
-//TODO use for speaking
-//TODO scroll is working but there is problem with contentPadding
-//        ttsState.values.sortedBy(selector = Utterance::sequence)
-//            .forEachIndexed { index, utterance ->
-//                if (index == 0)
-//                    ttsClient.flushAndSpeak(utterance = utterance)
-//                else
-//                    ttsClient.add(utterance = utterance)
-//            }
     }
 
     LaunchedEffect(
@@ -303,7 +293,7 @@ fun PostPane(
                                     .padding(
                                         top = paddingValues.calculateTopPadding(),
                                         start = paddingValues.calculateStartPadding(
-                                            LocalLayoutDirection.current
+                                            layoutDirection = LocalLayoutDirection.current
                                         ),
                                         end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
                                     ),
@@ -333,7 +323,7 @@ fun PostPane(
                                                 .padding(top = dimensions.topLinePadding)
                                                 .horizontalPadding()
                                                 .align(alignment = Alignment.TopCenter),
-                                            title = stringResource(R.string.error_unable_load_post),
+                                            title = stringResource(id = R.string.error_unable_load_post),
                                             cause = data.exceptionOrNull(),
                                             onRefresh = {
                                                 onRefresh(selectedPost ?: return@ErrorLayout)
@@ -375,8 +365,22 @@ fun PostPane(
                                                 }
                                             }
                                         },
+                                        title = { title ->
+                                            TextTts(
+                                                text = title.text,
+                                                utteranceId = "${title.key}",
+                                                ttsClient = ttsClient,
+                                                scrollableState = state.listState,
+                                                style = when (title.titleTag) {
+                                                    "h1", "h2" -> MaterialTheme.typography.displaySmall
+                                                    else -> MaterialTheme.typography.titleLarge
+                                                },
+                                                highlightStyle = TextStyle(
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                )
+                                            )
+                                        },
                                         text = { text ->
-                                            //TODO custom title too
                                             TextTts(
                                                 text = text.text,
                                                 utteranceId = "${text.key}",
@@ -451,14 +455,16 @@ fun PostPane(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_content),
-                            contentDescription = stringResource(R.string.content_desc_show_contest),
+                            contentDescription = stringResource(id = R.string.content_desc_show_contest),
                         )
                     }
                 }
             }
         },
         bottomBar = {
-            //TODO  PostBottomBar()
+            PostBottomBar(
+                ttsState = ttsState,
+            )
         }
     )
 }
