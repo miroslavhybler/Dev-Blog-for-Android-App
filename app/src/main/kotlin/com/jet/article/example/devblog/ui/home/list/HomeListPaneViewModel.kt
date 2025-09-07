@@ -50,17 +50,4 @@ class HomeListPaneViewModel @Inject constructor(
     fun refresh() {
         currentSource?.invalidate()
     }
-
-
-    fun toggleFavoriteItem(
-        item: PostItem
-    ) {
-        viewModelScope.launch {
-            databaseRepo.updatePostIsFavorite(
-                id = item.id,
-                isFavorite = !item.isFavoriteState,
-            )
-            item.isFavoriteState = !item.isFavoriteState
-        }
-    }
 }

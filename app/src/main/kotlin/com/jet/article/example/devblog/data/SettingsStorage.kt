@@ -32,22 +32,21 @@ class SettingsStorage @Inject constructor(
     companion object {
         private val Context.preferences: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-        private val dynamicColorKey: Preferences.Key<Boolean>  = booleanPreferencesKey(name = "dymanic_colors")
-        private val darkModeKey = intPreferencesKey(name = "dark_mode")
-        private val cellularDataKey: Preferences.Key<Boolean>  = booleanPreferencesKey(name = "cellular_data_usage_allowed")
+        private val dynamicColorKey: Preferences.Key<Boolean> =
+            booleanPreferencesKey(name = "dymanic_colors")
+        private val darkModeKey: Preferences.Key<Int> = intPreferencesKey(name = "dark_mode")
+        private val cellularDataKey: Preferences.Key<Boolean> =
+            booleanPreferencesKey(name = "cellular_data_usage_allowed")
+        private val usingTTSKey: Preferences.Key<Boolean> =
+            booleanPreferencesKey(name = "using_tts")
     }
 
 
     private val preferences: DataStore<Preferences>
         get() = context.preferences
 
-
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
-        "app-preferences",
-        Context.MODE_PRIVATE
-    )
-
-    val settings: Flow<Settings> = preferences.data.map(this::getSettings)
+    val settings: Flow<Settings> = preferences.data
+        .map(transform = this::getSettings)
 
 
     suspend fun saveSettings(settings: Settings) {
@@ -55,15 +54,17 @@ class SettingsStorage @Inject constructor(
             it[dynamicColorKey] = settings.isUsingDynamicColors
             it[darkModeKey] = settings.nightModeFlags
             it[cellularDataKey] = settings.isCellularDataUsageAllowed
+            it[usingTTSKey] = settings.isUsingTTS
         }
     }
 
 
     private fun getSettings(preferences: Preferences): Settings {
         return Settings(
-            isUsingDynamicColors = preferences[dynamicColorKey] == true,
+            isUsingDynamicColors = preferences[dynamicColorKey] == true, //False by default
             nightModeFlags = preferences[darkModeKey] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-            isCellularDataUsageAllowed = preferences[cellularDataKey] != false,
+            isCellularDataUsageAllowed = preferences[cellularDataKey] != false, //True by default
+            isUsingTTS = preferences[usingTTSKey] != false, //True by default
         )
     }
 
@@ -83,6 +84,7 @@ class SettingsStorage @Inject constructor(
         @AppCompatDelegate.NightMode
         val nightModeFlags: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
         val isCellularDataUsageAllowed: Boolean = true,
+        val isUsingTTS: Boolean = true,
     ) {
 
         companion object {

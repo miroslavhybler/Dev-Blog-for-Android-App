@@ -240,6 +240,7 @@ fun HomeScreenContent(
                                     listState = postLazyListState,
                                     selectedPost = selectedPostItem,
                                     onRefresh = onRefreshDetail,
+                                    viewModel= hiltViewModel()
                                 )
                             }
 

@@ -47,9 +47,12 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,8 +60,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -72,6 +77,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
+import androidx.core.text.toSpannable
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
@@ -79,6 +86,7 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
 import com.jet.article.example.devblog.composables.PostTopBar
 import com.jet.article.example.devblog.data.AdjustedPostData
+import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.rememberCurrentOffset
@@ -88,12 +96,14 @@ import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.example.devblog.ui.LocalTtsClient
 import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
 import com.jet.article.example.devblog.ui.home.list.NewPostMark
+import com.jet.article.toAnnotatedString
+import com.jet.article.toHtml
 import com.jet.article.ui.JetHtmlArticleContent
 import com.jet.article.ui.Link
 import com.jet.article.ui.LinkClickHandler
+import com.jet.article.ui.elements.HtmlBasicList
 import com.jet.article.ui.rememberJetHtmlArticleState
 import com.jet.tts.TextTts
-import com.jet.tts.Utterance
 import com.jet.tts.rememberTtsState
 import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
@@ -108,6 +118,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun PostPane(
+    viewModel: PostViewModel,
     data: Result<AdjustedPostData>?,
     onOpenContests: () -> Unit,
     listState: LazyListState,
@@ -120,6 +131,9 @@ fun PostPane(
     val mainState = LocalHomeScreenState.current
     val density = LocalDensity.current
     val ttsClient = LocalTtsClient.current
+    val settings by viewModel.settings.collectAsState(
+        initial = SettingsStorage.Settings(),
+    )
 
     val ttsState = rememberTtsState()
 
@@ -130,14 +144,14 @@ fun PostPane(
     var lastUrl: String? by remember { mutableStateOf(value = null) }
     val colorEvaluator = remember { ArgbEvaluator() }
     val coroutineScope = rememberCoroutineScope()
-    val scrollOffset by rememberCurrentOffset(state = listState)
+    val scrollOffsetY by rememberCurrentOffset(state = listState)
+    var lastScrollOffsetY by remember() { mutableIntStateOf(value = scrollOffsetY) }
     var topBarAlpha by rememberSaveable { mutableFloatStateOf(value = 0f) }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+    val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = rememberTopAppBarState()
     )
     val statusBarPadding = WindowInsets.statusBars.getTop(density = density)
-
     var headerImageHeight by rememberSaveable() {
         mutableFloatStateOf(
             value = density.dpToPx(dp = TopAppBarDefaults.LargeAppBarExpandedHeight)
@@ -181,7 +195,7 @@ fun PostPane(
                             //Tries to scroll to the right section given by element id
                             state.listState.animateScrollToItem(
                                 index = index,
-                                scrollOffset = scrollOffset,
+                                scrollOffset = scrollOffsetY,
                             )
                         }
                 }
@@ -191,6 +205,7 @@ fun PostPane(
 
     var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
+
 
     LaunchedEffect(key1 = data) {
         if (
@@ -210,6 +225,7 @@ fun PostPane(
             isRefreshing = false
         }
     }
+
 
     LaunchedEffect(key1 = post) {
         val mPost = post ?: return@LaunchedEffect
@@ -231,16 +247,28 @@ fun PostPane(
                         )
                 }
 
+                is HtmlElement.BasicList -> {
+                    element.items.forEachIndexed { index, item ->
+                        val cleanTextForTTS =
+                            ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
+                                input = item,
+                            )
+                        val utteranceId = "${element.key + 1_000_000 + index}"
+                        ttsState[utteranceId] = cleanTextForTTS
+                    }
+                }
+
                 else -> return@forEach
             }
         }
     }
 
+
     LaunchedEffect(
-        key1 = scrollOffset,
+        key1 = scrollOffsetY,
         key2 = titleStartColor,
     ) {
-        val alpha = if (scrollOffset < 128) (scrollOffset / (128f)) else 0.85f
+        val alpha = if (scrollOffsetY < 128) (scrollOffsetY / (128f)) else 0.85f
         topBarAlpha = alpha.coerceIn(minimumValue = 0.15f, maximumValue = 0.85f)
         titleColor.snapTo(
             targetValue = Color(
@@ -251,8 +279,34 @@ fun PostPane(
                 ) as Int
             )
         )
+
+        val limit = topBarScrollBehavior.state.heightOffsetLimit
+        val height = topBarScrollBehavior.state.heightOffset
+
+        //using + (plus) because topBarScrollBehavior.state.heightOffset is negative value
+        val availableY = -(scrollOffsetY + height)
+
+        if (
+            scrollOffsetY > lastScrollOffsetY
+        ) {
+            val consumedByAppBar = topBarScrollBehavior.nestedScrollConnection.onPreScroll(
+                available = Offset(x = 0f, y = availableY),
+                source = NestedScrollSource.UserInput,
+            )
+            lastScrollOffsetY = scrollOffsetY
+        }
+
+        // }
+
+
     }
 
+
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            ttsClient.stop()
+        }
+    }
 
     BackHandler(enabled = selectedImageUrl != null) {
         selectedImageUrl = null
@@ -261,7 +315,7 @@ fun PostPane(
 
     Scaffold(
         modifier = Modifier
-            .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+            .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
         topBar = {
             PostTopBar(
                 modifier = Modifier
@@ -271,7 +325,7 @@ fun PostPane(
                 title = remember(key1 = selectedPost?.id) {
                     selectedPost?.title ?: ""
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = topBarScrollBehavior,
                 backgroundAlpha = topBarAlpha,
                 titleColor = titleColor.value,
             )
@@ -314,7 +368,7 @@ fun PostPane(
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .verticalScroll(state = rememberScrollState())
-                                            .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
+                                            .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection)
 
                                     ) {
                                         ErrorLayout(
@@ -338,7 +392,7 @@ fun PostPane(
                                         modifier = Modifier
                                             .testTag(tag = Tracing.Tag.jetHtmlArticle)
                                             .fillMaxSize()
-                                            .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+                                            .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
                                         state = state,
                                         contentPadding = PaddingValues(
                                             start = dimensions.topLinePadding,
@@ -389,6 +443,29 @@ fun PostPane(
                                                 highlightStyle = TextStyle(
                                                     color = MaterialTheme.colorScheme.secondary,
                                                 )
+                                            )
+                                        },
+                                        basicList = { basicList ->
+                                            HtmlBasicList(
+                                                list = basicList,
+                                                textContent = { text, index ->
+                                                    TextTts(
+                                                        text = remember() {
+                                                            text.toHtml()
+                                                                .toSpannable()
+                                                                .toAnnotatedString(
+                                                                    primaryColor = colorScheme.primary,
+                                                                    linkClickHandler = post.postData.linkHandler,
+                                                                )
+                                                        },
+                                                        utteranceId = "${basicList.key + 1_000_000 + index}",
+                                                        ttsClient = ttsClient,
+                                                        scrollableState = state.listState,
+                                                        highlightStyle = TextStyle(
+                                                            color = MaterialTheme.colorScheme.secondary,
+                                                        )
+                                                    )
+                                                }
                                             )
                                         },
                                         image = { image ->
@@ -464,6 +541,11 @@ fun PostPane(
         bottomBar = {
             PostBottomBar(
                 ttsState = ttsState,
+                onToggleFavorite = {
+                    selectedPost?.let(block = viewModel::toggleFavoriteItem)
+                },
+                isFavorite = selectedPost?.isFavoriteState == true,
+                isUsingTTS = settings.isUsingTTS,
             )
         }
     )
@@ -480,6 +562,7 @@ private fun PostPanePreview1() {
             listState = rememberLazyListState(),
             selectedPost = null,
             onRefresh = {},
+            viewModel = hiltViewModel(),
         )
     }
 }
@@ -495,6 +578,8 @@ private fun PostPanePreview2() {
             listState = rememberLazyListState(),
             selectedPost = null,
             onRefresh = {},
-        )
+            viewModel = hiltViewModel(),
+
+            )
     }
 }

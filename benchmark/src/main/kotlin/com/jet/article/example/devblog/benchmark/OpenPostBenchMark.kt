@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
  * created on 09.10.2024
  */
 @LargeTest
-@RunWith(AndroidJUnit4::class)
+@RunWith(value = AndroidJUnit4::class)
 class OpenPostBenchMark : BaseBenchMark() {
 
 

@@ -105,7 +105,7 @@ private fun SettingsScreenContent(
     Scaffold(
         topBar = {
             TitleTopBar(
-                text = stringResource(R.string.settings_title),
+                text = stringResource(id = R.string.settings_title),
                 onNavigationIcon = navHostController::navigateUp,
             )
         },
@@ -125,7 +125,7 @@ private fun SettingsScreenContent(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     SettingsSwitch(
                         modifier = Modifier,
-                        title = stringResource(R.string.settings_dynamic_colors_label),
+                        title = stringResource(id = R.string.settings_dynamic_colors_label),
                         isChecked = settings.isUsingDynamicColors,
                         onCheckedChange = {
                             onNewSettings(settings.copy(isUsingDynamicColors = it))
@@ -135,7 +135,7 @@ private fun SettingsScreenContent(
 
                 SettingsDropdown(
                     modifier = Modifier,
-                    title = stringResource(R.string.settings_dark_mode_label),
+                    title = stringResource(id = R.string.settings_dark_mode_label),
                     items = darkModeOptions,
                     transform = {
                         SettingsStorage.Settings.nightModeString(
@@ -151,12 +151,24 @@ private fun SettingsScreenContent(
 
                 SettingsSwitch(
                     modifier = Modifier,
-                    title = stringResource(R.string.setting_cellular_data_label),
+                    title = stringResource(id = R.string.setting_cellular_data_label),
                     isChecked = settings.isCellularDataUsageAllowed,
                     onCheckedChange = {
                         onNewSettings(settings.copy(isCellularDataUsageAllowed = it))
                     }
                 )
+
+
+                SettingsSwitch(
+                    modifier = Modifier,
+                    title = stringResource(id = R.string.setting_tts_label),
+                    subtitle = stringResource(id = R.string.setting_tts_desc),
+                    isChecked = settings.isUsingTTS,
+                    onCheckedChange = {
+                        onNewSettings(settings.copy(isUsingTTS = it))
+                    }
+                )
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     var areNotificationsEnabled by remember {
@@ -180,7 +192,7 @@ private fun SettingsScreenContent(
 
                     SettingsSwitch(
                         modifier = Modifier,
-                        title = stringResource(R.string.setting_notifications_label),
+                        title = stringResource(id = R.string.setting_notifications_label),
                         isChecked = areNotificationsEnabled,
                         onCheckedChange = {
                             context.openNotificationSettings()
@@ -191,7 +203,7 @@ private fun SettingsScreenContent(
 
                 SettingsRow(
                     title = stringResource(id = R.string.setting_deeplink_label),
-                    subtitle = stringResource(id=R.string.setting_deeplink_desc),
+                    subtitle = stringResource(id = R.string.setting_deeplink_desc),
                     onClick = context::opendDeeplinkSettings,
                     icon = null,
                 )

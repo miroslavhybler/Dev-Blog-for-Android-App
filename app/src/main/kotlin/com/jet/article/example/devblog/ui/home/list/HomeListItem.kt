@@ -35,6 +35,7 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
+import com.jet.article.example.devblog.ui.colorFavorited
 import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
 import com.jet.article.ui.elements.HtmlImage
 import com.jet.article.ui.elements.HtmlTextBlock
@@ -148,21 +149,26 @@ private fun HomeListItemColumn(
                 )
             }
 
-//TODO            IconButton(
-//                modifier = Modifier
-//                    .align(alignment = Alignment.TopEnd)
-//                    .padding(end = 12.dp, top = 8.dp),
-//                onClick = { onToggleFavorite(item) },
-//            ) {
-//                Icon(
-//                    painter = painterResource(
-//                        id = if (item.isFavoriteState) R.drawable.ic_favorite_outlined
-//                        else
-//                            R.drawable.ic_favorite_outlined
-//                    ),
-//                    contentDescription = null
-//                )
-//            }
+            IconButton(
+                modifier = Modifier
+                    .align(alignment = Alignment.TopEnd)
+                    .padding(end = 12.dp, top = 8.dp),
+                onClick = { onToggleFavorite(item) },
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (item.isFavoriteState)
+                            R.drawable.ic_favorite_filled
+                        else
+                            R.drawable.ic_favorite_outlined
+                    ),
+                    contentDescription = null,
+                    tint = if(item.isFavoriteState)
+                        colorFavorited
+                    else
+                        MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(height = 4.dp))

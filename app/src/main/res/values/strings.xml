@@ -13,6 +13,9 @@
     <string name="dark_mode_no">Light</string>
     <string name="dark_mode_system">System</string>
     <string name="setting_cellular_data_label">Cellular Data Enabled</string>
+    <string name="setting_tts_label">Use Text to Speech</string>
+    <string name="setting_tts_desc">TTS will read the article with generic voice.</string>
+
     <string name="setting_notifications_label">Notifications</string>
     <string name="setting_deeplink_label">Deeplink support</string>
     <string name="setting_deeplink_desc">Enable deeplinks to open links to posts in application</string>

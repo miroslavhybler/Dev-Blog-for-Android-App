@@ -121,7 +121,7 @@ fun PostTopBar(
     @FloatRange(from = 0.0, to = 1.0)
     backgroundAlpha: Float,
     actions: @Composable RowScope.() -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+    scrollBehavior: TopAppBarScrollBehavior,
     onNavigationIcon: (() -> Unit)? = null,
     navigationActionContentDescription: String? = null,
     titleColor: Color = MaterialTheme.colorScheme.onBackground,

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -86,6 +87,11 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = Color.White,
     outline = Color(color = 0xFF938F99),
 )
+
+
+val colorFavorited: Color = Color(color = 0xFFFD7575)
+
+
 
 @Composable
 fun DevBlogAppTheme(
@@ -186,7 +192,7 @@ fun rememberDimensions(): Dimensions {
 /**
  * Local provider for dimensions, should be applied in top level composable functions
  */
-val LocalDimensions: ProvidableCompositionLocal<Dimensions> = compositionLocalOf(
+val LocalDimensions: ProvidableCompositionLocal<Dimensions> = staticCompositionLocalOf(
     defaultFactory = Dimensions.Companion::default,
 )
 
@@ -196,7 +202,7 @@ val LocalDeepLink: ProvidableCompositionLocal<String?> = compositionLocalOf(
 )
 
 
-val LocalTtsClient: ProvidableCompositionLocal<TtsClient> = compositionLocalOf(
+val LocalTtsClient: ProvidableCompositionLocal<TtsClient> = staticCompositionLocalOf(
     defaultFactory = { error("TtsClient not provided") }
 )
 

@@ -61,7 +61,7 @@ fun Modifier.horizontalPadding(): Modifier = this.composed {
     val gestureRight = gesturePadding.getRight(density = density, layoutDirection = layoutDirection)
     val contentLeft = contentPadding.getLeft(density = density, layoutDirection = layoutDirection)
     val contentRight = contentPadding.getRight(density = density, layoutDirection = layoutDirection)
-    val side = with(density) { dimensions.sidePadding.toPx().toInt() }
+    val side = with(receiver = density) { dimensions.sidePadding.toPx().toInt() }
 
     //Final padding is from max value to make sure there is enough space for gestures or other
     //components (like front camera in landscape)

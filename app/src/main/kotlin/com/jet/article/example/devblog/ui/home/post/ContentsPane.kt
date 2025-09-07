@@ -32,7 +32,7 @@ fun ContentsPane(
 
     Scaffold(
         topBar = {
-            TitleTopBar(text = stringResource(R.string.contents_title))
+            TitleTopBar(text = stringResource(id = R.string.contents_title))
         },
         content = { paddingValues ->
             LazyColumn(
