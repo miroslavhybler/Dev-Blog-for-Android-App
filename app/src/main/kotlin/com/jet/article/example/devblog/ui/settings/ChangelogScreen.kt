@@ -133,14 +133,14 @@ private val changelog: List<Changelog> = listOf(
  */
 @Composable
 fun ChangelogScreen(
-    navHostController: NavHostController,
+    onBack: () -> Unit,
 ) {
     val dimensions = LocalDimensions.current
     Scaffold(
         topBar = {
             TitleTopBar(
                 text = stringResource(id = R.string.settings_changelog_title),
-                onNavigationIcon = navHostController::navigateUp,
+                onNavigationIcon = onBack,
             )
         },
         content = { paddingValues ->
@@ -266,7 +266,7 @@ data class Changelog constructor(
 private fun ChangelogScreenPreview() {
     DevBlogAppTheme {
         ChangelogScreen(
-            navHostController = rememberNavController(),
+            onBack = {},
         )
     }
 }

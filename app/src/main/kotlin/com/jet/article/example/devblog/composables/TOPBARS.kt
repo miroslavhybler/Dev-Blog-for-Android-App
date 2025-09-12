@@ -72,7 +72,7 @@ fun TitleTopBar(
 fun MainTopBar(
     modifier: Modifier = Modifier,
     text: String,
-    navHostController: NavHostController,
+    onSettings: () -> Unit,
 ) {
     TopAppBar(
         modifier = Modifier
@@ -96,9 +96,7 @@ fun MainTopBar(
         },
         actions = {
             IconButton(
-                onClick = {
-                    navHostController.navigate(route = Routes.settings)
-                },
+                onClick = onSettings,
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = MaterialTheme.colorScheme.onBackground
                 )
@@ -152,7 +150,7 @@ fun PostTopBar(
                     onClick = onNavigationIcon,
                     content = {
                         Icon(
-                            painter = painterResource(R.drawable.ic_back),
+                            painter = painterResource(id=R.drawable.ic_back),
                             contentDescription = navigationActionContentDescription,
                             tint = MaterialTheme.colorScheme.onBackground,
                         )

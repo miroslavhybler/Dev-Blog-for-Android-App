@@ -4,6 +4,7 @@ import android.icu.util.Calendar
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.util.Date
 
@@ -13,6 +14,7 @@ import java.util.Date
  * created on 12.09.2024
  */
 @Keep
+@Serializable
 data class SimpleDate constructor(
     val year: Int,
     val month: Month,

@@ -41,14 +41,14 @@ import com.jet.article.example.devblog.ui.LocalDimensions
  */
 @Composable
 fun AboutScreen(
-    navHostController: NavHostController,
+    onBack: () -> Unit,
 ) {
     val dimensions = LocalDimensions.current
     Scaffold(
         topBar = {
             TitleTopBar(
                 text = stringResource(id = R.string.settings_about_title),
-                onNavigationIcon = navHostController::navigateUp,
+                onNavigationIcon = onBack,
             )
         },
         content = { paddingValues ->
@@ -141,6 +141,8 @@ fun AboutScreen(
 @PreviewLightDark
 private fun AboutScreenPreview() {
     DevBlogAppTheme {
-        AboutScreen(navHostController = rememberNavController())
+        AboutScreen(
+            onBack = {},
+        )
     }
 }

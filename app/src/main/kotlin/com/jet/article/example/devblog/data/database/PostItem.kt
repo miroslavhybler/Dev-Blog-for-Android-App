@@ -2,6 +2,7 @@
 
 package com.jet.article.example.devblog.data.database
 
+import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateOf
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -10,6 +11,7 @@ import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.SimpleDate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kotlinx.serialization.Serializable
 
 /**
  * @param title Title of the post
@@ -19,6 +21,8 @@ import androidx.compose.runtime.setValue
  * @param isUnread TODO
  * @param isFavorite TODO
  */
+@Keep
+@Serializable
 @Entity(tableName = "posts")
 data class PostItem constructor(
     @ColumnInfo(name = "title", typeAffinity = ColumnInfo.TEXT)

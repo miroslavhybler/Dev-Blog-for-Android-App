@@ -3,21 +3,16 @@
 package com.jet.article.example.devblog.ui.home.list
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,21 +21,17 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -53,8 +44,10 @@ import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
 import com.jet.article.example.devblog.shared.Tracing
+import com.jet.article.example.devblog.ui.LocalBackstack
 import com.jet.article.example.devblog.ui.LocalDimensions
-import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
+import com.jet.article.example.devblog.ui.Route
+import com.jet.article.example.devblog.ui.containsEntry
 
 
 /**
@@ -65,19 +58,17 @@ import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
  */
 @Composable
 fun HomeListPane(
-    onOpenPost: (index: Int, item: PostItem) -> Unit,
-    viewModel: HomeListPaneViewModel,
-    navHostController: NavHostController,
+    onNavigate: (route: Route) -> Unit,
+    viewModel: HomeListPaneViewModel = hiltViewModel(),
 ) = trace(sectionName = Tracing.Section.homeListPane) {
 
     val posts = viewModel.posts.collectAsLazyPagingItems()
 
     HomeListPaneContent(
-        onOpenPost = onOpenPost,
         data = posts,
-        navHostController = navHostController,
         onRefresh = viewModel::refresh,
         onToggleFavorite = viewModel::toggleFavoriteItem,
+        onNavigate = onNavigate,
     )
 }
 
@@ -87,19 +78,20 @@ private const val loadingLazyKey: Int = Int.MIN_VALUE - 1
 
 @Composable
 private fun HomeListPaneContent(
-    onOpenPost: (index: Int, item: PostItem) -> Unit,
+    onNavigate: (route: Route) -> Unit,
     data: LazyPagingItems<PostItem>,
-    navHostController: NavHostController,
     onRefresh: () -> Unit,
     onToggleFavorite: (postItem: PostItem) -> Unit,
 ) {
-    val mainState = LocalHomeScreenState.current
+    val backstack = LocalBackstack.current
     val dimensions = LocalDimensions.current
     val windowInfo = currentWindowAdaptiveInfo()
     val windowWidth = windowInfo.windowSizeClass.windowWidthSizeClass
 
-    val isExpanded = mainState.role == ListDetailPaneScaffoldRole.Detail
-            || mainState.role == ListDetailPaneScaffoldRole.Extra
+    val isExpanded by rememberUpdatedState(
+        newValue = backstack.containsEntry(clazz = Route.Post::class)
+    )
+
     val isLargeWidth = windowWidth.isExpanded || windowWidth.isMedium
 
     val isConnectedToInternet = AndroidDevBlogApp.isConnectedToInternet
@@ -118,7 +110,9 @@ private fun HomeListPaneContent(
         topBar = {
             MainTopBar(
                 text = stringResource(id = R.string.app_name),
-                navHostController = navHostController,
+                onSettings = {
+                    onNavigate(Route.Settings)
+                },
             )
 
         },
@@ -172,10 +166,14 @@ private fun HomeListPaneContent(
                                         .animateItem()
                                 } else Modifier
                                     .animateItem(),
-                                onOpenPost = onOpenPost,
+                                onOpenPost = { index, item ->
+                                    val route = Route.Post(item = item)
+                                    onNavigate(route)
+                                },
                                 item = it,
                                 index = index,
                                 onToggleFavorite = onToggleFavorite,
+                                isSelected = false,
                             )
                         }
                     }

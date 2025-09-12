@@ -18,9 +18,11 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.R
@@ -42,12 +44,33 @@ import java.util.concurrent.TimeUnit
 public class ContentSyncWorker @AssistedInject public constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
-    private var databaseRepo: DatabaseRepo,
-    private var coreRepo: CoreRepo,
+    private val databaseRepo: DatabaseRepo,
+    private val coreRepo: CoreRepo,
 ) : CoroutineWorker(
     appContext = context,
     params = workerParameters,
 ) {
+
+
+    class Factory constructor(
+        private val databaseRepo: DatabaseRepo,
+        private val coreRepo: CoreRepo,
+    ) : WorkerFactory() {
+
+        override fun createWorker(
+            appContext: Context,
+            workerClassName: String,
+            workerParameters: WorkerParameters
+        ): ListenableWorker? {
+            return ContentSyncWorker(
+                context = appContext,
+                workerParameters = workerParameters,
+                databaseRepo = databaseRepo,
+                coreRepo = coreRepo,
+            )
+        }
+    }
+
 
     companion object {
 

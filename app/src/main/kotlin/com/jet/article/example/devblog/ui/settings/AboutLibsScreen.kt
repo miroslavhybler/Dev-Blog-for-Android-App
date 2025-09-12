@@ -25,13 +25,13 @@ import com.mikepenz.aboutlibraries.ui.compose.libraryColors
  */
 @Composable
 fun AboutLibsScreen(
-    navHostController: NavHostController,
+    onBack: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TitleTopBar(
                 text = stringResource(id = R.string.settings_about_libs_title),
-                onNavigationIcon = navHostController::navigateUp,
+                onNavigationIcon = onBack,
             )
         },
         content = { paddingValues ->
@@ -56,7 +56,7 @@ fun AboutLibsScreen(
 private fun AboutLibsScreenPreview() {
     DevBlogAppTheme {
         AboutLibsScreen(
-            navHostController = rememberNavController(),
+           onBack = {},
         )
     }
 }

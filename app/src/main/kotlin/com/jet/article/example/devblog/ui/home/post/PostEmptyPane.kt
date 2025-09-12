@@ -45,6 +45,7 @@ fun PostEmptyPane() {
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineMedium,
             maxLines = 1,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
@@ -54,6 +55,7 @@ fun PostEmptyPane() {
             style = MaterialTheme.typography.labelMedium,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }

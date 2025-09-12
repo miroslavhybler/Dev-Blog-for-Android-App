@@ -404,6 +404,7 @@ class CoreRepo @Inject constructor(
                 if (!isRefresh || !isConnected) {
                     //Request is not refresh request or we are not connected to the internet
                     //Only chance to show post is try to load it from cache
+                    //TODO add check if cached results are valid (HDR and User Interfaces, cache is invalid and remote returns 404)
                     val fromCache = cacheRepo.getCachedResponse(url = url)
                     if (fromCache != null) {
                         return Result.success(value = fromCache)

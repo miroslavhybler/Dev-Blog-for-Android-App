@@ -57,8 +57,10 @@ import com.jet.article.example.devblog.ui.Routes
 import com.jet.utils.plus
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jet.article.example.devblog.OnLifecycleEvent
 import com.jet.article.example.devblog.opendDeeplinkSettings
+import com.jet.article.example.devblog.ui.Route
 
 
 /**
@@ -74,15 +76,17 @@ val darkModeOptions: List<Int> = listOf(
 
 @Composable
 fun SettingsScreen(
-    navHostController: NavHostController,
-    viewModel: SettingsViewModel,
+    onBack: () -> Unit,
+    onNavigate: (Route) -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
 
 
     val settings by viewModel.settings.collectAsState(initial = SettingsStorage.Settings())
 
     SettingsScreenContent(
-        navHostController = navHostController,
+        onBack = onBack,
+        onNavigate = onNavigate,
         settings = settings,
         onNewSettings = {
             viewModel.viewModelScope.launch {
@@ -95,9 +99,10 @@ fun SettingsScreen(
 
 @Composable
 private fun SettingsScreenContent(
-    navHostController: NavHostController,
     settings: SettingsStorage.Settings,
     onNewSettings: (SettingsStorage.Settings) -> Unit,
+    onBack: () -> Unit,
+    onNavigate: (Route) -> Unit,
 ) {
     val dimensions = LocalDimensions.current
     val context = LocalContext.current
@@ -106,7 +111,7 @@ private fun SettingsScreenContent(
         topBar = {
             TitleTopBar(
                 text = stringResource(id = R.string.settings_title),
-                onNavigationIcon = navHostController::navigateUp,
+                onNavigationIcon = onBack,
             )
         },
         content = { paddingValues ->
@@ -212,18 +217,18 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.weight(weight = 1f))
 
                 SettingsRow(
-                    title = stringResource(R.string.settings_changelog_title),
-                    onClick = { navHostController.navigate(route = Routes.changeLog) },
+                    title = stringResource(id= R.string.settings_changelog_title),
+                    onClick = { onNavigate(Route.Changelog) },
                     icon = null,
                 )
                 SettingsRow(
-                    title = stringResource(R.string.settings_about_title),
-                    onClick = { navHostController.navigate(route = Routes.about) },
+                    title = stringResource(id = R.string.settings_about_title),
+                    onClick = { onNavigate(Route.About) },
                     icon = null,
                 )
                 SettingsRow(
-                    title = stringResource(R.string.settings_about_libs_title),
-                    onClick = { navHostController.navigate(route = Routes.aboutLibs) },
+                    title = stringResource(id =R.string.settings_about_libs_title),
+                    onClick = { onNavigate(Route.AboutLibs) },
                     icon = null,
                 )
 
@@ -311,9 +316,10 @@ fun GithubBottomBar() {
 private fun SettingsScreenPreview() {
     DevBlogAppTheme {
         SettingsScreenContent(
-            navHostController = rememberNavController(),
+            onBack = {},
             settings = SettingsStorage.Settings(),
-            onNewSettings = { _ -> }
+            onNewSettings = { _ -> },
+            onNavigate = { _ -> },
         )
     }
 }

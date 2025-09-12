@@ -1,3 +1,5 @@
+@file:Suppress("RedundantVisibilityModifier")
+
 package com.jet.article.example.devblog.data
 
 import com.jet.article.data.HtmlArticleData
@@ -6,7 +8,7 @@ import com.jet.article.example.devblog.ui.home.post.TitleWithOriginalIndex
 
 
 /**
- * @param headerImage Image used as background for TopBar in [com.jet.article.example.devblog.ui.home.post.PostPane]
+ * @param headerImage Image used as background for TopBar in [com.jet.article.example.devblog.ui.home.post.PostScreen]
  * @param postData Adjusted post data to be shown as content
  * @param date Date of post
  * @param title Title of the post
@@ -14,7 +16,7 @@ import com.jet.article.example.devblog.ui.home.post.TitleWithOriginalIndex
  * @author Miroslav Hýbler <br>
  * created on 23.08.2024
  */
-data class AdjustedPostData constructor(
+public data class AdjustedPostData public constructor(
     val headerImage: HtmlElement.Image,
     val postData: HtmlArticleData,
     val date: SimpleDate,

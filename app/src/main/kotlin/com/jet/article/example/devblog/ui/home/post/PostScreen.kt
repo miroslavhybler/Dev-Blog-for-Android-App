@@ -8,7 +8,6 @@ package com.jet.article.example.devblog.ui.home.post
 import android.animation.ArgbEvaluator
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedContent
@@ -43,7 +42,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -86,15 +84,20 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
 import com.jet.article.example.devblog.composables.PostTopBar
 import com.jet.article.example.devblog.data.AdjustedPostData
+import com.jet.article.example.devblog.data.Month
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.data.SimpleDate
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.rememberCurrentOffset
 import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
+import com.jet.article.example.devblog.ui.LocalDeepLink
 import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.example.devblog.ui.LocalTtsClient
-import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
+import com.jet.article.example.devblog.ui.MainActivity
+import com.jet.article.example.devblog.ui.Route
+import com.jet.article.example.devblog.ui.SectionSelectedEvent
 import com.jet.article.example.devblog.ui.home.list.NewPostMark
 import com.jet.article.toAnnotatedString
 import com.jet.article.toHtml
@@ -117,27 +120,29 @@ import kotlinx.coroutines.launch
  * created on 13.08.2024
  */
 @Composable
-fun PostPane(
-    viewModel: PostViewModel,
-    data: Result<AdjustedPostData>?,
-    onOpenContests: () -> Unit,
+fun PostScreen(
+    route: Route.Post,
+    onNavigate: (Route) -> Unit,
+    onBack: () -> Unit,
     listState: LazyListState,
-    selectedPost: PostItem?,
-    onRefresh: (PostItem) -> Unit,
+    selectedSectionEvent: SectionSelectedEvent?,
+    viewModel: PostViewModel = hiltViewModel(),
 ) = trace(sectionName = Tracing.Section.postPane) {
 
+    val selectedPost = route.item
+    val colorScheme = MaterialTheme.colorScheme
+
+    val deeplink = LocalDeepLink.current
     val context = LocalContext.current
     val dimensions = LocalDimensions.current
-    val mainState = LocalHomeScreenState.current
     val density = LocalDensity.current
     val ttsClient = LocalTtsClient.current
     val settings by viewModel.settings.collectAsState(
         initial = SettingsStorage.Settings(),
     )
 
-    val ttsState = rememberTtsState()
+    val data by viewModel.postData.collectAsState()
 
-    val colorScheme = MaterialTheme.colorScheme
     val post = remember(key1 = data) {
         data?.getOrNull()
     }
@@ -147,6 +152,7 @@ fun PostPane(
     val scrollOffsetY by rememberCurrentOffset(state = listState)
     var lastScrollOffsetY by remember() { mutableIntStateOf(value = scrollOffsetY) }
     var topBarAlpha by rememberSaveable { mutableFloatStateOf(value = 0f) }
+    val ttsState = rememberTtsState()
 
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = rememberTopAppBarState()
@@ -207,11 +213,26 @@ fun PostPane(
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
 
 
+    LaunchedEffect(key1 = deeplink) {
+        if (deeplink != null) {
+            viewModel.loadPostFromDeeplink(
+                url = deeplink,
+                onFinal = {
+                    MainActivity.onDeeplinkOpened()
+                },
+            )
+        } else {
+            viewModel.loadPostDetail(item = selectedPost)
+        }
+    }
+
+
     LaunchedEffect(key1 = data) {
+        val mData = data
         if (
-            data != null
-            && data.isSuccess
-            && data.getOrNull()?.postData?.url != lastUrl
+            mData != null
+            && mData.isSuccess
+            && mData.getOrNull()?.postData?.url != lastUrl
             && post != null
         ) {
             if (post.postData.linkHandler.callback == null) {
@@ -219,7 +240,7 @@ fun PostPane(
             }
             state.show(data = post.postData)
             listState.scrollToItem(index = 0, scrollOffset = 0)
-            lastUrl = data.getOrNull()?.postData?.url
+            lastUrl = mData.getOrNull()?.postData?.url
         }
         if (isRefreshing) {
             isRefreshing = false
@@ -301,6 +322,19 @@ fun PostPane(
 
     }
 
+    LaunchedEffect(key1 = selectedSectionEvent) {
+        val event = selectedSectionEvent
+        if (event == null) {
+            return@LaunchedEffect
+        }
+
+        listState.animateScrollToItem(
+            index = event.index,
+            scrollOffset = density.dpToPx(dp = 24.dp).toInt(),
+        )
+        event.isConsumed = true
+    }
+
 
     DisposableEffect(key1 = Unit) {
         onDispose {
@@ -322,12 +356,13 @@ fun PostPane(
                     .onSizeChanged { newSize ->
                         headerImageHeight = newSize.height.toFloat()
                     },
-                title = remember(key1 = selectedPost?.id) {
-                    selectedPost?.title ?: ""
+                title = remember(key1 = selectedPost.id) {
+                    selectedPost.title
                 },
                 scrollBehavior = topBarScrollBehavior,
                 backgroundAlpha = topBarAlpha,
                 titleColor = titleColor.value,
+                onNavigationIcon = onBack,
             )
         },
         content = { paddingValues ->
@@ -349,14 +384,13 @@ fun PostPane(
                                         start = paddingValues.calculateStartPadding(
                                             layoutDirection = LocalLayoutDirection.current
                                         ),
-                                        end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
+                                        end = paddingValues.calculateEndPadding(layoutDirection = LocalLayoutDirection.current),
                                     ),
                                 isRefreshing = isRefreshing,
                                 onRefresh = {
-                                    selectedPost?.let {
-                                        isRefreshing = true
-                                        onRefresh(it)
-                                    }
+                                    isRefreshing = true
+                                    viewModel.loadPostDetail(item = selectedPost, isRefresh = true)
+
                                 },
                             ) {
                                 if (
@@ -378,9 +412,12 @@ fun PostPane(
                                                 .horizontalPadding()
                                                 .align(alignment = Alignment.TopCenter),
                                             title = stringResource(id = R.string.error_unable_load_post),
-                                            cause = data.exceptionOrNull(),
+                                            cause = data?.exceptionOrNull(),
                                             onRefresh = {
-                                                onRefresh(selectedPost ?: return@ErrorLayout)
+                                                viewModel.loadPostDetail(
+                                                    item = selectedPost,
+                                                    isRefresh = true
+                                                )
                                             }
                                         )
                                     }
@@ -517,8 +554,6 @@ fun PostPane(
         floatingActionButton = {
             if (
                 post != null
-                && (mainState.role == ListDetailPaneScaffoldRole.Detail
-                        || mainState.role == ListDetailPaneScaffoldRole.Extra)
                 && post.contest.isNotEmpty()
             ) {
                 AnimatedVisibility(
@@ -528,7 +563,9 @@ fun PostPane(
                 ) {
                     FloatingActionButton(
                         modifier = Modifier.horizontalPadding(),
-                        onClick = onOpenContests,
+                        onClick = {
+                            onNavigate(Route.Contest(item = selectedPost))
+                        },
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_content),
@@ -542,9 +579,9 @@ fun PostPane(
             PostBottomBar(
                 ttsState = ttsState,
                 onToggleFavorite = {
-                    selectedPost?.let(block = viewModel::toggleFavoriteItem)
+                    viewModel.toggleFavoriteItem(item = selectedPost)
                 },
-                isFavorite = selectedPost?.isFavoriteState == true,
+                isFavorite = selectedPost.isFavoriteState,
                 isUsingTTS = settings.isUsingTTS,
             )
         }
@@ -556,13 +593,28 @@ fun PostPane(
 @PreviewLightDark
 private fun PostPanePreview1() {
     DevBlogAppTheme {
-        PostPane(
-            data = null,
-            onOpenContests = {},
+        PostScreen(
+            onNavigate = { _ -> },
             listState = rememberLazyListState(),
-            selectedPost = null,
-            onRefresh = {},
+            route = Route.Post(
+                item = PostItem(
+                    title = "Title",
+                    url = "https://google.com",
+                    date = SimpleDate(
+                        dayOfMonth = 1,
+                        month = Month.JANUARY,
+                        year = 2023,
+                    ),
+                    isUnread = true,
+                    isFavorite = false,
+                    description = "Description",
+                    image = "https://google.com",
+                    dateTimeStamp = 0,
+                )
+            ),
             viewModel = hiltViewModel(),
+            onBack = {},
+            selectedSectionEvent = null,
         )
     }
 }
@@ -572,14 +624,28 @@ private fun PostPanePreview1() {
 @PreviewLightDark
 private fun PostPanePreview2() {
     DevBlogAppTheme {
-        PostPane(
-            data = Result.failure(exception = IllegalStateException()),
-            onOpenContests = {},
+        PostScreen(
+            route = Route.Post(
+                item = PostItem(
+                    title = "Title",
+                    url = "https://google.com",
+                    date = SimpleDate(
+                        dayOfMonth = 1,
+                        month = Month.JANUARY,
+                        year = 2023,
+                    ),
+                    isUnread = true,
+                    isFavorite = false,
+                    description = "Description",
+                    image = "https://google.com",
+                    dateTimeStamp = 0,
+                )
+            ),
+            onNavigate = { _ -> },
             listState = rememberLazyListState(),
-            selectedPost = null,
-            onRefresh = {},
             viewModel = hiltViewModel(),
-
-            )
+            onBack = {},
+            selectedSectionEvent = null,
+        )
     }
 }

@@ -22,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,8 +37,10 @@ import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
+import com.jet.article.example.devblog.ui.LocalBackstack
+import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.colorFavorited
-import com.jet.article.example.devblog.ui.home.LocalHomeScreenState
+import com.jet.article.example.devblog.ui.containsEntry
 import com.jet.article.ui.elements.HtmlImage
 import com.jet.article.ui.elements.HtmlTextBlock
 
@@ -52,12 +56,11 @@ fun HomeListItem(
     onToggleFavorite: (item: PostItem) -> Unit,
     item: PostItem,
     index: Int,
+    isSelected: Boolean,
 ) {
-
-    val mainState = LocalHomeScreenState.current
+    val backstack = LocalBackstack.current
     val windowInfo = currentWindowAdaptiveInfo()
     val windowWidth = windowInfo.windowSizeClass.windowWidthSizeClass
-    val isSelected = mainState.selectedIndex == index
 
     val containerColor = if (isSelected)
         MaterialTheme.colorScheme.secondaryContainer
@@ -76,8 +79,9 @@ fun HomeListItem(
             .wrapContentHeight()
             .animateContentSize()
     ) {
-        val isExpanded = mainState.role == ListDetailPaneScaffoldRole.Detail
-                || mainState.role == ListDetailPaneScaffoldRole.Extra
+        val isExpanded by rememberUpdatedState(
+            newValue = backstack.containsEntry(clazz = Route.Post::class)
+        )
 
         val isLargeWidth = windowWidth.isExpanded || windowWidth.isMedium
         when {
@@ -163,7 +167,7 @@ private fun HomeListItemColumn(
                             R.drawable.ic_favorite_outlined
                     ),
                     contentDescription = null,
-                    tint = if(item.isFavoriteState)
+                    tint = if (item.isFavoriteState)
                         colorFavorited
                     else
                         MaterialTheme.colorScheme.onBackground

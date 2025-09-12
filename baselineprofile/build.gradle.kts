@@ -2,7 +2,7 @@
 
 plugins {
     alias(libs.plugins.android.test)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.androidx.baselineprofile)
 }
 

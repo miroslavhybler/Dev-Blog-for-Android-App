@@ -8,15 +8,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.TitleTopBar
-import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.horizontalPadding
+import com.jet.article.example.devblog.ui.Route
+import com.jet.article.example.devblog.ui.SectionSelectedEvent
 
 
 /**
@@ -25,10 +30,17 @@ import com.jet.article.example.devblog.horizontalPadding
  * created on 14.08.2024
  */
 @Composable
-fun ContentsPane(
-    data: AdjustedPostData?,
-    onSelected: (index: Int, element: HtmlElement.Title) -> Unit,
+fun ContentsScreen(
+    route: Route.Contest,
+    onSelected: (SectionSelectedEvent) -> Unit,
+    viewModel: PostViewModel = hiltViewModel(),
 ) {
+    val postData by viewModel.postData.collectAsState()
+    val data = postData?.getOrNull()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadPostDetail(item = route.item)
+    }
 
     Scaffold(
         topBar = {
@@ -39,13 +51,21 @@ fun ContentsPane(
                 modifier = Modifier
                     .padding(paddingValues = paddingValues)
             ) {
-                itemsIndexed(items = data?.contest ?: emptyList()) { index, item ->
+                itemsIndexed(
+                    items = data?.contest ?: emptyList(),
+                    key = { index, item -> item.title.key },
+                ) { index, item ->
                     Text(
                         modifier = Modifier
                             .fillParentMaxWidth()
                             .clickable(
                                 onClick = {
-                                    onSelected(item.originalIndex, item.title)
+                                    onSelected(
+                                        SectionSelectedEvent(
+                                            index = item.originalIndex,
+                                            element = item.title,
+                                        )
+                                    )
                                 }
                             )
                             .horizontalPadding()

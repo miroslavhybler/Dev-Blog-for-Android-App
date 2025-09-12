@@ -3,13 +3,15 @@ import kotlin.collections.set
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.aboutLibraries)
+    alias(libs.plugins.kotlin.serialization)
 }
+
 
 android {
     namespace = "com.jet.article.example.devblog"
@@ -71,83 +73,92 @@ dependencies {
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     //debugImplementation(files("libs/jet-article-debug.aar"))
-    debugImplementation(files("libs/jet-article-debug.aar"))
-    releaseImplementation(files("libs/jet-article-release.aar"))
-    implementation(project(":tests-names"))
-    implementation(libs.jet.utils)
-    implementation(libs.jet.lint)
-    implementation(libs.jet.tts)
+    debugImplementation(dependencyNotation = files("libs/jet-article-debug.aar"))
+    releaseImplementation(dependencyNotation = files("libs/jet-article-release.aar"))
+    implementation(dependencyNotation = project(path = ":tests-names"))
+    implementation(dependencyNotation = libs.jet.utils)
+    implementation(dependencyNotation = libs.jet.lint)
+    implementation(dependencyNotation = libs.jet.tts) {
+        exclude(group = "androidx.compose.material3")
+        exclude(group = "androidx.compose")
+        exclude(group = "androidx.compose.ui")
+    }
 
-    implementation(libs.androidx.core.core.ktx)
-    implementation(libs.androidx.lifecycle.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.datastore.preferences.core)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.ui.tooling.preview)
-
-
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material)
-    implementation(libs.material3)
-    implementation(libs.androidx.adaptive.android)
-    implementation(libs.androidx.navigation.runtime.ktx)
-    implementation(libs.androidx.palette.ktx)
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.core.splashscreen)
+    implementation(dependencyNotation = libs.androidx.core.core.ktx)
+    implementation(dependencyNotation = libs.androidx.lifecycle.lifecycle.runtime.ktx)
+    implementation(dependencyNotation = libs.androidx.activity.compose)
+    //implementation(platform(libs.androidx.compose.bom))
+    implementation(dependencyNotation = libs.androidx.datastore.preferences.core)
+    implementation(dependencyNotation = libs.androidx.datastore.preferences)
+    implementation(dependencyNotation = libs.androidx.ui.tooling.preview)
 
 
-    implementation(libs.androidx.paging.runtime.ktx)
-    testImplementation(libs.androidx.paging.paging.common.ktx)
-    implementation(libs.androidx.paging.compose)
+    implementation(dependencyNotation = libs.androidx.ui)
+    implementation(dependencyNotation = libs.androidx.ui.graphics)
+    implementation(dependencyNotation = libs.ui.tooling.preview)
+    implementation(dependencyNotation = libs.material)
+    implementation(dependencyNotation = libs.material3)
+    implementation(dependencyNotation = libs.androidx.adaptive.android)
+    implementation(dependencyNotation = libs.androidx.palette.ktx)
+    implementation(dependencyNotation = libs.androidx.work.runtime.ktx)
+    implementation(dependencyNotation = libs.androidx.core.splashscreen)
 
-    implementation(libs.android.joda)
-    implementation(libs.aboutlibraries.compose)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
+
+    implementation(dependencyNotation = libs.androidx.paging.runtime.ktx)
+    testImplementation(dependencyNotation = libs.androidx.paging.paging.common.ktx)
+    implementation(dependencyNotation = libs.androidx.paging.compose)
+
+    implementation(dependencyNotation = libs.android.joda)
+    implementation(dependencyNotation = libs.aboutlibraries.compose)
+    implementation(dependencyNotation = libs.coil.compose)
+    implementation(dependencyNotation = libs.coil.gif)
 
     /** Adaptive UI */
-    implementation(libs.androidx.adaptive)
-    implementation(libs.androidx.adaptive.layout)
-    implementation(libs.androidx.adaptive.navigation)
-    implementation(libs.androidx.adaptive.navigation.suite)
+    implementation(dependencyNotation = libs.androidx.adaptive)
+    implementation(dependencyNotation = libs.androidx.adaptive.layout)
+    implementation(dependencyNotation = libs.androidx.adaptive.navigation)
+    implementation(dependencyNotation = libs.androidx.adaptive.navigation.suite)
+
+    /** Navigation 3 */
+    implementation(dependencyNotation = libs.androidx.material3.navigation3)
+    implementation(dependencyNotation = libs.androidx.navigation3.ui)
+    implementation(dependencyNotation = libs.androidx.navigation3.runtime)
+    implementation(dependencyNotation = libs.androidx.lifecycle.viewmodel.navigation3)
 
     /** Room Database */
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.datastore.core.android)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.storage)
-    implementation(libs.androidx.profileinstaller)
-    baselineProfile(project(":baselineprofile"))
-    debugImplementation(libs.ui.tooling)
-    ksp(libs.androidx.room.compiler)
+    implementation(dependencyNotation = libs.androidx.room.runtime)
+    implementation(dependencyNotation = libs.androidx.room.ktx)
+    implementation(dependencyNotation = libs.androidx.datastore.core.android)
+    implementation(dependencyNotation = libs.androidx.appcompat)
+    implementation(dependencyNotation = libs.androidx.storage)
+    implementation(dependencyNotation = libs.androidx.profileinstaller)
+    baselineProfile(dependencyNotation = project(path = ":baselineprofile"))
+    debugImplementation(dependencyNotation = libs.ui.tooling)
+    ksp(dependencyNotation = libs.androidx.room.compiler)
 
     /** InApp updates*/
-    implementation(libs.app.update.ktx)
+    implementation(dependencyNotation = libs.app.update.ktx)
 
     /** KTOR */
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging.jvm)
+    implementation(dependencyNotation = libs.ktor.client.android)
+    implementation(dependencyNotation = libs.ktor.client.serialization)
+    implementation(dependencyNotation = libs.ktor.client.logging.jvm)
 
     /** Hilt DI */
-    implementation(libs.google.dagger.hilt)
-    implementation(libs.androidx.hilt.common)
-    ksp(libs.google.dagger.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.work)
+    implementation(dependencyNotation = libs.google.dagger.hilt)
+    implementation(dependencyNotation = libs.androidx.hilt.common)
+    ksp(dependencyNotation = libs.google.dagger.hilt.compiler)
+    implementation(dependencyNotation = libs.androidx.hilt.navigation.compose)
+    implementation(dependencyNotation = libs.androidx.hilt.work)
 
 
     /** Tests */
-    implementation(libs.androidx.runtime.tracing)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(dependencyNotation = libs.androidx.runtime.tracing)
+    testImplementation(dependencyNotation = libs.junit)
+    androidTestImplementation(dependencyNotation = libs.androidx.junit)
+    androidTestImplementation(dependencyNotation = libs.androidx.espresso.core)
+    //  androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(dependencyNotation = libs.androidx.ui.test.junit4)
+    debugImplementation(dependencyNotation = libs.ui.tooling)
+    debugImplementation(dependencyNotation = libs.androidx.ui.test.manifest)
 }

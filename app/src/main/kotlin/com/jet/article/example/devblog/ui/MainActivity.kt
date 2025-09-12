@@ -8,8 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,24 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.isAppDark
 import com.jet.article.example.devblog.rememberSystemBarsStyle
-import com.jet.article.example.devblog.ui.home.HomeScreen
-import com.jet.article.example.devblog.ui.settings.AboutLibsScreen
-import com.jet.article.example.devblog.ui.settings.AboutScreen
-import com.jet.article.example.devblog.ui.settings.ChangelogScreen
-import com.jet.article.example.devblog.ui.settings.SettingsScreen
 import com.jet.tts.TtsClient
 import com.jet.tts.rememberTtsClient
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,7 +95,6 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition(condition = { isSplashScreenVisible })
         super.onCreate(savedInstanceState)
 
-
         lifecycleScope.launch {
             delay(timeMillis = 1_000)
             //Just in case that onDataLoaded() will not be called after 1 sec (this can be due
@@ -172,59 +157,8 @@ class MainActivity : ComponentActivity() {
                             navigationBarStyle = systemBarsStyle,
                         )
                     }
-                    val navHostController = rememberNavController()
-                    NavHost(
-                        modifier = Modifier
-                            .semantics { testTagsAsResourceId = true },
-                        navController = navHostController,
-                        startDestination = Routes.main,
-                    ) {
-                        composable(route = Routes.main) {
-                            HomeScreen(
-                                viewModel = hiltViewModel(),
-                                navHostController = navHostController,
-                            )
-                        }
 
-                        composable(
-                            route = Routes.settings,
-                            enterTransition = { fadeIn() },
-                            exitTransition = { fadeOut() },
-                        ) {
-                            SettingsScreen(
-                                navHostController = navHostController,
-                                viewModel = hiltViewModel(),
-                            )
-                        }
-
-                        composable(
-                            route = Routes.aboutLibs,
-                            enterTransition = { fadeIn() },
-                            exitTransition = { fadeOut() },
-                        ) {
-                            AboutLibsScreen(
-                                navHostController = navHostController,
-                            )
-                        }
-                        composable(
-                            route = Routes.changeLog,
-                            enterTransition = { fadeIn() },
-                            exitTransition = { fadeOut() },
-                        ) {
-                            ChangelogScreen(
-                                navHostController = navHostController,
-                            )
-                        }
-                        composable(
-                            route = Routes.about,
-                            enterTransition = { fadeIn() },
-                            exitTransition = { fadeOut() },
-                        ) {
-                            AboutScreen(
-                                navHostController = navHostController,
-                            )
-                        }
-                    }
+                    MainNavDisplay()
                 }
             }
         }

@@ -29,7 +29,9 @@ import javax.inject.Inject
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import com.jet.article.example.devblog.data.CoreRepo
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.data.database.DatabaseRepo
 
 
 /**
@@ -140,13 +142,24 @@ class AndroidDevBlogApp : Application(),
         }
     }
 
-
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    @Inject
+    lateinit var databaseRepo: DatabaseRepo
+
+    @Inject
+    lateinit var coreRepo: CoreRepo
 
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
+        get() = Configuration.Builder()
+            .setWorkerFactory(
+                workerFactory
+//                ContentSyncWorker.Factory(
+//                    databaseRepo = databaseRepo,
+//                    coreRepo = coreRepo,
+//                )
+            ).build()
 
 
     override fun onCreate() {
