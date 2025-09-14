@@ -1,4 +1,4 @@
-package com.jet.article.example.devblog.ui.home.post
+package com.jet.article.example.devblog.ui.post
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

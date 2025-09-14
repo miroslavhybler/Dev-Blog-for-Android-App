@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,27 +41,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.jet.article.example.devblog.BuildConfig
+import com.jet.article.example.devblog.OnLifecycleEvent
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.TitleTopBar
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.openNotificationSettings
 import com.jet.article.example.devblog.openWeb
+import com.jet.article.example.devblog.opendDeeplinkSettings
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.LocalDimensions
-import com.jet.article.example.devblog.ui.Routes
+import com.jet.article.example.devblog.ui.Route
 import com.jet.utils.plus
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.setValue
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.jet.article.example.devblog.OnLifecycleEvent
-import com.jet.article.example.devblog.opendDeeplinkSettings
-import com.jet.article.example.devblog.ui.Route
 
 
 /**

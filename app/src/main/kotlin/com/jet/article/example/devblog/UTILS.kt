@@ -310,3 +310,20 @@ fun Context.openNotificationSettings() {
             .putExtra("android.provider.extra.APP_PACKAGE", packageName)
     )
 }
+
+
+fun Context.shareUrl(
+    url: String,
+    title: String? = null,
+) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, url)
+        title?.let {
+            putExtra(Intent.EXTRA_SUBJECT, it)
+        }
+    }
+
+    // Use a chooser to let the user pick the app
+    startActivity(Intent.createChooser(intent, title ?: "Share via"))
+}

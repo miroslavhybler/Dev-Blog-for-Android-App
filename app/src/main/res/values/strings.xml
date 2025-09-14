@@ -95,4 +95,13 @@
     <string name="general_unread">UNREAD</string>
     <string name="contents_title">Contents</string>
 
+
+    <string name="content_desc_add_to_favorites">Add to favorites</string>
+    <string name="content_desc_remove_from_favorites">Remove from favorites</string>
+    <string name="content_desc_share">Share</string>
+    <string name="content_desc_open_in_browser">Open in browser</string>
+    <string name="content_desc_show_contents">Show Contents</string>
+    <string name="content_desc_show_menu">Show menu</string>
+    <string name="content_desc_speak_tts">Read by TTS</string>
+    <string name="content_desc_stop_tts">Stop TTS</string>
 </resources>

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalSharedTransitionApi::class)
 
-package com.jet.article.example.devblog.ui.home.post
+package com.jet.article.example.devblog.ui.post
 
 import android.util.Log
 import androidx.activity.compose.BackHandler

@@ -1,7 +1,6 @@
-package com.jet.article.example.devblog.ui.home.list
+package com.jet.article.example.devblog.ui.home
 
 import android.app.Application
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -13,8 +12,6 @@ import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 

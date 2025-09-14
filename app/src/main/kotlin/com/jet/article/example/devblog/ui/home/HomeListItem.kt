@@ -1,4 +1,4 @@
-package com.jet.article.example.devblog.ui.home.list
+package com.jet.article.example.devblog.ui.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -30,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage

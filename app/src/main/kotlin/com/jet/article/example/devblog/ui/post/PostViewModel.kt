@@ -1,4 +1,4 @@
-package com.jet.article.example.devblog.ui.home.post
+package com.jet.article.example.devblog.ui.post
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
@@ -29,7 +29,7 @@ class PostViewModel @Inject constructor(
 
 
     /**
-     * Holding detail of [mSelectedPost] for [com.jet.article.example.devblog.ui.home.post.PostScreen].
+     * Holding detail of [mSelectedPost] for [PostScreen].
      */
     private val mPostData: MutableStateFlow<Result<AdjustedPostData>?> =
         MutableStateFlow(value = null)

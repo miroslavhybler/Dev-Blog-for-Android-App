@@ -4,11 +4,11 @@ package com.jet.article.example.devblog.data
 
 import com.jet.article.data.HtmlArticleData
 import com.jet.article.data.HtmlElement
-import com.jet.article.example.devblog.ui.home.post.TitleWithOriginalIndex
+import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
 
 
 /**
- * @param headerImage Image used as background for TopBar in [com.jet.article.example.devblog.ui.home.post.PostScreen]
+ * @param headerImage Image used as background for TopBar in [com.jet.article.example.devblog.ui.post.PostScreen]
  * @param postData Adjusted post data to be shown as content
  * @param date Date of post
  * @param title Title of the post

@@ -22,10 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.navigation.NavHostController
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.horizontalPadding
-import com.jet.article.example.devblog.ui.Routes
 import com.jet.article.ui.elements.HtmlTextBlock
 
 

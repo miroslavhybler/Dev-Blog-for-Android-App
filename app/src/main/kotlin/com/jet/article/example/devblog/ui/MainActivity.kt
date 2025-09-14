@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
 
         /**
-         * Should be called when data for [com.jet.article.example.devblog.ui.home.list.HomeListPane]
+         * Should be called when data for [com.jet.article.example.devblog.ui.home.HomeListPane]
          * are loaded. This is needed to hide splashscreen and handle the case of "Double SplashScreen"
          * issue.
          */

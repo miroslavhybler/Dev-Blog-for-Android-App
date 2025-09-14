@@ -78,7 +78,7 @@ private val DarkColorScheme = darkColorScheme(
     error = Color(color = 0xFF420000),
     onError = Color(color = 0xFFFFFFFF),
     errorContainer = Color(color = 0xFF420000),
-    onErrorContainer = Color(0xFFFFFFFF),
+    onErrorContainer = Color(color = 0xFFFFFFFF),
     background = Color(color = 0xFF181818),
     onBackground = Color(color = 0xFFEFEFEF),
     surface = Color(color = 0xFF181818),
@@ -90,7 +90,6 @@ private val DarkColorScheme = darkColorScheme(
 
 
 val colorFavorited: Color = Color(color = 0xFFFD7575)
-
 
 
 @Composable
@@ -202,18 +201,9 @@ val LocalDeepLink: ProvidableCompositionLocal<String?> = compositionLocalOf(
 )
 
 
-val LocalTtsClient: ProvidableCompositionLocal<TtsClient> = staticCompositionLocalOf(
-    defaultFactory = { error("TtsClient not provided") }
+val LocalTtsClient: ProvidableCompositionLocal<TtsClient?> = staticCompositionLocalOf(
+    defaultFactory = { null }
 )
-
-
-data object Routes {
-    const val main: String = "main"
-    const val settings: String = "settings"
-    const val aboutLibs: String = "settings/about-libs"
-    const val changeLog: String = "settings/channel-log"
-    const val about: String = "settings/about"
-}
 
 
 @Composable

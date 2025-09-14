@@ -3,7 +3,7 @@
     ExperimentalSharedTransitionApi::class,
 )
 
-package com.jet.article.example.devblog.ui.home.post
+package com.jet.article.example.devblog.ui.post
 
 import android.animation.ArgbEvaluator
 import android.content.ActivityNotFoundException
@@ -11,12 +11,9 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +34,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -68,7 +63,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -89,7 +83,9 @@ import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.data.SimpleDate
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.horizontalPadding
+import com.jet.article.example.devblog.openWeb
 import com.jet.article.example.devblog.rememberCurrentOffset
+import com.jet.article.example.devblog.shareUrl
 import com.jet.article.example.devblog.shared.Tracing
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.LocalDeepLink
@@ -98,7 +94,7 @@ import com.jet.article.example.devblog.ui.LocalTtsClient
 import com.jet.article.example.devblog.ui.MainActivity
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
-import com.jet.article.example.devblog.ui.home.list.NewPostMark
+import com.jet.article.example.devblog.ui.home.NewPostMark
 import com.jet.article.toAnnotatedString
 import com.jet.article.toHtml
 import com.jet.article.ui.JetHtmlArticleContent
@@ -110,12 +106,14 @@ import com.jet.tts.TextTts
 import com.jet.tts.rememberTtsState
 import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
+import com.jet.article.example.devblog.composables.MessageSnackbar
+import com.jet.article.example.devblog.composables.rememberSnackbarState
 import kotlinx.coroutines.launch
 
 
 /**
- * Showing single [PostItem] selected on [com.jet.article.example.devblog.ui.home.list.HomeListPane].
- * [AdjustedPostData] are parsed from Html using [com.jet.article.ArticleParser] in [com.jet.article.example.devblog.data.CoreRepo].
+ * Showing single [PostItem] selected on [com.jet.article.example.devblog.ui.home.HomeListPane].
+ * [AdjustedPostData] are parsed from Html using [ArticleParser] in [com.jet.article.example.devblog.data.CoreRepo].
  * @author Miroslav Hýbler <br>
  * created on 13.08.2024
  */
@@ -211,7 +209,7 @@ fun PostScreen(
 
     var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
-
+    val snackbarState = rememberSnackbarState()
 
     LaunchedEffect(key1 = deeplink) {
         if (deeplink != null) {
@@ -338,7 +336,7 @@ fun PostScreen(
 
     DisposableEffect(key1 = Unit) {
         onDispose {
-            ttsClient.stop()
+            ttsClient?.stop()
         }
     }
 
@@ -460,7 +458,8 @@ fun PostScreen(
                                             TextTts(
                                                 text = title.text,
                                                 utteranceId = "${title.key}",
-                                                ttsClient = ttsClient,
+                                                ttsClient = ttsClient
+                                                    ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
                                                 style = when (title.titleTag) {
                                                     "h1", "h2" -> MaterialTheme.typography.displaySmall
@@ -475,7 +474,8 @@ fun PostScreen(
                                             TextTts(
                                                 text = text.text,
                                                 utteranceId = "${text.key}",
-                                                ttsClient = ttsClient,
+                                                ttsClient = ttsClient
+                                                    ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
                                                 highlightStyle = TextStyle(
                                                     color = MaterialTheme.colorScheme.secondary,
@@ -496,7 +496,8 @@ fun PostScreen(
                                                                 )
                                                         },
                                                         utteranceId = "${basicList.key + 1_000_000 + index}",
-                                                        ttsClient = ttsClient,
+                                                        ttsClient = ttsClient
+                                                            ?: throw NullPointerException("TtsClient not provided"),
                                                         scrollableState = state.listState,
                                                         highlightStyle = TextStyle(
                                                             color = MaterialTheme.colorScheme.secondary,
@@ -551,39 +552,40 @@ fun PostScreen(
                 }
             }
         },
-        floatingActionButton = {
-            if (
-                post != null
-                && post.contest.isNotEmpty()
-            ) {
-                AnimatedVisibility(
-                    visible = selectedImageUrl == null,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    FloatingActionButton(
-                        modifier = Modifier.horizontalPadding(),
-                        onClick = {
-                            onNavigate(Route.Contest(item = selectedPost))
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_content),
-                            contentDescription = stringResource(id = R.string.content_desc_show_contest),
-                        )
-                    }
-                }
-            }
+        snackbarHost = {
+            MessageSnackbar(
+                state = snackbarState,
+            )
         },
         bottomBar = {
-            PostBottomBar(
-                ttsState = ttsState,
-                onToggleFavorite = {
-                    viewModel.toggleFavoriteItem(item = selectedPost)
-                },
-                isFavorite = selectedPost.isFavoriteState,
-                isUsingTTS = settings.isUsingTTS,
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                PostBottomBar(
+                    ttsState = ttsState,
+                    onToggleFavorite = {
+                        viewModel.toggleFavoriteItem(item = selectedPost)
+                    },
+                    onShowContest = {
+                        onNavigate(Route.Contest(item = selectedPost))
+                    },
+                    onOpenWeb = {
+                        context.openWeb(url = selectedPost.url)
+                    },
+                    onShare = {
+                        context.shareUrl(
+                            url = selectedPost.url,
+                            title = selectedPost.title
+                        )
+                    },
+                    isFavorite = selectedPost.isFavoriteState,
+                    isUsingTTS = settings.isUsingTTS,
+                    snackbarState = snackbarState,
+                )
+            }
         }
     )
 }

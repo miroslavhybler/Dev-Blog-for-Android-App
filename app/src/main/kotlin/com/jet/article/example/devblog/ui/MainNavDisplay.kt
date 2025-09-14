@@ -15,6 +15,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -33,10 +34,12 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.database.PostItem
-import com.jet.article.example.devblog.ui.home.list.HomeListPane
-import com.jet.article.example.devblog.ui.home.post.ContentsScreen
-import com.jet.article.example.devblog.ui.home.post.PostEmptyPane
-import com.jet.article.example.devblog.ui.home.post.PostScreen
+import com.jet.article.example.devblog.isExpanded
+import com.jet.article.example.devblog.isMedium
+import com.jet.article.example.devblog.ui.home.HomeListPane
+import com.jet.article.example.devblog.ui.post.ContentsScreen
+import com.jet.article.example.devblog.ui.post.PostEmptyPane
+import com.jet.article.example.devblog.ui.post.PostScreen
 import com.jet.article.example.devblog.ui.settings.AboutLibsScreen
 import com.jet.article.example.devblog.ui.settings.AboutScreen
 import com.jet.article.example.devblog.ui.settings.ChangelogScreen
@@ -71,16 +74,34 @@ public data class SectionSelectedEvent public constructor(
  */
 @Composable
 fun MainNavDisplay() {
-    val backstack: MutableBackstack = rememberNavBackStack(
-        Route.Home,
-    //    Route.EmptyPostPlaceholder,
-    )
+    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
     val directive = calculatePaneScaffoldDirective(
-        windowAdaptiveInfo = currentWindowAdaptiveInfo(),
+        windowAdaptiveInfo = windowAdaptiveInfo,
     )
+    val width = windowAdaptiveInfo.windowSizeClass.windowWidthSizeClass
+    val hasSpaceForEmptyDetail = width.isExpanded || width.isMedium
+    val backstack: MutableBackstack = rememberNavBackStack(
+        elements = buildList {
+
+            add(element = Route.Home)
+            if (hasSpaceForEmptyDetail) {
+                add(element = Route.EmptyPostPlaceholder)
+            }
+        }.toTypedArray()
+    )
+
 
     var selectedSectionEvent: SectionSelectedEvent? by remember { mutableStateOf(value = null) }
 
+    LaunchedEffect(key1 = hasSpaceForEmptyDetail) {
+        if (hasSpaceForEmptyDetail) {
+            if (!backstack.contains(element = Route.EmptyPostPlaceholder)) {
+                backstack.add(element = Route.EmptyPostPlaceholder)
+            }
+        } else {
+            backstack.remove(element = Route.EmptyPostPlaceholder)
+        }
+    }
 
 
     CompositionLocalProvider(
@@ -188,7 +209,6 @@ fun MainNavDisplay() {
                             },
                         )
                     }
-
                 }
             ),
         )
