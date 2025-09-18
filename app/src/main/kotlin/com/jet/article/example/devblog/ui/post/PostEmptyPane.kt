@@ -37,7 +37,7 @@ fun PostEmptyPane() {
 
         EmptyAnimation(modifier = Modifier)
 
-        Spacer(modifier = Modifier.height(height = 8.dp))
+        Spacer(modifier = Modifier.height(height = 16.dp))
 
         Android()
 

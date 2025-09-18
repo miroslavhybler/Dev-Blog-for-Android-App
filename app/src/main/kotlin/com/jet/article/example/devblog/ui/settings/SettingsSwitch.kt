@@ -10,6 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.ui.LocalDimensions
@@ -27,10 +31,15 @@ fun SettingsSwitch(
     onCheckedChange: (Boolean) -> Unit = {},
     subtitle: String? = null,
 ) {
-    val dimensions = LocalDimensions.current
     Row(
         modifier = modifier
             .clickable(onClick = { onCheckedChange(!isChecked) })
+            .semantics(
+                properties = {
+                    role = Role.Switch
+                    contentDescription = title
+                }
+            )
             .horizontalPadding()
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically

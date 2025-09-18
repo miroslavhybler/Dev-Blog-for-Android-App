@@ -166,9 +166,9 @@ fun PostBottomBar(
                         snackbarState = snackbarState,
                         label = stringResource(
                             id = if (ttsClient?.isSpeaking == true)
-                                R.string.content_desc_speak_tts
+                                R.string.content_desc_stop_tts
                             else
-                                R.string.content_desc_stop_tts,
+                                R.string.content_desc_speak_tts,
                         ),
                         shape = shape,
                     )
@@ -281,6 +281,7 @@ private fun RowScope.Item(
             }
         }
     }
+
     Box(
         modifier = modifier
             .size(size = ITEM_SIZE)

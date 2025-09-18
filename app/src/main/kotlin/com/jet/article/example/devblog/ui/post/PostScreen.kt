@@ -8,6 +8,7 @@ package com.jet.article.example.devblog.ui.post
 import android.animation.ArgbEvaluator
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedContent
@@ -70,7 +71,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
 import androidx.core.text.toSpannable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
@@ -108,6 +110,7 @@ import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
 import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.rememberSnackbarState
+import com.jet.tts.TtsLifecycleAwareEffect
 import kotlinx.coroutines.launch
 
 
@@ -139,18 +142,19 @@ fun PostScreen(
         initial = SettingsStorage.Settings(),
     )
 
-    val data by viewModel.postData.collectAsState()
+    val data by viewModel.postData.collectAsStateWithLifecycle()
 
     val post = remember(key1 = data) {
         data?.getOrNull()
     }
+
     var lastUrl: String? by remember { mutableStateOf(value = null) }
     val colorEvaluator = remember { ArgbEvaluator() }
     val coroutineScope = rememberCoroutineScope()
     val scrollOffsetY by rememberCurrentOffset(state = listState)
     var lastScrollOffsetY by remember() { mutableIntStateOf(value = scrollOffsetY) }
     var topBarAlpha by rememberSaveable { mutableFloatStateOf(value = 0f) }
-    val ttsState = rememberTtsState()
+    val ttsState = rememberTtsState(key = selectedPost.id)
 
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = rememberTopAppBarState()
@@ -211,6 +215,11 @@ fun PostScreen(
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
     val snackbarState = rememberSnackbarState()
 
+    TtsLifecycleAwareEffect(
+        client = ttsClient ?: throw NullPointerException("TtsClient not provided"),
+        state = ttsState,
+    )
+
     LaunchedEffect(key1 = deeplink) {
         if (deeplink != null) {
             viewModel.loadPostFromDeeplink(
@@ -223,6 +232,8 @@ fun PostScreen(
             viewModel.loadPostDetail(item = selectedPost)
         }
     }
+
+
 
 
     LaunchedEffect(key1 = data) {
@@ -250,17 +261,18 @@ fun PostScreen(
         val mPost = post ?: return@LaunchedEffect
         //Adding content from post to TTS State so text can be spoken
 
+        // ttsState.clear()
         mPost.postData.elements.forEach { element ->
             when (element) {
                 is HtmlElement.Title -> {
-                    ttsState["${element.key}"] =
+                    ttsState["${selectedPost.id}_${element.key}"] =
                         ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
                             input = element.text.toString(),
                         )
                 }
 
                 is HtmlElement.TextBlock -> {
-                    ttsState["${element.key}"] =
+                    ttsState["${selectedPost.id}_${element.key}"] =
                         ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
                             input = element.text.toString()
                         )
@@ -272,7 +284,7 @@ fun PostScreen(
                             ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
                                 input = item,
                             )
-                        val utteranceId = "${element.key + 1_000_000 + index}"
+                        val utteranceId = "${selectedPost.id}_${element.key + 1_000_000 + index}"
                         ttsState[utteranceId] = cleanTextForTTS
                     }
                 }
@@ -334,9 +346,11 @@ fun PostScreen(
     }
 
 
+
     DisposableEffect(key1 = Unit) {
         onDispose {
-            ttsClient?.stop()
+            ttsClient.stop()
+            viewModel.clear()
         }
     }
 
@@ -439,7 +453,7 @@ fun PostScreen(
                                         verticalArrangement = Arrangement.spacedBy(space = 24.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         header = {
-                                            if (selectedPost?.isUnread == true) {
+                                            if (selectedPost.isUnread) {
                                                 //Using isUnread instead of isUnreadState on purpose, post is marked
                                                 //as read when opened, so this will keep the mark visible
                                                 Box(
@@ -457,7 +471,7 @@ fun PostScreen(
                                         title = { title ->
                                             TextTts(
                                                 text = title.text,
-                                                utteranceId = "${title.key}",
+                                                utteranceId = "${selectedPost.id}_${title.key}",
                                                 ttsClient = ttsClient
                                                     ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
@@ -473,7 +487,7 @@ fun PostScreen(
                                         text = { text ->
                                             TextTts(
                                                 text = text.text,
-                                                utteranceId = "${text.key}",
+                                                utteranceId = "${selectedPost.id}_${text.key}",
                                                 ttsClient = ttsClient
                                                     ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
@@ -495,7 +509,7 @@ fun PostScreen(
                                                                     linkClickHandler = post.postData.linkHandler,
                                                                 )
                                                         },
-                                                        utteranceId = "${basicList.key + 1_000_000 + index}",
+                                                        utteranceId = "${selectedPost.id}_${basicList.key + 1_000_000 + index}",
                                                         ttsClient = ttsClient
                                                             ?: throw NullPointerException("TtsClient not provided"),
                                                         scrollableState = state.listState,

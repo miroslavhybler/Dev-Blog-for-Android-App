@@ -76,13 +76,10 @@ dependencies {
     debugImplementation(dependencyNotation = files("libs/jet-article-debug.aar"))
     releaseImplementation(dependencyNotation = files("libs/jet-article-release.aar"))
     implementation(dependencyNotation = project(path = ":tests-names"))
+
     implementation(dependencyNotation = libs.jet.utils)
     implementation(dependencyNotation = libs.jet.lint)
-    implementation(dependencyNotation = libs.jet.tts) {
-        exclude(group = "androidx.compose.material3")
-        exclude(group = "androidx.compose")
-        exclude(group = "androidx.compose.ui")
-    }
+    implementation(dependencyNotation = libs.jet.tts)
 
     implementation(dependencyNotation = libs.androidx.core.core.ktx)
     implementation(dependencyNotation = libs.androidx.lifecycle.lifecycle.runtime.ktx)

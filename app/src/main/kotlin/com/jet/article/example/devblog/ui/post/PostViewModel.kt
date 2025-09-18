@@ -59,6 +59,10 @@ class PostViewModel @Inject constructor(
     }
 
 
+    fun clear() {
+        mPostData.value = null
+    }
+
     /**
      * Loads post detail from deeplink [url]
      * @param url Url to post detail that was passed as a deeplink into the app
