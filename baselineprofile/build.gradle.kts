@@ -3,7 +3,7 @@
 plugins {
     alias(libs.plugins.android.test)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -16,7 +16,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    targetProjectPath = ":app"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -29,6 +28,7 @@ android {
     kotlin {
         jvmToolchain(jdkVersion = 11)
     }
+    targetProjectPath = ":app"
 }
 
 // This is the configuration block for the Baseline Profile plugin.
@@ -39,6 +39,7 @@ baselineProfile {
 
 dependencies {
     implementation(project(":tests-names"))
+    implementation(project(":tests-shared"))
 
     implementation(libs.androidx.junit)
     implementation(libs.androidx.espresso.core)
@@ -51,7 +52,7 @@ androidComponents {
         val artifactsLoader = v.artifacts.getBuiltArtifactsLoader()
         v.instrumentationRunnerArguments.put(
             "targetAppId",
-            v.testedApks.map { artifactsLoader.load(it)?.applicationId!! }
+            v.testedApks.map { artifactsLoader.load(it)!!.applicationId }
         )
     }
 }

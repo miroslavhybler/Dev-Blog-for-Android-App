@@ -11,6 +11,7 @@ import androidx.benchmark.macro.TraceSectionMetric
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.jet.article.example.devblog.shared.Tracing
+import com.jet.article.example.devblog.tests.shared.Scenarios
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -33,18 +34,6 @@ class HomeListBenchmark : BaseBenchMark() {
             ),
         ),
     ) {
-        pressHome()
-        startActivityAndWait()
-        val postsLazyColumn = device.ensureObject(tag = Tracing.Tag.posts)
-        postsLazyColumn.setGestureMargin(device.displayWidth / 5)
-        repeat(2) {
-            postsLazyColumn.drag(
-                Point(
-                    postsLazyColumn.visibleCenter.x,
-                    postsLazyColumn.visibleBounds.top
-                )
-            )
-            Thread.sleep(500)
-        }
+        Scenarios.openHomeAndScroll(scope = this)
     }
 }

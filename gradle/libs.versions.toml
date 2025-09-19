@@ -3,9 +3,9 @@ aboutLibraries = "12.2.4"
 adaptive = "1.1.0"
 androidJodaVersion = "2.13.1"
 appUpdateKtx = "2.1.0"
-benchmark = "1.4.0"
+benchmark = "1.4.1"
 coil = "2.7.0"
-composeBom = "2025.08.01"
+composeBom = "2025.07.00"
 activityCompose = "1.10.1"
 coreSplashscreen = "1.0.1"
 datastorePreferencesCore = "1.1.7"
@@ -43,6 +43,7 @@ datastore = "1.2.0-alpha02"
 appcompat = "1.7.1"
 storage = "1.6.0"
 profileinstaller = "1.4.1"
+
 [libraries]
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "aboutLibraries" }
 android-joda = { module = "net.danlew:android.joda", version.ref = "androidJodaVersion" }
@@ -129,6 +130,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

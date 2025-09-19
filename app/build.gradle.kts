@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -40,11 +40,6 @@ android {
         create("benchmark") {
             initWith(buildTypes.getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
-            isDebuggable = false
-        }
-        create("benchmark1") {
-            initWith(buildTypes.getByName("release"))
             matchingFallbacks += listOf("release")
             isDebuggable = false
         }
@@ -150,11 +145,19 @@ dependencies {
 
 
     /** Tests */
+    add(
+        configurationName = "benchmarkImplementation",
+        dependencyNotation = "androidx.test:core-ktx:1.5.0"
+    )
+    add(
+        configurationName = "benchmarkImplementation",
+        dependencyNotation = files("libs/jet-article-release.aar")
+    )
     implementation(dependencyNotation = libs.androidx.runtime.tracing)
     testImplementation(dependencyNotation = libs.junit)
     androidTestImplementation(dependencyNotation = libs.androidx.junit)
     androidTestImplementation(dependencyNotation = libs.androidx.espresso.core)
-    //  androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(dependencyNotation = libs.androidx.ui.test.junit4)
     debugImplementation(dependencyNotation = libs.ui.tooling)
     debugImplementation(dependencyNotation = libs.androidx.ui.test.manifest)

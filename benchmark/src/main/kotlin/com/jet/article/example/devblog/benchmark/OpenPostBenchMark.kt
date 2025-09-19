@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.Direction
 import com.jet.article.example.devblog.shared.Tracing
+import com.jet.article.example.devblog.tests.shared.Scenarios
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -39,19 +40,8 @@ class OpenPostBenchMark : BaseBenchMark() {
             ),
         ),
     ) {
-        pressHome()
-        startActivityAndWait()
-        //Waiting for first post item to appear
-        val firstPost = device.ensureObject(tag = Tracing.Tag.firstPostItem)
-        //Performing click, opening PostPane with selected post
-        firstPost.click()
-        //Waiting for post to be loaded and displayed
-        val jetHtmlArticle = device.ensureObject(tag = Tracing.Tag.jetHtmlArticle)
-
-        //Scrolling down in PostPane, simulation of reading post
-        repeat(2) {
-            jetHtmlArticle.fling(Direction.DOWN, 1024,)
-            Thread.sleep(500)
-        }
+        Scenarios.openPost(
+            scope = this,
+        )
     }
 }
