@@ -134,7 +134,8 @@ class MainActivity : ComponentActivity() {
                     client.setLanguage(language = Locale.getDefault())
                     client.highlightMode =
                         TtsClient.HighlightMode.SPOKEN_RANGE_FROM_BEGINNING_INCLUDING_PREVIOUS_UTTERANCES
-
+                    client.tapNavigationBehavior =
+                        TtsClient.TapNavigationBehavior.ONLY_WHEN_CURRENTLY_SPEAKING
                 }
             )
             val settings by viewModel.settings.collectAsState(

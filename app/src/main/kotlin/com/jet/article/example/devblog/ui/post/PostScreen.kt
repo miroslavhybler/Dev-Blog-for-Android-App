@@ -261,7 +261,6 @@ fun PostScreen(
         val mPost = post ?: return@LaunchedEffect
         //Adding content from post to TTS State so text can be spoken
 
-        // ttsState.clear()
         mPost.postData.elements.forEach { element ->
             when (element) {
                 is HtmlElement.Title -> {
@@ -469,17 +468,18 @@ fun PostScreen(
                                             }
                                         },
                                         title = { title ->
+                                            val style = when (title.titleTag) {
+                                                "h1", "h2" -> MaterialTheme.typography.displaySmall
+                                                else -> MaterialTheme.typography.titleLarge
+                                            }
                                             TextTts(
                                                 text = title.text,
                                                 utteranceId = "${selectedPost.id}_${title.key}",
                                                 ttsClient = ttsClient
                                                     ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
-                                                style = when (title.titleTag) {
-                                                    "h1", "h2" -> MaterialTheme.typography.displaySmall
-                                                    else -> MaterialTheme.typography.titleLarge
-                                                },
-                                                highlightStyle = TextStyle(
+                                                style = style,
+                                                highlightStyle = style.copy(
                                                     color = MaterialTheme.colorScheme.secondary,
                                                 )
                                             )

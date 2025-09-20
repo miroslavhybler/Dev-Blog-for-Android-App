@@ -4,6 +4,11 @@
 package com.jet.article.example.devblog.ui
 
 import androidx.annotation.Keep
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -27,6 +32,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -211,6 +217,18 @@ fun MainNavDisplay() {
                     }
                 }
             ),
+            predictivePopTransitionSpec = {
+                val outT = slideOut(
+                    targetOffset = { size ->
+                        IntOffset(x = size.width, y = 0)
+                    }
+                ) + fadeOut()
+
+                //In transition for the underlying screen
+                val inT = fadeIn()
+
+                inT togetherWith outT
+            }
         )
     }
 }

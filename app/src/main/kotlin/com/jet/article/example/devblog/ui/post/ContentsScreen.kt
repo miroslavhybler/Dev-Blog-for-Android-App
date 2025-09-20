@@ -1,6 +1,10 @@
 package com.jet.article.example.devblog.ui.post
 
+import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,10 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
@@ -33,7 +38,7 @@ import com.jet.article.example.devblog.ui.SectionSelectedEvent
 fun ContentsScreen(
     route: Route.Contest,
     onSelected: (SectionSelectedEvent) -> Unit,
-    viewModel: PostViewModel = hiltViewModel(),
+    viewModel: ContestViewModel = hiltViewModel(),
 ) {
     val postData by viewModel.postData.collectAsState()
     val data = postData?.getOrNull()
@@ -51,6 +56,24 @@ fun ContentsScreen(
                 modifier = Modifier
                     .padding(paddingValues = paddingValues)
             ) {
+                if (data?.contest != null && data.contest.isEmpty()) {
+                    item(key = Int.MIN_VALUE) {
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
+                        ) {
+                            Text(
+                                text = "This article doesn't have sections",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+
+                        }
+                    }
+                }
+
                 itemsIndexed(
                     items = data?.contest ?: emptyList(),
                     key = { index, item -> item.title.key },

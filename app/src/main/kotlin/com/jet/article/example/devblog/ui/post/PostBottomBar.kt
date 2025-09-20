@@ -9,6 +9,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -22,6 +24,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -56,6 +60,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -103,6 +108,18 @@ fun PostBottomBar(
     val dimensions = LocalDimensions.current
 
     var isExpanded by rememberSaveable { mutableStateOf(value = isInspection) }
+
+    var rememberedIsSpeaking by remember { mutableStateOf(value = ttsClient?.isSpeaking == true) }
+
+
+    LaunchedEffect(key1 = ttsClient?.isSpeaking) {
+        if (ttsClient?.isSpeaking == false) {
+            //Just delay for showing "stop" icon for one sec before AnimatedVisibility hides
+            delay(timeMillis = 1_000)
+        }
+        rememberedIsSpeaking = ttsClient?.isSpeaking == true
+    }
+
 
     Box(
         modifier = Modifier
@@ -171,6 +188,35 @@ fun PostBottomBar(
                                 R.string.content_desc_speak_tts,
                         ),
                         shape = shape,
+                        customContent = {
+
+                            androidx.compose.animation.AnimatedVisibility(
+                                modifier = Modifier
+                                    .size(size = 24.dp)
+                                    .align(alignment = Alignment.Center)
+                                    .offset(x = 12.dp, y = 12.dp),
+                                visible = rememberedIsSpeaking,
+                                enter = scaleIn(),
+                                exit = scaleOut(),
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .semantics(
+                                            properties = {
+                                                this.hideFromAccessibility()
+                                            }
+                                        ),
+                                    painter = painterResource(
+                                        id = if (ttsClient?.isSpeaking == true)
+                                            R.drawable.ic_tts_play
+                                        else
+                                            R.drawable.ic_tts_stop,
+                                    ),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        }
                     )
                 }
 
@@ -254,6 +300,7 @@ private fun RowScope.Item(
     isReady: Boolean = true,
     useWeight: Boolean = true,
     shape: Shape,
+    customContent: @Composable BoxScope.() -> Unit = {},
 ) {
 
     val indication = LocalIndication.current
@@ -316,7 +363,6 @@ private fun RowScope.Item(
         contentAlignment = Alignment.Center,
     ) {
 
-
         androidx.compose.animation.AnimatedVisibility(
             modifier = Modifier
                 .align(alignment = Alignment.Center)
@@ -348,6 +394,8 @@ private fun RowScope.Item(
                 tint = tint,
             )
         }
+
+        customContent()
     }
 }
 
