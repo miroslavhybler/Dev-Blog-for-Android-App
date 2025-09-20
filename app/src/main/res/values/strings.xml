@@ -71,6 +71,12 @@
     <string name="settings_changelog_1_1_2__0">Added pagination using androidx.paging library</string>
     <string name="settings_changelog_1_1_2__1">Added support for deeplinks to posts, can be enabled in settings</string>
 
+    <string name="settings_changelog_title_1_2_0">TTS Reading support 🔊</string>
+    <string name="settings_changelog_1_2_0__0">Added support for TextToSpeech reading of posts</string>
+    <string name="settings_changelog_1_2_0__1">Added isFavorite flag to post</string>
+    <string name="settings_changelog_1_2_0__2">Navigation reworked to use navigation3 snapshot</string>
+    <string name="settings_changelog_1_2_0__3">Other small UI/UX changes</string>
+
 
     <string name="settings_about_title">About</string>
 
@@ -104,4 +110,5 @@
     <string name="content_desc_show_menu">Show menu</string>
     <string name="content_desc_speak_tts">Read by TTS</string>
     <string name="content_desc_stop_tts">Stop TTS</string>
+    <string name="post_no_sections">This post doesn\'t have sections</string>
 </resources>

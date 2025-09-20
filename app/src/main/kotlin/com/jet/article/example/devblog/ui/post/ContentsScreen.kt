@@ -65,7 +65,7 @@ fun ContentsScreen(
                             verticalArrangement = Arrangement.spacedBy(space = 4.dp),
                         ) {
                             Text(
-                                text = "This article doesn't have sections",
+                                text = stringResource(id = R.string.post_no_sections),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onBackground,
                             )
