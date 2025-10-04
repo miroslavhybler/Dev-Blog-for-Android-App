@@ -8,7 +8,9 @@ plugins {
 
 android {
     namespace = "com.jet.article.example.devblog.baselineprofile"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         minSdk = 28
@@ -16,6 +18,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    targetProjectPath = ":app"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -28,7 +32,6 @@ android {
     kotlin {
         jvmToolchain(jdkVersion = 11)
     }
-    targetProjectPath = ":app"
 }
 
 // This is the configuration block for the Baseline Profile plugin.

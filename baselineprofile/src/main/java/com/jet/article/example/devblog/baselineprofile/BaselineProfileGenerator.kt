@@ -29,12 +29,12 @@ import org.junit.runner.RunWith
  *
  * The minimum required version of androidx.benchmark to generate a baseline profile is 1.2.0.
  **/
-@RunWith(value=AndroidJUnit4::class)
+@RunWith(value = AndroidJUnit4::class)
 @LargeTest
 class BaselineProfileGenerator : BaseBaselineProfileTest() {
 
     @Test
-    fun oopenPostScenario() {
+    fun openPostScenario() {
         baselineProfiles {
             Scenarios.openPost(scope = this)
         }

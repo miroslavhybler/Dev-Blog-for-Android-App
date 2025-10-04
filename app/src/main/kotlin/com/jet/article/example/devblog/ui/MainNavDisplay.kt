@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -54,7 +54,7 @@ import io.ktor.util.reflect.instanceOf
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
-typealias MutableBackstack = SnapshotStateList<NavKey>
+typealias MutableBackstack = NavBackStack<NavKey>
 typealias Backstack = List<NavKey>
 
 
@@ -86,28 +86,10 @@ fun MainNavDisplay() {
     )
     val width = windowAdaptiveInfo.windowSizeClass.windowWidthSizeClass
     val hasSpaceForEmptyDetail = width.isExpanded || width.isMedium
-    val backstack: MutableBackstack = rememberNavBackStack(
-        elements = buildList {
-
-            add(element = Route.Home)
-            if (hasSpaceForEmptyDetail) {
-                add(element = Route.EmptyPostPlaceholder)
-            }
-        }.toTypedArray()
-    )
+    val backstack: MutableBackstack = rememberNavBackStack(Route.Home)
 
 
     var selectedSectionEvent: SectionSelectedEvent? by remember { mutableStateOf(value = null) }
-
-    LaunchedEffect(key1 = hasSpaceForEmptyDetail) {
-        if (hasSpaceForEmptyDetail) {
-            if (!backstack.contains(element = Route.EmptyPostPlaceholder)) {
-                backstack.add(element = Route.EmptyPostPlaceholder)
-            }
-        } else {
-            backstack.remove(element = Route.EmptyPostPlaceholder)
-        }
-    }
 
 
     CompositionLocalProvider(
@@ -137,7 +119,11 @@ fun MainNavDisplay() {
                 },
                 builder = {
                     entry<Route.Home>(
-                        metadata = ListDetailSceneStrategy.listPane()
+                        metadata = ListDetailSceneStrategy.listPane(
+                            detailPlaceholder = {
+                                PostEmptyPane()
+                            }
+                        ),
                     ) {
                         HomeListPane(
                             onNavigate = { route ->
@@ -146,11 +132,6 @@ fun MainNavDisplay() {
                         )
                     }
 
-                    entry<Route.EmptyPostPlaceholder>(
-                        metadata = ListDetailSceneStrategy.detailPane(),
-                    ) {
-                        PostEmptyPane()
-                    }
 
                     entry<Route.Post>(
                         metadata = ListDetailSceneStrategy.detailPane(),
@@ -159,7 +140,6 @@ fun MainNavDisplay() {
                             onBack = { backstack.pop() },
                             onNavigate = { backstack.add(element = it) },
                             route = route,
-                            listState = rememberLazyListState(),
                             selectedSectionEvent = selectedSectionEvent,
                         )
                     }
@@ -242,9 +222,6 @@ sealed class Route private constructor() : NavKey {
     @Serializable
     object Home : Route()
 
-    @Keep
-    @Serializable
-    object EmptyPostPlaceholder : Route()
 
     @Keep
     @Serializable

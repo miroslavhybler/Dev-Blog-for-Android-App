@@ -8,7 +8,6 @@ package com.jet.article.example.devblog.ui.post
 import android.animation.ArgbEvaluator
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedContent
@@ -19,17 +18,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,6 +37,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -66,7 +63,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
@@ -74,6 +73,7 @@ import androidx.core.text.toSpannable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jet.article.ArticleParser
+import com.jet.article.data.HtmlArticleData
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
@@ -110,7 +110,11 @@ import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
 import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.rememberSnackbarState
+import com.jet.article.ui.JetHtmlArticleState
 import com.jet.tts.TtsLifecycleAwareEffect
+import com.jet.tts.TtsState
+import com.jet.tts.rememberTtsClient
+import com.jet.utils.statusBarsPaddingPx
 import kotlinx.coroutines.launch
 
 
@@ -125,51 +129,142 @@ fun PostScreen(
     route: Route.Post,
     onNavigate: (Route) -> Unit,
     onBack: () -> Unit,
-    listState: LazyListState,
     selectedSectionEvent: SectionSelectedEvent?,
     viewModel: PostViewModel = hiltViewModel(),
 ) = trace(sectionName = Tracing.Section.postPane) {
 
     val selectedPost = route.item
-    val colorScheme = MaterialTheme.colorScheme
-
     val deeplink = LocalDeepLink.current
-    val context = LocalContext.current
-    val dimensions = LocalDimensions.current
     val density = LocalDensity.current
     val ttsClient = LocalTtsClient.current
+
     val settings by viewModel.settings.collectAsState(
-        initial = SettingsStorage.Settings(),
+        initial = SettingsStorage.Settings.Default,
     )
 
     val data by viewModel.postData.collectAsStateWithLifecycle()
 
-    val post = remember(key1 = data) {
-        data?.getOrNull()
+
+    val ttsState = rememberTtsState(key = selectedPost.id)
+
+    val state = rememberJetHtmlArticleState(listState = rememberLazyListState())
+
+
+    var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
+
+    //Initializes ttsClient with the state
+    TtsLifecycleAwareEffect(
+        client = ttsClient ?: throw NullPointerException("TtsClient not provided"),
+        state = ttsState,
+    )
+
+    LaunchedEffect(key1 = deeplink) {
+        if (deeplink != null) {
+            viewModel.loadPostFromDeeplink(
+                url = deeplink,
+                onFinal = {
+                    MainActivity.onDeeplinkOpened()
+                },
+            )
+        } else {
+            viewModel.loadPostDetail(item = selectedPost)
+        }
     }
 
-    var lastUrl: String? by remember { mutableStateOf(value = null) }
+
+
+    LaunchedEffect(key1 = selectedSectionEvent) {
+        val event = selectedSectionEvent ?: return@LaunchedEffect
+        state.listState.animateScrollToItem(
+            index = event.index,
+            scrollOffset = density.dpToPx(dp = 24.dp).toInt(),
+        )
+        event.isConsumed = true
+    }
+
+
+
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            ttsClient.stop()
+            viewModel.clear()
+        }
+    }
+
+    BackHandler(enabled = selectedImageUrl != null) {
+        selectedImageUrl = null
+    }
+
+    PostScreenImpl(
+        route = route,
+        onNavigate = onNavigate,
+        onBack = onBack,
+        state = state,
+        selectedSectionEvent = selectedSectionEvent,
+        ttsState = ttsState,
+        settings = settings,
+        data = data,
+        onRefresh = {
+            viewModel.loadPostDetail(
+                item = selectedPost,
+                isRefresh = true
+            )
+        },
+        onToggleFavorite = {
+            viewModel.toggleFavoriteItem(item = selectedPost)
+        }
+    )
+}
+
+
+@Composable
+private fun PostScreenImpl(
+    route: Route.Post,
+    onNavigate: (Route) -> Unit,
+    onBack: () -> Unit,
+    state: JetHtmlArticleState,
+    selectedSectionEvent: SectionSelectedEvent?,
+    ttsState: TtsState,
+    settings: SettingsStorage.Settings,
+    data: Result<AdjustedPostData>?,
+    onRefresh: () -> Unit,
+    onToggleFavorite: () -> Unit,
+) {
+    val selectedPost = route.item
+    val colorScheme = MaterialTheme.colorScheme
+    val listState = state.listState
+
+    val density = LocalDensity.current
+    val dimensions = LocalDimensions.current
+    val ttsClient = LocalTtsClient.current
+    val context = LocalContext.current
+
+    val statusBarPadding = density.statusBarsPaddingPx()
+
     val colorEvaluator = remember { ArgbEvaluator() }
     val coroutineScope = rememberCoroutineScope()
     val scrollOffsetY by rememberCurrentOffset(state = listState)
     var lastScrollOffsetY by remember() { mutableIntStateOf(value = scrollOffsetY) }
     var topBarAlpha by rememberSaveable { mutableFloatStateOf(value = 0f) }
-    val ttsState = rememberTtsState(key = selectedPost.id)
-
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = rememberTopAppBarState()
     )
-    val statusBarPadding = WindowInsets.statusBars.getTop(density = density)
+    var titleStartColor by remember { mutableStateOf(value = colorScheme.background) }
+    val titleEndColor = colorScheme.onBackground
+    val titleColor = remember { Animatable(initialValue = colorScheme.onBackground) }
     var headerImageHeight by rememberSaveable() {
         mutableFloatStateOf(
             value = density.dpToPx(dp = TopAppBarDefaults.LargeAppBarExpandedHeight)
                 .plus(other = statusBarPadding)
         )
     }
-    val state = rememberJetHtmlArticleState(listState = listState)
-    var titleStartColor by remember { mutableStateOf(value = colorScheme.background) }
-    val titleEndColor = colorScheme.onBackground
-    val titleColor = remember { Animatable(initialValue = colorScheme.onBackground) }
+    var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
+
+    val snackbarState = rememberSnackbarState()
+    var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
+    val post = remember(key1 = data) { data?.getOrNull() }
+    var lastUrl: String? by remember { mutableStateOf(value = null) }
+
 
     val linkCallback = remember {
         object : LinkClickHandler.LinkCallback() {
@@ -211,45 +306,20 @@ fun PostScreen(
         }
     }
 
-    var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
-    var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
-    val snackbarState = rememberSnackbarState()
-
-    TtsLifecycleAwareEffect(
-        client = ttsClient ?: throw NullPointerException("TtsClient not provided"),
-        state = ttsState,
-    )
-
-    LaunchedEffect(key1 = deeplink) {
-        if (deeplink != null) {
-            viewModel.loadPostFromDeeplink(
-                url = deeplink,
-                onFinal = {
-                    MainActivity.onDeeplinkOpened()
-                },
-            )
-        } else {
-            viewModel.loadPostDetail(item = selectedPost)
-        }
-    }
-
-
-
 
     LaunchedEffect(key1 = data) {
-        val mData = data
         if (
-            mData != null
-            && mData.isSuccess
-            && mData.getOrNull()?.postData?.url != lastUrl
+            data != null
+            && data.isSuccess
+            && data.getOrNull()?.postData?.url != lastUrl
             && post != null
         ) {
             if (post.postData.linkHandler.callback == null) {
                 post.postData.linkHandler.callback = linkCallback
             }
             state.show(data = post.postData)
-            listState.scrollToItem(index = 0, scrollOffset = 0)
-            lastUrl = mData.getOrNull()?.postData?.url
+            state.listState.scrollToItem(index = 0, scrollOffset = 0)
+            lastUrl = data.getOrNull()?.postData?.url
         }
         if (isRefreshing) {
             isRefreshing = false
@@ -294,6 +364,7 @@ fun PostScreen(
     }
 
 
+
     LaunchedEffect(
         key1 = scrollOffsetY,
         key2 = titleStartColor,
@@ -327,36 +398,7 @@ fun PostScreen(
         }
 
         // }
-
-
     }
-
-    LaunchedEffect(key1 = selectedSectionEvent) {
-        val event = selectedSectionEvent
-        if (event == null) {
-            return@LaunchedEffect
-        }
-
-        listState.animateScrollToItem(
-            index = event.index,
-            scrollOffset = density.dpToPx(dp = 24.dp).toInt(),
-        )
-        event.isConsumed = true
-    }
-
-
-
-    DisposableEffect(key1 = Unit) {
-        onDispose {
-            ttsClient.stop()
-            viewModel.clear()
-        }
-    }
-
-    BackHandler(enabled = selectedImageUrl != null) {
-        selectedImageUrl = null
-    }
-
 
     Scaffold(
         modifier = Modifier
@@ -400,8 +442,7 @@ fun PostScreen(
                                 isRefreshing = isRefreshing,
                                 onRefresh = {
                                     isRefreshing = true
-                                    viewModel.loadPostDetail(item = selectedPost, isRefresh = true)
-
+                                    onRefresh()
                                 },
                             ) {
                                 if (
@@ -423,17 +464,11 @@ fun PostScreen(
                                                 .horizontalPadding()
                                                 .align(alignment = Alignment.TopCenter),
                                             title = stringResource(id = R.string.error_unable_load_post),
-                                            cause = data?.exceptionOrNull(),
-                                            onRefresh = {
-                                                viewModel.loadPostDetail(
-                                                    item = selectedPost,
-                                                    isRefresh = true
-                                                )
-                                            }
+                                            cause = data.exceptionOrNull(),
+                                            onRefresh = onRefresh,
                                         )
                                     }
                                 }
-
 
                                 if (post != null) {
                                     JetHtmlArticleContent(
@@ -506,7 +541,7 @@ fun PostScreen(
                                                                 .toSpannable()
                                                                 .toAnnotatedString(
                                                                     primaryColor = colorScheme.primary,
-                                                                    linkClickHandler = post.postData.linkHandler,
+                                                                    linkClickHandler = post?.postData?.linkHandler,
                                                                 )
                                                         },
                                                         utteranceId = "${selectedPost.id}_${basicList.key + 1_000_000 + index}",
@@ -580,9 +615,7 @@ fun PostScreen(
             ) {
                 PostBottomBar(
                     ttsState = ttsState,
-                    onToggleFavorite = {
-                        viewModel.toggleFavoriteItem(item = selectedPost)
-                    },
+                    onToggleFavorite = onToggleFavorite,
                     onShowContest = {
                         onNavigate(Route.Contest(item = selectedPost))
                     },
@@ -608,60 +641,110 @@ fun PostScreen(
 @Composable
 @PreviewLightDark
 private fun PostPanePreview1() {
-    DevBlogAppTheme {
-        PostScreen(
-            onNavigate = { _ -> },
-            listState = rememberLazyListState(),
-            route = Route.Post(
-                item = PostItem(
-                    title = "Title",
-                    url = "https://google.com",
-                    date = SimpleDate(
-                        dayOfMonth = 1,
-                        month = Month.JANUARY,
-                        year = 2023,
-                    ),
-                    isUnread = true,
-                    isFavorite = false,
-                    description = "Description",
-                    image = "https://google.com",
-                    dateTimeStamp = 0,
+
+    val articeData = remember {
+        HtmlArticleData(
+            url = "https://android-developers.googleblog.com/2025/09/weareplay-meet-the-people-building-vibrant-communities-with-their-apps-and-games.html",
+            elements = listOf(
+                HtmlElement.TextBlock(
+                    text = buildAnnotatedString {
+                        append(
+                            text = "In our latest #WeArePlay stories, we meet the founders who turned their interests into vibrant communities through their apps and games on Google Play - from democratizing music production for artists in Brazil to building a global network for Black professionals.\n" +
+                                    "\n" +
+                                    "Here are a few of our favorites:"
+                        )
+                    },
+                    id = null,
+                    key = 3,
+                ),
+                HtmlElement.Image(
+                    url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-Ux4E4BpQ4Ojs3ifq6bcYEyfx2Ehb8TGYSXt0ELGoN4ztjwxFOx3i0z5R22U08MM_225-8j395cT840zcn7313BbWFXEOxpHA4gnX2PUQPiDBeMptoOlF9dBDGVSzAm7ULXfnrBVCFzRxWQ0yAIKv1XpSfnrTuBxgUiZBe0vPalqzKkl14h5DcMisHR4/s1600/01_BRAZIL_MURB_FOUNDER_ERICK%20MACEDO_KELVIN%20MACEDO_edited.jpg",
+                    alt = null,
+                    description = null,
+                    id = null,
+                    key = 4,
+                    defaultSize = IntSize.Zero,
+                ),
+                HtmlElement.Title(
+                    text = buildAnnotatedString {
+                        append(
+                            text = "Erik and Kelvin’s app Murb connects and enables indie artists in Brazil to create and distribute music from their phones."
+                        )
+                    },
+                    id = null,
+                    key = 5,
+                    titleTag = "h3",
+                ),
+                HtmlElement.TextBlock(
+                    text = buildAnnotatedString {
+                        append(
+                            text = "Brothers Erick and Kelvin combined their passion for Brazil's urban culture from skateboarding to graffiti with their professional experience in tech to create Murb. Their app empowers young, independent artists in the rap, trap, and funk communities to produce music directly on their phones, providing a vital platform for those who lack access to studios. With recent features like producer profiles to help musicians sell their work and plans to integrate with major streaming platforms, Murb is on a mission to democratize music production."
+                        )
+                    },
+                    id = null,
+                    key = 6,
                 )
-            ),
-            viewModel = hiltViewModel(),
-            onBack = {},
-            selectedSectionEvent = null,
+            )
         )
     }
-}
 
-
-@Composable
-@PreviewLightDark
-private fun PostPanePreview2() {
-    DevBlogAppTheme {
-        PostScreen(
-            route = Route.Post(
-                item = PostItem(
-                    title = "Title",
-                    url = "https://google.com",
-                    date = SimpleDate(
-                        dayOfMonth = 1,
-                        month = Month.JANUARY,
-                        year = 2023,
-                    ),
-                    isUnread = true,
-                    isFavorite = false,
-                    description = "Description",
-                    image = "https://google.com",
-                    dateTimeStamp = 0,
-                )
-            ),
-            onNavigate = { _ -> },
-            listState = rememberLazyListState(),
-            viewModel = hiltViewModel(),
-            onBack = {},
-            selectedSectionEvent = null,
-        )
+    CompositionLocalProvider(
+        LocalTtsClient provides rememberTtsClient(),
+    ) {
+        DevBlogAppTheme {
+            PostScreenImpl(
+                onNavigate = { _ -> },
+                route = Route.Post(
+                    item = PostItem(
+                        title = "#WeArePlay: Meet the people building vibrant communities with their apps and games",
+                        url = "https://android-developers.googleblog.com/2025/09/weareplay-meet-the-people-building-vibrant-communities-with-their-apps-and-games.html",
+                        date = SimpleDate(
+                            dayOfMonth = 24,
+                            month = Month.SEPTEMBER,
+                            year = 2025,
+                        ),
+                        isUnread = true,
+                        isFavorite = false,
+                        description = "Description",
+                        image = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXHK03KiFLi-Ej2Pewi30s2R58kkiiIkl7mzZx9PNC28ac7zbsIvkTqsQZJoKh3QeogtqCwP2vF2iwBaWqE7H770IUfFyZlZX41ZvdqN-3Cvd1hsBowXGOaMR2w0IB4vyBLzX6xfbT7qGbuIeEXZOZzMShMLs9QrTbJeaNkSeImX9GCiqdTOEiJD8kycc/s1600/Android%20Devs%20_%20Google%20Devs%20-Blog_Header_1200x600.jpg",
+                        dateTimeStamp = 0,
+                    )
+                ),
+                onBack = {},
+                ttsState = rememberTtsState(), //Safe to use for preview
+                selectedSectionEvent = null,
+                settings = SettingsStorage.Settings.Default,
+                data = Result.success(
+                    value = AdjustedPostData(
+                        headerImage = HtmlElement.Image(
+                            url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXHK03KiFLi-Ej2Pewi30s2R58kkiiIkl7mzZx9PNC28ac7zbsIvkTqsQZJoKh3QeogtqCwP2vF2iwBaWqE7H770IUfFyZlZX41ZvdqN-3Cvd1hsBowXGOaMR2w0IB4vyBLzX6xfbT7qGbuIeEXZOZzMShMLs9QrTbJeaNkSeImX9GCiqdTOEiJD8kycc/s1600/Android%20Devs%20_%20Google%20Devs%20-Blog_Header_1200x600.jpg",
+                            description = null,
+                            defaultSize = IntSize.Zero,
+                            alt = null,
+                            id = null,
+                            key = 1,
+                        ),
+                        date = SimpleDate(
+                            dayOfMonth = 24,
+                            month = Month.SEPTEMBER,
+                            year = 2025,
+                        ),
+                        title = HtmlElement.Title(
+                            text = buildAnnotatedString {
+                                append(text = "#WeArePlay: Meet the people building vibrant communities with their apps and games")
+                            },
+                            key = 0,
+                            titleTag = "h1",
+                            id = null,
+                        ),
+                        postData = articeData,
+                        contest = emptyList(),
+                    )
+                ),
+                onRefresh = {},
+                onToggleFavorite = {},
+                state = rememberJetHtmlArticleState(initialData = articeData),
+            )
+        }
     }
 }

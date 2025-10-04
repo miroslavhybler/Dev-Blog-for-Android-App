@@ -41,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import com.jet.article.example.devblog.BuildConfig
@@ -60,17 +60,18 @@ import com.jet.utils.plus
 import kotlinx.coroutines.launch
 
 
-/**
- * @author Miroslav Hýbler <br>
- * created on 19.08.2024
- */
-val darkModeOptions: List<Int> = listOf(
+private val darkModeOptions: List<Int> = listOf(
     AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
     AppCompatDelegate.MODE_NIGHT_YES,
     AppCompatDelegate.MODE_NIGHT_NO,
 )
 
 
+/**
+ * Simple screen for managing user settings.
+ * @author Miroslav Hýbler <br>
+ * created on 19.08.2024
+ */
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
@@ -79,7 +80,9 @@ fun SettingsScreen(
 ) {
 
 
-    val settings by viewModel.settings.collectAsState(initial = SettingsStorage.Settings())
+    val settings by viewModel.settings.collectAsState(
+        initial = SettingsStorage.Settings.Default,
+    )
 
     SettingsScreenContent(
         onBack = onBack,
@@ -214,7 +217,7 @@ private fun SettingsScreenContent(
                 Spacer(modifier = Modifier.weight(weight = 1f))
 
                 SettingsRow(
-                    title = stringResource(id= R.string.settings_changelog_title),
+                    title = stringResource(id = R.string.settings_changelog_title),
                     onClick = { onNavigate(Route.Changelog) },
                     icon = null,
                 )
@@ -224,7 +227,7 @@ private fun SettingsScreenContent(
                     icon = null,
                 )
                 SettingsRow(
-                    title = stringResource(id =R.string.settings_about_libs_title),
+                    title = stringResource(id = R.string.settings_about_libs_title),
                     onClick = { onNavigate(Route.AboutLibs) },
                     icon = null,
                 )
@@ -236,7 +239,7 @@ private fun SettingsScreenContent(
                     verticalAlignment = Alignment.Bottom,
                 ) {
                     Text(
-                        text = stringResource(R.string.settings_version),
+                        text = stringResource(id=R.string.settings_version),
                         style = MaterialTheme.typography.titleSmall,
                     )
 
@@ -314,7 +317,7 @@ private fun SettingsScreenPreview() {
     DevBlogAppTheme {
         SettingsScreenContent(
             onBack = {},
-            settings = SettingsStorage.Settings(),
+            settings = SettingsStorage.Settings.Default,
             onNewSettings = { _ -> },
             onNavigate = { _ -> },
         )

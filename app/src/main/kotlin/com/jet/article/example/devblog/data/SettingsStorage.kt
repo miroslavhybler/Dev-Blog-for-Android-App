@@ -34,7 +34,8 @@ class SettingsStorage @Inject constructor(
 
         private val dynamicColorKey: Preferences.Key<Boolean> =
             booleanPreferencesKey(name = "dymanic_colors")
-        private val darkModeKey: Preferences.Key<Int> = intPreferencesKey(name = "dark_mode")
+        private val darkModeKey: Preferences.Key<Int> =
+            intPreferencesKey(name = "dark_mode")
         private val cellularDataKey: Preferences.Key<Boolean> =
             booleanPreferencesKey(name = "cellular_data_usage_allowed")
         private val usingTTSKey: Preferences.Key<Boolean> =
@@ -42,13 +43,23 @@ class SettingsStorage @Inject constructor(
     }
 
 
+    /**
+     * Datastore preferences instance for saving user settings
+     */
     private val preferences: DataStore<Preferences>
         get() = context.preferences
 
+
+    /**
+     * Provides [Settings] from the datastore [preferences] as [Flow]
+     */
     val settings: Flow<Settings> = preferences.data
         .map(transform = this::getSettings)
 
 
+    /**
+     * Saves [Settings] to the datastore [preferences]
+     */
     suspend fun saveSettings(settings: Settings) {
         preferences.edit {
             it[dynamicColorKey] = settings.isUsingDynamicColors
@@ -61,10 +72,14 @@ class SettingsStorage @Inject constructor(
 
     private fun getSettings(preferences: Preferences): Settings {
         return Settings(
-            isUsingDynamicColors = preferences[dynamicColorKey] == true, //False by default
-            nightModeFlags = preferences[darkModeKey] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-            isCellularDataUsageAllowed = preferences[cellularDataKey] != false, //True by default
-            isUsingTTS = preferences[usingTTSKey] != false, //True by default
+            isUsingDynamicColors = preferences[dynamicColorKey]
+                ?: Settings.Default.isUsingDynamicColors, //False by default
+            nightModeFlags = preferences[darkModeKey]
+                ?: Settings.Default.nightModeFlags,
+            isCellularDataUsageAllowed = preferences[cellularDataKey]
+                ?: Settings.Default.isCellularDataUsageAllowed, //True by default
+            isUsingTTS = preferences[usingTTSKey]
+                ?: Settings.Default.isUsingTTS, //True by default
         )
     }
 
@@ -80,17 +95,29 @@ class SettingsStorage @Inject constructor(
      */
     @Keep
     data class Settings constructor(
-        val isUsingDynamicColors: Boolean = false,
+        val isUsingDynamicColors: Boolean,
         @AppCompatDelegate.NightMode
-        val nightModeFlags: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-        val isCellularDataUsageAllowed: Boolean = true,
-        val isUsingTTS: Boolean = true,
+        val nightModeFlags: Int,
+        val isCellularDataUsageAllowed: Boolean,
+        val isUsingTTS: Boolean,
     ) {
 
         companion object {
 
+
             /**
-             * @return User friendly description of dark mode
+             * Default settings for the app
+             */
+            val Default: Settings = Settings(
+                isUsingDynamicColors = false,
+                nightModeFlags = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+                isCellularDataUsageAllowed = true,
+                isUsingTTS = true,
+            )
+
+
+            /**
+             * @return User friendly description of dark mode flag
              */
             fun nightModeString(
                 settings: Settings,
@@ -100,7 +127,7 @@ class SettingsStorage @Inject constructor(
             }
 
             /**
-             * @return User friendly description of dark mode
+             * @return User friendly description of dark mode flag
              */
             fun nightModeString(
                 context: Context,
@@ -114,6 +141,9 @@ class SettingsStorage @Inject constructor(
             }
         }
 
+        /**
+         * @return User friendly description of dark mode flag
+         */
         fun nightModeString(context: Context): String {
             return nightModeString(context = context, settings = this)
         }

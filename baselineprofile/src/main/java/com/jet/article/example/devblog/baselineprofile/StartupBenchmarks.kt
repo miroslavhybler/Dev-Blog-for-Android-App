@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
  * For more information, see the [Macrobenchmark documentation](https://d.android.com/macrobenchmark#create-macrobenchmark)
  * and the [instrumentation arguments documentation](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args).
  **/
-@RunWith(AndroidJUnit4::class)
+@RunWith(value= AndroidJUnit4::class)
 @LargeTest
 class StartupBenchmarks {
 

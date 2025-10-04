@@ -139,7 +139,7 @@ class MainActivity : ComponentActivity() {
                 }
             )
             val settings by viewModel.settings.collectAsState(
-                initial = SettingsStorage.Settings()
+                initial = SettingsStorage.Settings.Default
             )
             val systemBarsStyle = rememberSystemBarsStyle(settings = settings)
             val dimensions = rememberDimensions()

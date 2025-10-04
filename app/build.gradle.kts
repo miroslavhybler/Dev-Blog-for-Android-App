@@ -21,7 +21,7 @@ android {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
         targetSdk = 36
-        versionCode = 12
+        versionCode = 13
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -50,6 +50,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
     kotlin {
         jvmToolchain(jdkVersion = 11)
@@ -104,12 +105,6 @@ dependencies {
     implementation(dependencyNotation = libs.aboutlibraries.compose)
     implementation(dependencyNotation = libs.coil.compose)
     implementation(dependencyNotation = libs.coil.gif)
-
-    /** Adaptive UI */
-    implementation(dependencyNotation = libs.androidx.adaptive)
-    implementation(dependencyNotation = libs.androidx.adaptive.layout)
-    implementation(dependencyNotation = libs.androidx.adaptive.navigation)
-    implementation(dependencyNotation = libs.androidx.adaptive.navigation.suite)
 
     /** Navigation 3 */
     implementation(dependencyNotation = libs.androidx.material3.navigation3)

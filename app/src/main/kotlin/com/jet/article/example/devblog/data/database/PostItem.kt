@@ -14,12 +14,13 @@ import androidx.compose.runtime.setValue
 import kotlinx.serialization.Serializable
 
 /**
- * @param title Title of the post
- * @param url Url of the post
- * @param description Short description of the post
- * @param image Thumbnail of the post
- * @param isUnread TODO
- * @param isFavorite TODO
+ * @param title Title of the post.
+ * @param url Url of the html page with the post.
+ * @param date Date when this post was published.
+ * @param description Short description of the post.
+ * @param image Thumbnail of the post, image url.
+ * @param isUnread True when this post wasn't opened yet. Default value is true.
+ * @param isFavorite True when this post was added to favorites by user. Default value is false.
  */
 @Keep
 @Serializable
@@ -43,13 +44,22 @@ data class PostItem constructor(
     val isFavorite: Boolean,
 ) {
 
+    /**
+     * Id for local database, has no relation with some remote data.
+     */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id", typeAffinity = ColumnInfo.INTEGER)
     var id: Int = 0
 
 
+    /**
+     * Provides [isUnread] as state for UI.
+     */
     var isUnreadState: Boolean by mutableStateOf(value = isUnread)
 
 
+    /**
+     * Provides [isFavorite] as state for UI.
+     */
     var isFavoriteState: Boolean by mutableStateOf(value = isFavorite)
 }
