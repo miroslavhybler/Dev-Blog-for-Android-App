@@ -21,7 +21,7 @@ android {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
         targetSdk = 36
-        versionCode = 13
+        versionCode = 14
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -80,7 +80,7 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.core.core.ktx)
     implementation(dependencyNotation = libs.androidx.lifecycle.lifecycle.runtime.ktx)
     implementation(dependencyNotation = libs.androidx.activity.compose)
-    //implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.androidx.compose.bom))
     implementation(dependencyNotation = libs.androidx.datastore.preferences.core)
     implementation(dependencyNotation = libs.androidx.datastore.preferences)
     implementation(dependencyNotation = libs.androidx.ui.tooling.preview)
@@ -111,6 +111,13 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.navigation3.ui)
     implementation(dependencyNotation = libs.androidx.navigation3.runtime)
     implementation(dependencyNotation = libs.androidx.lifecycle.viewmodel.navigation3)
+
+    /** Adaptive UI */
+    implementation(dependencyNotation = libs.androidx.adaptive)
+    implementation(dependencyNotation = libs.androidx.adaptive.layout)
+    implementation(dependencyNotation = libs.androidx.adaptive.navigation)
+    implementation(dependencyNotation = libs.androidx.adaptive.navigation.suite)
+
 
     /** Room Database */
     implementation(dependencyNotation = libs.androidx.room.runtime)

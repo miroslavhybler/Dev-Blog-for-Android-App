@@ -9,10 +9,16 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.HingePolicy
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
@@ -29,12 +35,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -74,6 +83,10 @@ public data class SectionSelectedEvent public constructor(
 }
 
 
+private enum class Scene {
+    POST, SETTINGS;
+}
+
 /**
  * @author Miroslav Hýbler <br>
  * created on 08.09.2025
@@ -83,11 +96,9 @@ fun MainNavDisplay() {
     val windowAdaptiveInfo = currentWindowAdaptiveInfo()
     val directive = calculatePaneScaffoldDirective(
         windowAdaptiveInfo = windowAdaptiveInfo,
+        verticalHingePolicy = HingePolicy.AlwaysAvoid
     )
-    val width = windowAdaptiveInfo.windowSizeClass.windowWidthSizeClass
-    val hasSpaceForEmptyDetail = width.isExpanded || width.isMedium
     val backstack: MutableBackstack = rememberNavBackStack(Route.Home)
-
 
     var selectedSectionEvent: SectionSelectedEvent? by remember { mutableStateOf(value = null) }
 
@@ -103,14 +114,7 @@ fun MainNavDisplay() {
             backStack = backstack,
             sceneStrategy = rememberListDetailSceneStrategy(
                 backNavigationBehavior = BackNavigationBehavior.PopLatest,
-                directive = PaneScaffoldDirective(
-                    maxHorizontalPartitions = directive.maxHorizontalPartitions,
-                    maxVerticalPartitions = 2,
-                    defaultPanePreferredWidth = directive.defaultPanePreferredWidth,
-                    verticalPartitionSpacerSize = directive.verticalPartitionSpacerSize,
-                    horizontalPartitionSpacerSize = directive.horizontalPartitionSpacerSize,
-                    excludedBounds = directive.excludedBounds,
-                )
+                directive = directive,
             ),
             onBack = { backstack.pop() },
             entryProvider = entryProvider(
@@ -120,9 +124,10 @@ fun MainNavDisplay() {
                 builder = {
                     entry<Route.Home>(
                         metadata = ListDetailSceneStrategy.listPane(
+                            sceneKey = Scene.POST,
                             detailPlaceholder = {
                                 PostEmptyPane()
-                            }
+                            },
                         ),
                     ) {
                         HomeListPane(
@@ -134,7 +139,9 @@ fun MainNavDisplay() {
 
 
                     entry<Route.Post>(
-                        metadata = ListDetailSceneStrategy.detailPane(),
+                        metadata = ListDetailSceneStrategy.detailPane(
+                            sceneKey = Scene.POST,
+                        ),
                     ) { route ->
                         PostScreen(
                             onBack = { backstack.pop() },
@@ -144,7 +151,9 @@ fun MainNavDisplay() {
                         )
                     }
                     entry<Route.Contest>(
-                        metadata = ListDetailSceneStrategy.extraPane(),
+                        metadata = ListDetailSceneStrategy.extraPane(
+                            sceneKey = Scene.POST,
+                        ),
                     ) { route ->
                         ContentsScreen(
                             route = route,
@@ -156,7 +165,10 @@ fun MainNavDisplay() {
                     }
 
                     entry<Route.Settings>(
-                        metadata = ListDetailSceneStrategy.listPane(),
+                        metadata = ListDetailSceneStrategy.listPane(
+                            sceneKey = Scene.SETTINGS,
+                            detailPlaceholder ={},
+                        ),
                     ) {
                         SettingsScreen(
                             onBack = {
@@ -169,7 +181,9 @@ fun MainNavDisplay() {
                     }
 
                     entry<Route.Changelog>(
-                        metadata = ListDetailSceneStrategy.detailPane(),
+                        metadata = ListDetailSceneStrategy.detailPane(
+                            sceneKey = Scene.SETTINGS,
+                        ),
                     ) {
                         ChangelogScreen(
                             onBack = {
@@ -178,7 +192,9 @@ fun MainNavDisplay() {
                         )
                     }
                     entry<Route.About>(
-                        metadata = ListDetailSceneStrategy.detailPane(),
+                        metadata = ListDetailSceneStrategy.detailPane(
+                            sceneKey = Scene.SETTINGS,
+                        ),
                     ) {
                         AboutScreen(
                             onBack = {
@@ -187,7 +203,9 @@ fun MainNavDisplay() {
                         )
                     }
                     entry<Route.AboutLibs>(
-                        metadata = ListDetailSceneStrategy.detailPane(),
+                        metadata = ListDetailSceneStrategy.detailPane(
+                            sceneKey = Scene.SETTINGS,
+                        ),
                     ) {
                         AboutLibsScreen(
                             onBack = {
