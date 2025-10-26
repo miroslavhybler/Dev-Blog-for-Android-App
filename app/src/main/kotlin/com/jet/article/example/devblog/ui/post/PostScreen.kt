@@ -62,6 +62,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -97,8 +98,6 @@ import com.jet.article.example.devblog.ui.MainActivity
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
 import com.jet.article.example.devblog.ui.home.NewPostMark
-import com.jet.article.toAnnotatedString
-import com.jet.article.toHtml
 import com.jet.article.ui.JetHtmlArticleContent
 import com.jet.article.ui.Link
 import com.jet.article.ui.LinkClickHandler
@@ -110,6 +109,7 @@ import com.jet.utils.dpToPx
 import com.jet.utils.pxToDp
 import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.rememberSnackbarState
+import com.jet.article.example.devblog.overrideSpecifiedTextColors
 import com.jet.article.ui.JetHtmlArticleState
 import com.jet.tts.TtsLifecycleAwareEffect
 import com.jet.tts.TtsState
@@ -283,6 +283,7 @@ private fun PostScreenImpl(
             }
 
             override fun onUriLink(link: Link.UriLink) {
+
             }
 
             override fun onSectionLink(
@@ -351,7 +352,7 @@ private fun PostScreenImpl(
                     element.items.forEachIndexed { index, item ->
                         val cleanTextForTTS =
                             ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                                input = item,
+                                input = item.text,
                             )
                         val utteranceId = "${selectedPost.id}_${element.key + 1_000_000 + index}"
                         ttsState[utteranceId] = cleanTextForTTS
@@ -410,7 +411,7 @@ private fun PostScreenImpl(
                         headerImageHeight = newSize.height.toFloat()
                     },
                 title = remember(key1 = selectedPost.id) {
-                    selectedPost.title
+                    AnnotatedString(text = selectedPost.title)
                 },
                 scrollBehavior = topBarScrollBehavior,
                 backgroundAlpha = topBarAlpha,
@@ -516,19 +517,23 @@ private fun PostScreenImpl(
                                                 style = style,
                                                 highlightStyle = style.copy(
                                                     color = MaterialTheme.colorScheme.secondary,
-                                                )
+                                                ),
+                                                color = MaterialTheme.colorScheme.onBackground,
                                             )
                                         },
                                         text = { text ->
                                             TextTts(
-                                                text = text.text,
+                                                text = text.text.overrideSpecifiedTextColors(
+                                                    newColor = MaterialTheme.colorScheme.onBackground,
+                                                ),
                                                 utteranceId = "${selectedPost.id}_${text.key}",
                                                 ttsClient = ttsClient
                                                     ?: throw NullPointerException("TtsClient not provided"),
                                                 scrollableState = state.listState,
                                                 highlightStyle = TextStyle(
                                                     color = MaterialTheme.colorScheme.secondary,
-                                                )
+                                                ),
+                                                color = MaterialTheme.colorScheme.onBackground,
                                             )
                                         },
                                         basicList = { basicList ->
@@ -536,21 +541,15 @@ private fun PostScreenImpl(
                                                 list = basicList,
                                                 textContent = { text, index ->
                                                     TextTts(
-                                                        text = remember() {
-                                                            text.toHtml()
-                                                                .toSpannable()
-                                                                .toAnnotatedString(
-                                                                    primaryColor = colorScheme.primary,
-                                                                    linkClickHandler = post?.postData?.linkHandler,
-                                                                )
-                                                        },
+                                                        text = text,
                                                         utteranceId = "${selectedPost.id}_${basicList.key + 1_000_000 + index}",
                                                         ttsClient = ttsClient
                                                             ?: throw NullPointerException("TtsClient not provided"),
                                                         scrollableState = state.listState,
                                                         highlightStyle = TextStyle(
                                                             color = MaterialTheme.colorScheme.secondary,
-                                                        )
+                                                        ),
+                                                        color = MaterialTheme.colorScheme.onBackground,
                                                     )
                                                 }
                                             )

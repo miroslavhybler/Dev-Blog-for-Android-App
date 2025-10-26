@@ -30,6 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -40,6 +43,8 @@ import com.jet.article.ArticleParser
 import com.jet.article.data.HtmlArticleData
 import com.jet.article.example.devblog.data.ExcludeOption
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.ui.Green40
+import com.jet.article.example.devblog.ui.Green80
 import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.utils.pxToDp
 
@@ -150,7 +155,8 @@ suspend fun ArticleParser.parseWithInitialization(
         areImagesEnabled = true,
         isLoggingEnabled = false,
         isTextFormattingEnabled = true,
-        isQueringTextOutsideTextTags = true,
+        isQueryingTextOutsideTextTags = true,
+        linkColor = Green80,
     )
     ExcludeOption.devBlogExcludeRules.forEach { option ->
         addExcludeOption(
@@ -325,5 +331,57 @@ fun Context.shareUrl(
     }
 
     // Use a chooser to let the user pick the app
-    startActivity(Intent.createChooser(intent, title ?: "Share via"))
+    startActivity(
+        Intent.createChooser(
+            intent,
+            title ?: "Share via",
+        )
+    )
+}
+
+
+fun AnnotatedString.overrideSpecifiedTextColors(
+    newColor: Color,
+): AnnotatedString {
+    return buildAnnotatedString {
+        append(text = this@overrideSpecifiedTextColors.text)
+
+        // Copy paragraph styles
+        this@overrideSpecifiedTextColors.paragraphStyles.forEach {
+            addStyle(style = it.item, start = it.start, end = it.end)
+        }
+
+        // Copy span styles, but override only those with an explicitly set color
+        this@overrideSpecifiedTextColors.spanStyles.forEach { range ->
+            val style = range.item
+
+            //some articles has specified dark blue color in spans, this is bad for dark mode
+            //https://android-developers.googleblog.com/2025/10/bringing-androidify-to-xr-with-jetpack.html
+            val adjustedStyle = if (style.color.toArgb() == 0xFF073042.toInt()) {
+                // Replace explicit colors (e.g. from <font color="...">)
+                style.copy(color = newColor)
+            } else {
+                style
+            }
+
+            addStyle(
+                style = adjustedStyle,
+                start = range.start,
+                end = range.end,
+            )
+
+            this@overrideSpecifiedTextColors.getLinkAnnotations(
+                start = range.start,
+                end = range.end
+            ).forEach {
+                (it.item as? LinkAnnotation.Url)?.let { originalLink ->
+                    addLink(
+                        url = originalLink,
+                        start = it.start,
+                        end = it.end,
+                    )
+                }
+            }
+        }
+    }
 }

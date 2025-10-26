@@ -36,11 +36,11 @@ import com.jet.article.example.devblog.isCompat
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
 import com.jet.tts.TtsClient
-import com.jet.utils.theme.MaterialColors
+import com.jet.utils.theme.MaterialColorsPreview
 
-private val Green80: Color = Color(color = 0xFF13B041)
-private val Green90: Color = Color(color = 0xFF07882B)
-private val Green40: Color = Color(color = 0xFF3ddc84)
+val Green80: Color = Color(color = 0xFF13B041)
+val Green90: Color = Color(color = 0xFF07882B)
+val Green40: Color = Color(color = 0xFF3ddc84)
 
 private val LightColorScheme: ColorScheme = lightColorScheme(
     primary = Green80,
@@ -213,7 +213,7 @@ val LocalTtsClient: ProvidableCompositionLocal<TtsClient?> = staticCompositionLo
 @PreviewLightDark
 private fun ThemePreview() {
     DevBlogAppTheme {
-        MaterialColors(
+        MaterialColorsPreview(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.background)
         )

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
@@ -184,15 +185,13 @@ private fun HomeListItemColumn(
 
         HtmlTextBlock(
             modifier = Modifier,
-            text = item.title,
-            key = index,
+            text = AnnotatedString(text = item.title),
             style = MaterialTheme.typography.titleLarge,
             color = contentColor,
         )
         HtmlTextBlock(
             modifier = Modifier,
-            text = item.description,
-            key = index,
+            text = AnnotatedString(text = item.description),
             style = MaterialTheme.typography.bodyMedium,
             color = contentColor,
         )
@@ -254,8 +253,7 @@ private fun HomeListItemRow(
                 )
                 HtmlTextBlock(
                     modifier = Modifier,
-                    text = item.title,
-                    key = index,
+                    text = AnnotatedString(text=item.title),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     color = contentColor,
@@ -264,8 +262,7 @@ private fun HomeListItemRow(
 
                 HtmlTextBlock(
                     modifier = Modifier,
-                    text = item.description,
-                    key = index,
+                    text = AnnotatedString(text=item.description),
                     style = MaterialTheme.typography.bodySmall,
                     color = contentColor,
                     maxLines = 1,

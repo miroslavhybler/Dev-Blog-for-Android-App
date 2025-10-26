@@ -72,7 +72,7 @@ fun ImageDetailLayout(
 
 
     Box(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()

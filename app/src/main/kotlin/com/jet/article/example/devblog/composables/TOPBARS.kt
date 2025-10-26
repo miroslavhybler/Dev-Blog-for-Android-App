@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.horizontalPadding
@@ -113,7 +114,7 @@ fun MainTopBar(
 @Composable
 fun PostTopBar(
     modifier: Modifier = Modifier,
-    title: String,
+    title: AnnotatedString,
     @FloatRange(from = 0.0, to = 1.0)
     backgroundAlpha: Float,
     actions: @Composable RowScope.() -> Unit = {},
@@ -128,7 +129,6 @@ fun PostTopBar(
             HtmlTextBlock(
                 modifier = Modifier.horizontalPadding(),
                 text = title,
-                key = Int.MIN_VALUE,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,

@@ -21,7 +21,7 @@ android {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
         targetSdk = 36
-        versionCode = 14
+        versionCode = 15
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -80,7 +80,7 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.core.core.ktx)
     implementation(dependencyNotation = libs.androidx.lifecycle.lifecycle.runtime.ktx)
     implementation(dependencyNotation = libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+    implementation(dependencyNotation = platform(libs.androidx.compose.bom))
     implementation(dependencyNotation = libs.androidx.datastore.preferences.core)
     implementation(dependencyNotation = libs.androidx.datastore.preferences)
     implementation(dependencyNotation = libs.androidx.ui.tooling.preview)
@@ -159,7 +159,7 @@ dependencies {
     testImplementation(dependencyNotation = libs.junit)
     androidTestImplementation(dependencyNotation = libs.androidx.junit)
     androidTestImplementation(dependencyNotation = libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(dependencyNotation = platform(libs.androidx.compose.bom))
     androidTestImplementation(dependencyNotation = libs.androidx.ui.test.junit4)
     debugImplementation(dependencyNotation = libs.ui.tooling)
     debugImplementation(dependencyNotation = libs.androidx.ui.test.manifest)

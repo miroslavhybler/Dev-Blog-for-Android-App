@@ -17,6 +17,7 @@ import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.parseWithInitialization
+import com.jet.article.example.devblog.ui.Green80
 import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -351,7 +352,7 @@ class CoreRepo @Inject constructor(
             isLoggingEnabled = false,
             areImagesEnabled = true,
             isTextFormattingEnabled = true,
-            isQueringTextOutsideTextTags = true,
+            isQueryingTextOutsideTextTags = true,
         )
         var hasFeaturedItem: Boolean = false
         val links: ArrayList<TagInfo> = ArrayList()
