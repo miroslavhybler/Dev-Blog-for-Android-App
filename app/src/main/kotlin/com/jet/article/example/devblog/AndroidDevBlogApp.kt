@@ -153,13 +153,8 @@ class AndroidDevBlogApp : Application(),
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
-            .setWorkerFactory(
-                workerFactory
-//                ContentSyncWorker.Factory(
-//                    databaseRepo = databaseRepo,
-//                    coreRepo = coreRepo,
-//                )
-            ).build()
+            .setWorkerFactory(workerFactory)
+            .build()
 
 
     override fun onCreate() {

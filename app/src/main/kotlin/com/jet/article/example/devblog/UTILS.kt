@@ -355,9 +355,15 @@ fun AnnotatedString.overrideSpecifiedTextColors(
         this@overrideSpecifiedTextColors.spanStyles.forEach { range ->
             val style = range.item
 
-            //some articles has specified dark blue color in spans, this is bad for dark mode
+            //some articles has specified varios colors in styles, this is bad for dark mode
             //https://android-developers.googleblog.com/2025/10/bringing-androidify-to-xr-with-jetpack.html
-            val adjustedStyle = if (style.color.toArgb() == 0xFF073042.toInt()) {
+            val originalColor = style.color.toArgb()
+            val adjustedStyle = if (
+                originalColor == 0xFF073042.toInt()
+                || originalColor == 0xFF000000.toInt()
+                || originalColor == 0xFF1B1C1D.toInt()
+                || originalColor == 0xFF434343.toInt()
+            ) {
                 // Replace explicit colors (e.g. from <font color="...">)
                 style.copy(color = newColor)
             } else {

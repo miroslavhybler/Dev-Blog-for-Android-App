@@ -47,6 +47,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.SceneStrategy
 import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
@@ -112,7 +113,7 @@ fun MainNavDisplay() {
                 .fillMaxSize()
                 .semantics(properties = { testTagsAsResourceId = true }),
             backStack = backstack,
-            sceneStrategy = rememberListDetailSceneStrategy(
+            sceneStrategy = rememberListDetailSceneStrategy<NavKey>(
                 backNavigationBehavior = BackNavigationBehavior.PopLatest,
                 directive = directive,
             ),
@@ -122,7 +123,7 @@ fun MainNavDisplay() {
                     error(message = "Unknown route: $it")
                 },
                 builder = {
-                    entry<Route.Home>(
+                    entry<Route.Home>   (
                         metadata = ListDetailSceneStrategy.listPane(
                             sceneKey = Scene.POST,
                             detailPlaceholder = {

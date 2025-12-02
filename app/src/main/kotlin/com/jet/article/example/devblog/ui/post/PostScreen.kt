@@ -336,9 +336,10 @@ private fun PostScreenImpl(
             when (element) {
                 is HtmlElement.Title -> {
                     ttsState["${selectedPost.id}_${element.key}"] =
-                        ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                            input = element.text.toString(),
-                        )
+                        ArticleParser
+                            .Utils.clearTagsAndReplaceEntitiesFromText(
+                                input = element.text.toString(),
+                            )
                 }
 
                 is HtmlElement.TextBlock -> {
@@ -541,7 +542,9 @@ private fun PostScreenImpl(
                                                 list = basicList,
                                                 textContent = { text, index ->
                                                     TextTts(
-                                                        text = text,
+                                                        text = text.overrideSpecifiedTextColors(
+                                                            newColor = MaterialTheme.colorScheme.onBackground,
+                                                        ),
                                                         utteranceId = "${selectedPost.id}_${basicList.key + 1_000_000 + index}",
                                                         ttsClient = ttsClient
                                                             ?: throw NullPointerException("TtsClient not provided"),

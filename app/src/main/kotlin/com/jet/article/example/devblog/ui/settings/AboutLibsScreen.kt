@@ -5,17 +5,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.jet.article.example.devblog.composables.TitleTopBar
-import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
-import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.jet.article.example.devblog.R
+import com.jet.article.example.devblog.composables.TitleTopBar
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
-import com.mikepenz.aboutlibraries.ui.compose.libraryColors
+import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.m3.chipColors
+import com.mikepenz.aboutlibraries.ui.compose.m3.libraryColors
 
 /**
  * Using [about-libraries library](https://github.com/mikepenz/AboutLibraries) to show list of libraries
@@ -27,6 +28,8 @@ import com.mikepenz.aboutlibraries.ui.compose.libraryColors
 fun AboutLibsScreen(
     onBack: () -> Unit,
 ) {
+    val libraries by produceLibraries()
+
     Scaffold(
         topBar = {
             TitleTopBar(
@@ -39,11 +42,14 @@ fun AboutLibsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues),
+                libraries = libraries,
                 colors = LibraryDefaults.libraryColors(
-                    backgroundColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    badgeBackgroundColor = MaterialTheme.colorScheme.primary,
-                    badgeContentColor = MaterialTheme.colorScheme.onPrimary,
+                    libraryBackgroundColor = MaterialTheme.colorScheme.background,
+                    libraryContentColor = MaterialTheme.colorScheme.onBackground,
+                    versionChipColors = LibraryDefaults.chipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
                 ),
             )
         }
@@ -56,7 +62,7 @@ fun AboutLibsScreen(
 private fun AboutLibsScreenPreview() {
     DevBlogAppTheme {
         AboutLibsScreen(
-           onBack = {},
+            onBack = {},
         )
     }
 }

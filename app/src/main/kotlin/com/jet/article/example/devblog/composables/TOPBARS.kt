@@ -134,12 +134,12 @@ fun PostTopBar(
                 style = MaterialTheme.typography.titleLarge,
             )
         },
-        colors = TopAppBarDefaults.largeTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background.copy(alpha = backgroundAlpha),
-            titleContentColor = titleColor,
             scrolledContainerColor = MaterialTheme.colorScheme.background.copy(alpha = backgroundAlpha),
-            actionIconContentColor = MaterialTheme.colorScheme.onBackground,
             navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+            titleContentColor = titleColor,
+            actionIconContentColor = MaterialTheme.colorScheme.onBackground
         ),
         actions = actions,
         navigationIcon = {

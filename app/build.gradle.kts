@@ -21,7 +21,7 @@ android {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
         targetSdk = 36
-        versionCode = 15
+        versionCode = 17
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -69,14 +69,14 @@ dependencies {
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     //debugImplementation(files("libs/jet-article-debug.aar"))
-    debugImplementation(dependencyNotation = files("libs/jet-article-debug.aar"))
-    releaseImplementation(dependencyNotation = files("libs/jet-article-release.aar"))
+    implementation(dependencyNotation = files("libs/jet-article-debug.aar"))
     implementation(dependencyNotation = project(path = ":tests-names"))
 
     implementation(dependencyNotation = libs.jet.utils)
     implementation(dependencyNotation = libs.jet.lint)
     implementation(dependencyNotation = libs.jet.tts)
 
+    implementation(dependencyNotation = libs.androidx.appcompat)
     implementation(dependencyNotation = libs.androidx.core.core.ktx)
     implementation(dependencyNotation = libs.androidx.lifecycle.lifecycle.runtime.ktx)
     implementation(dependencyNotation = libs.androidx.activity.compose)
@@ -89,9 +89,7 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.ui)
     implementation(dependencyNotation = libs.androidx.ui.graphics)
     implementation(dependencyNotation = libs.ui.tooling.preview)
-    implementation(dependencyNotation = libs.material)
     implementation(dependencyNotation = libs.material3)
-    implementation(dependencyNotation = libs.androidx.adaptive.android)
     implementation(dependencyNotation = libs.androidx.palette.ktx)
     implementation(dependencyNotation = libs.androidx.work.runtime.ktx)
     implementation(dependencyNotation = libs.androidx.core.splashscreen)
@@ -102,7 +100,6 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.paging.compose)
 
     implementation(dependencyNotation = libs.android.joda)
-    implementation(dependencyNotation = libs.aboutlibraries.compose)
     implementation(dependencyNotation = libs.coil.compose)
     implementation(dependencyNotation = libs.coil.gif)
 
@@ -111,13 +108,6 @@ dependencies {
     implementation(dependencyNotation = libs.androidx.navigation3.ui)
     implementation(dependencyNotation = libs.androidx.navigation3.runtime)
     implementation(dependencyNotation = libs.androidx.lifecycle.viewmodel.navigation3)
-
-    /** Adaptive UI */
-    implementation(dependencyNotation = libs.androidx.adaptive)
-    implementation(dependencyNotation = libs.androidx.adaptive.layout)
-    implementation(dependencyNotation = libs.androidx.adaptive.navigation)
-    implementation(dependencyNotation = libs.androidx.adaptive.navigation.suite)
-
 
     /** Room Database */
     implementation(dependencyNotation = libs.androidx.room.runtime)
@@ -144,6 +134,11 @@ dependencies {
     ksp(dependencyNotation = libs.google.dagger.hilt.compiler)
     implementation(dependencyNotation = libs.androidx.hilt.navigation.compose)
     implementation(dependencyNotation = libs.androidx.hilt.work)
+
+
+    /** About Libraries */
+    implementation(dependencyNotation = libs.aboutlibraries.core)
+    implementation(dependencyNotation = libs.aboutlibraries.material3)
 
 
     /** Tests */
