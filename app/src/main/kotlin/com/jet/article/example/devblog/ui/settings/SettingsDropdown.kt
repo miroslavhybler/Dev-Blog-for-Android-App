@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.horizontalPadding
 
@@ -58,7 +59,7 @@ fun <T> SettingsDropdown(
                     expanded = isDropdownMenuOpened,
                     onDismissRequest = { isDropdownMenuOpened = false },
                 ) {
-                    items.forEach { item ->
+                    items.fastForEach { item ->
                         DropdownMenuItem(
                             text = {
                                 val text = transform(item)

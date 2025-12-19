@@ -297,25 +297,20 @@ class CoreRepo @Inject constructor(
 
         try {
             val title = original.elements
-                .first { it is HtmlElement.Title } as HtmlElement.Title
+                .firstOrNull { it is HtmlElement.Title } as? HtmlElement.Title
             val headerImage = original.elements
-                .first { it is HtmlElement.Image } as HtmlElement.Image
+                .firstOrNull { it is HtmlElement.Image } as? HtmlElement.Image
             val date = original.elements
-                .first { it is HtmlElement.TextBlock } as HtmlElement.TextBlock
+                .firstOrNull() { it is HtmlElement.TextBlock } as? HtmlElement.TextBlock
 
 
-            val simpleDate = processDate(date = date.text.toString())
+            val simpleDate = processDate(date = date!!.text.toString())
             val newElements = ArrayList(original.elements).apply {
                 remove(element = headerImage)
                 remove(element = title)
                 remove(element = date)
             }
 
-            if (simpleDate == null) {
-                return Result.failure(
-                    exception = NullPointerException("Unable to get date")
-                )
-            }
             val data = original.copy(elements = newElements)
             return Result.success(
                 value = AdjustedPostData(

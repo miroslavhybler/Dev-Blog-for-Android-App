@@ -29,6 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jet.article.example.devblog.composables.TitleTopBar
@@ -225,7 +227,7 @@ private fun ChangelogItem(
             color = MaterialTheme.colorScheme.onBackground,
         )
 
-        item.changes.forEach { changeStringRes ->
+        item.changes.fastForEach { changeStringRes ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top,

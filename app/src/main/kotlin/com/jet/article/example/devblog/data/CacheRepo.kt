@@ -3,6 +3,7 @@
 package com.jet.article.example.devblog.data
 
 import android.content.Context
+import androidx.compose.ui.util.fastForEach
 import androidx.datastore.core.FileStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -89,7 +90,7 @@ class CacheRepo @Inject constructor(
         if (files.size > maxNumberOfEntries) {
             //Keep 10 latest items in cache
             val toBeDeleted = files.drop(n = maxNumberOfEntries)
-            toBeDeleted.forEach { file ->
+            toBeDeleted.fastForEach { file ->
                 file.delete()
             }
         }

@@ -17,10 +17,10 @@ import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
  * created on 23.08.2024
  */
 public data class AdjustedPostData public constructor(
-    val headerImage: HtmlElement.Image,
+    val headerImage: HtmlElement.Image?,
     val postData: HtmlArticleData,
-    val date: SimpleDate,
-    val title: HtmlElement.Title,
+    val date: SimpleDate?,
+    val title: HtmlElement.Title?,
     val contest: List<TitleWithOriginalIndex>,
 ) {
 

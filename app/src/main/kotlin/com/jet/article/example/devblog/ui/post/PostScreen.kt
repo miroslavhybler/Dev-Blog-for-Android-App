@@ -68,6 +68,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
 import androidx.core.text.toSpannable
@@ -332,7 +334,7 @@ private fun PostScreenImpl(
         val mPost = post ?: return@LaunchedEffect
         //Adding content from post to TTS State so text can be spoken
 
-        mPost.postData.elements.forEach { element ->
+        mPost.postData.elements.fastForEach { element ->
             when (element) {
                 is HtmlElement.Title -> {
                     ttsState["${selectedPost.id}_${element.key}"] =
@@ -350,7 +352,7 @@ private fun PostScreenImpl(
                 }
 
                 is HtmlElement.BasicList -> {
-                    element.items.forEachIndexed { index, item ->
+                    element.items.fastForEachIndexed { index, item ->
                         val cleanTextForTTS =
                             ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
                                 input = item.text,
@@ -360,7 +362,7 @@ private fun PostScreenImpl(
                     }
                 }
 
-                else -> return@forEach
+                else -> return@fastForEach
             }
         }
     }

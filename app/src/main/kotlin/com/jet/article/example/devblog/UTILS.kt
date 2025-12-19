@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.util.fastForEach
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -158,7 +159,7 @@ suspend fun ArticleParser.parseWithInitialization(
         isQueryingTextOutsideTextTags = true,
         linkColor = Green80,
     )
-    ExcludeOption.devBlogExcludeRules.forEach { option ->
+    ExcludeOption.devBlogExcludeRules.fastForEach { option ->
         addExcludeOption(
             tag = option.tag,
             clazz = option.clazz,
@@ -347,12 +348,12 @@ fun AnnotatedString.overrideSpecifiedTextColors(
         append(text = this@overrideSpecifiedTextColors.text)
 
         // Copy paragraph styles
-        this@overrideSpecifiedTextColors.paragraphStyles.forEach {
+        this@overrideSpecifiedTextColors.paragraphStyles.fastForEach {
             addStyle(style = it.item, start = it.start, end = it.end)
         }
 
         // Copy span styles, but override only those with an explicitly set color
-        this@overrideSpecifiedTextColors.spanStyles.forEach { range ->
+        this@overrideSpecifiedTextColors.spanStyles.fastForEach { range ->
             val style = range.item
 
             //some articles has specified varios colors in styles, this is bad for dark mode
@@ -379,7 +380,7 @@ fun AnnotatedString.overrideSpecifiedTextColors(
             this@overrideSpecifiedTextColors.getLinkAnnotations(
                 start = range.start,
                 end = range.end
-            ).forEach {
+            ).fastForEach {
                 (it.item as? LinkAnnotation.Url)?.let { originalLink ->
                     addLink(
                         url = originalLink,
