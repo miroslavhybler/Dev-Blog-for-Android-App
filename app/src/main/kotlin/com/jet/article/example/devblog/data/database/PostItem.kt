@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.SimpleDate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue

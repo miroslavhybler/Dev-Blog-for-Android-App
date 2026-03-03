@@ -68,8 +68,12 @@ dependencies {
 
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
-    //debugImplementation(files("libs/jet-article-debug.aar"))
-    implementation(dependencyNotation = files("libs/jet-article-debug.aar"))
+    //debugImplementation(files("libs/jet-article-old-debug.aar"))
+   // implementation(dependencyNotation = files("libs/jet-article-old-debug.aar"))
+
+    implementation(dependencyNotation = files("libs/jet-article-core-debug.aar"))
+    implementation(dependencyNotation = files("libs/jet-article-ui-debug.aar"))
+
     implementation(dependencyNotation = project(path = ":tests-names"))
 
     implementation(dependencyNotation = libs.jet.utils)
@@ -148,7 +152,7 @@ dependencies {
     )
     add(
         configurationName = "benchmarkImplementation",
-        dependencyNotation = files("libs/jet-article-release.aar")
+        dependencyNotation = files("libs/jet-article-old-release.aar")
     )
     implementation(dependencyNotation = libs.androidx.runtime.tracing)
     testImplementation(dependencyNotation = libs.junit)

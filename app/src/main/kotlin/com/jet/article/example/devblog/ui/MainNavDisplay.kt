@@ -48,7 +48,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.SceneStrategy
-import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
@@ -60,6 +59,7 @@ import com.jet.article.example.devblog.ui.settings.AboutLibsScreen
 import com.jet.article.example.devblog.ui.settings.AboutScreen
 import com.jet.article.example.devblog.ui.settings.ChangelogScreen
 import com.jet.article.example.devblog.ui.settings.SettingsScreen
+import com.jet.article.nativelib.ArticleElement
 import io.ktor.util.reflect.instanceOf
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
@@ -77,7 +77,7 @@ public val LocalBackstack: ProvidableCompositionLocal<Backstack> = staticComposi
 
 public data class SectionSelectedEvent public constructor(
     val index: Int,
-    val element: HtmlElement.Title,
+    val element: ArticleElement.Text,
 ) {
 
     var isConsumed: Boolean = false

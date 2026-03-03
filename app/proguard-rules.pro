@@ -1,9 +1,5 @@
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
--keep class com.jet.article.data.*
--keep class com.jet.article.ui.elements.*
--keep class com.jet.article.ArticleParser { *; }
--keep class com.jet.article.ArticleAnalyzer { *; }
 -keep class com.jet.tts.*
 
 

@@ -10,9 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jet.article.data.HtmlElement
-import com.jet.article.ui.elements.HtmlImage
+import com.jet.article.nativelib.ArticleElement
 import com.jet.article.ui.elements.HtmlImageDefaults
+import com.jet.article.ui.elements.ImageElement
 
 /**
  * @author Miroslav Hýbler <br>
@@ -21,15 +21,15 @@ import com.jet.article.ui.elements.HtmlImageDefaults
 @Composable
 fun CustomHtmlImage(
     modifier: Modifier = Modifier,
-    image: HtmlElement.Image,
+    image: ArticleElement.Image,
 ) {
-    HtmlImage(
+    ImageElement(
         modifier = modifier.animateContentSize(),
-        data = image,
+        image = image,
         loading = {
             CustomHtmlImageDefaults.Loading()
         },
-        error = { HtmlImageDefaults.ErrorLayout() }
+        error = { HtmlImageDefaults.ErrorLayout() },
     )
 }
 
@@ -38,7 +38,7 @@ fun CustomHtmlImage(
     modifier: Modifier = Modifier,
     url: String,
 ) {
-    HtmlImage(
+    ImageElement(
         modifier = modifier.animateContentSize(),
         url = url,
         loading = {

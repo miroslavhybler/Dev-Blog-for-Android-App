@@ -3,7 +3,6 @@ package com.jet.article.example.devblog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.SystemBarStyle
@@ -40,13 +39,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.jet.article.ArticleParser
-import com.jet.article.data.HtmlArticleData
 import com.jet.article.example.devblog.data.ExcludeOption
 import com.jet.article.example.devblog.data.SettingsStorage
-import com.jet.article.example.devblog.ui.Green40
-import com.jet.article.example.devblog.ui.Green80
 import com.jet.article.example.devblog.ui.LocalDimensions
+import com.jet.article.nativelib.ArticleContentTransformer
+import com.jet.article.nativelib.ArticleData
 import com.jet.utils.pxToDp
 
 
@@ -148,27 +145,27 @@ fun rememberSystemBarsStyle(
 }
 
 
-suspend fun ArticleParser.parseWithInitialization(
+suspend fun ArticleContentTransformer.parseWithInitialization(
     content: String,
     url: String,
-): HtmlArticleData {
-    initialize(
-        areImagesEnabled = true,
-        isLoggingEnabled = false,
-        isTextFormattingEnabled = true,
-        isQueryingTextOutsideTextTags = true,
-        linkColor = Green80,
-    )
-    ExcludeOption.devBlogExcludeRules.fastForEach { option ->
-        addExcludeOption(
-            tag = option.tag,
-            clazz = option.clazz,
-            id = option.id,
-            keyword = option.keyword,
-        )
-    }
+): ArticleData {
+//    initialize(
+//        areImagesEnabled = true,
+//        isLoggingEnabled = false,
+//        isTextFormattingEnabled = true,
+//        isQueryingTextOutsideTextTags = true,
+//        linkColor = Green80,
+//    )
 
-    return parse(content = content, url = url)
+    return this.transform(html = content, url = url, customTagFilter = { tag, attributes ->
+        ExcludeOption.devBlogExcludeRules.fastForEach { option ->
+            if (!option.filter(tag = tag, attributes = attributes)) {
+                return@transform false
+            }
+        }
+
+        return@transform true
+    })
 }
 
 
@@ -340,7 +337,7 @@ fun Context.shareUrl(
     )
 }
 
-
+//TODO remove
 fun AnnotatedString.overrideSpecifiedTextColors(
     newColor: Color,
 ): AnnotatedString {

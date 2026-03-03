@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -72,12 +73,8 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
-import androidx.core.text.toSpannable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jet.article.ArticleParser
-import com.jet.article.data.HtmlArticleData
-import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
@@ -100,11 +97,8 @@ import com.jet.article.example.devblog.ui.MainActivity
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
 import com.jet.article.example.devblog.ui.home.NewPostMark
-import com.jet.article.ui.JetHtmlArticleContent
-import com.jet.article.ui.Link
+
 import com.jet.article.ui.LinkClickHandler
-import com.jet.article.ui.elements.HtmlBasicList
-import com.jet.article.ui.rememberJetHtmlArticleState
 import com.jet.tts.TextTts
 import com.jet.tts.rememberTtsState
 import com.jet.utils.dpToPx
@@ -112,7 +106,14 @@ import com.jet.utils.pxToDp
 import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.rememberSnackbarState
 import com.jet.article.example.devblog.overrideSpecifiedTextColors
-import com.jet.article.ui.JetHtmlArticleState
+import com.jet.article.nativelib.ArticleData
+import com.jet.article.nativelib.ArticleElement
+import com.jet.article.nativelib.ArticleHeadData
+import com.jet.article.nativelib.Link
+import com.jet.article.ui.ArticleLazyColumn
+import com.jet.article.ui.ArticleState
+import com.jet.article.ui.elements.ContentList
+import com.jet.article.ui.rememberArticleState
 import com.jet.tts.TtsLifecycleAwareEffect
 import com.jet.tts.TtsState
 import com.jet.tts.rememberTtsClient
@@ -148,8 +149,8 @@ fun PostScreen(
 
 
     val ttsState = rememberTtsState(key = selectedPost.id)
-
-    val state = rememberJetHtmlArticleState(listState = rememberLazyListState())
+    val state = rememberArticleState()
+    val lazyListState = rememberLazyListState()
 
 
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
@@ -177,7 +178,7 @@ fun PostScreen(
 
     LaunchedEffect(key1 = selectedSectionEvent) {
         val event = selectedSectionEvent ?: return@LaunchedEffect
-        state.listState.animateScrollToItem(
+        lazyListState.animateScrollToItem(
             index = event.index,
             scrollOffset = density.dpToPx(dp = 24.dp).toInt(),
         )
@@ -201,7 +202,8 @@ fun PostScreen(
         route = route,
         onNavigate = onNavigate,
         onBack = onBack,
-        state = state,
+        articleState = state,
+        lazyListState = lazyListState,
         selectedSectionEvent = selectedSectionEvent,
         ttsState = ttsState,
         settings = settings,
@@ -224,7 +226,8 @@ private fun PostScreenImpl(
     route: Route.Post,
     onNavigate: (Route) -> Unit,
     onBack: () -> Unit,
-    state: JetHtmlArticleState,
+    articleState: ArticleState,
+    lazyListState: LazyListState,
     selectedSectionEvent: SectionSelectedEvent?,
     ttsState: TtsState,
     settings: SettingsStorage.Settings,
@@ -234,7 +237,6 @@ private fun PostScreenImpl(
 ) {
     val selectedPost = route.item
     val colorScheme = MaterialTheme.colorScheme
-    val listState = state.listState
 
     val density = LocalDensity.current
     val dimensions = LocalDimensions.current
@@ -245,7 +247,7 @@ private fun PostScreenImpl(
 
     val colorEvaluator = remember { ArgbEvaluator() }
     val coroutineScope = rememberCoroutineScope()
-    val scrollOffsetY by rememberCurrentOffset(state = listState)
+    val scrollOffsetY by rememberCurrentOffset(state = lazyListState)
     var lastScrollOffsetY by remember() { mutableIntStateOf(value = scrollOffsetY) }
     var topBarAlpha by rememberSaveable { mutableFloatStateOf(value = 0f) }
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -292,14 +294,14 @@ private fun PostScreenImpl(
                 link: Link.SectionLink,
             ) {
                 coroutineScope.launch {
-                    val i = state.data.elements.indexOfFirst { element ->
-                        element.id == link.rawLink.removePrefix(prefix = "#")
+                    val i = articleState.data.elements.indexOfFirst { element ->
+                        element.ids.contains(element = link.rawLink.removePrefix(prefix = "#"))
                     }
 
                     i.takeIf { index -> index != -1 }
                         ?.let { index ->
                             //Tries to scroll to the right section given by element id
-                            state.listState.animateScrollToItem(
+                            lazyListState.animateScrollToItem(
                                 index = index,
                                 scrollOffset = scrollOffsetY,
                             )
@@ -317,11 +319,8 @@ private fun PostScreenImpl(
             && data.getOrNull()?.postData?.url != lastUrl
             && post != null
         ) {
-            if (post.postData.linkHandler.callback == null) {
-                post.postData.linkHandler.callback = linkCallback
-            }
-            state.show(data = post.postData)
-            state.listState.scrollToItem(index = 0, scrollOffset = 0)
+            articleState.data = post.postData
+            lazyListState.scrollToItem(index = 0, scrollOffset = 0)
             lastUrl = data.getOrNull()?.postData?.url
         }
         if (isRefreshing) {
@@ -336,29 +335,18 @@ private fun PostScreenImpl(
 
         mPost.postData.elements.fastForEach { element ->
             when (element) {
-                is HtmlElement.Title -> {
-                    ttsState["${selectedPost.id}_${element.key}"] =
-                        ArticleParser
-                            .Utils.clearTagsAndReplaceEntitiesFromText(
-                                input = element.text.toString(),
-                            )
+                is ArticleElement.Text -> {
+                    ttsState["${selectedPost.id}_${element.compositionKey}"] = element.text.toString()
                 }
 
-                is HtmlElement.TextBlock -> {
-                    ttsState["${selectedPost.id}_${element.key}"] =
-                        ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                            input = element.text.toString()
-                        )
-                }
-
-                is HtmlElement.BasicList -> {
-                    element.items.fastForEachIndexed { index, item ->
-                        val cleanTextForTTS =
-                            ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                                input = item.text,
-                            )
-                        val utteranceId = "${selectedPost.id}_${element.key + 1_000_000 + index}"
-                        ttsState[utteranceId] = cleanTextForTTS
+                is ArticleElement.ContentList -> {
+                    element.items.fastForEachIndexed { index, list ->
+                        list.filterIsInstance<ArticleElement.Text>().forEach { item ->
+                            val cleanTextForTTS = item.text.toString()
+                            val utteranceId =
+                                "${selectedPost.id}_${element.compositionKey + 1_000_000 + index}"
+                            ttsState[utteranceId] = cleanTextForTTS
+                        }
                     }
                 }
 
@@ -475,12 +463,12 @@ private fun PostScreenImpl(
                                 }
 
                                 if (post != null) {
-                                    JetHtmlArticleContent(
+                                    ArticleLazyColumn(
                                         modifier = Modifier
                                             .testTag(tag = Tracing.Tag.jetHtmlArticle)
                                             .fillMaxSize()
                                             .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                                        state = state,
+                                        state = articleState,
                                         contentPadding = PaddingValues(
                                             start = dimensions.topLinePadding,
                                             top = dimensions.topLinePadding,
@@ -506,51 +494,34 @@ private fun PostScreenImpl(
                                                 }
                                             }
                                         },
-                                        title = { title ->
-                                            val style = when (title.titleTag) {
-                                                "h1", "h2" -> MaterialTheme.typography.displaySmall
-                                                else -> MaterialTheme.typography.titleLarge
-                                            }
-                                            TextTts(
-                                                text = title.text,
-                                                utteranceId = "${selectedPost.id}_${title.key}",
-                                                ttsClient = ttsClient
-                                                    ?: throw NullPointerException("TtsClient not provided"),
-                                                scrollableState = state.listState,
-                                                style = style,
-                                                highlightStyle = style.copy(
-                                                    color = MaterialTheme.colorScheme.secondary,
-                                                ),
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                            )
-                                        },
                                         text = { text ->
                                             TextTts(
                                                 text = text.text.overrideSpecifiedTextColors(
                                                     newColor = MaterialTheme.colorScheme.onBackground,
                                                 ),
-                                                utteranceId = "${selectedPost.id}_${text.key}",
+                                                utteranceId = "${selectedPost.id}_${text.compositionKey}",
                                                 ttsClient = ttsClient
                                                     ?: throw NullPointerException("TtsClient not provided"),
-                                                scrollableState = state.listState,
+                                                scrollableState = lazyListState,
                                                 highlightStyle = TextStyle(
                                                     color = MaterialTheme.colorScheme.secondary,
                                                 ),
                                                 color = MaterialTheme.colorScheme.onBackground,
                                             )
                                         },
-                                        basicList = { basicList ->
-                                            HtmlBasicList(
+                                        list = { basicList ->
+                                            ContentList(
                                                 list = basicList,
-                                                textContent = { text, index ->
+                                                textContent = { text ->
                                                     TextTts(
-                                                        text = text.overrideSpecifiedTextColors(
+                                                        text = text.text.overrideSpecifiedTextColors(
                                                             newColor = MaterialTheme.colorScheme.onBackground,
                                                         ),
-                                                        utteranceId = "${selectedPost.id}_${basicList.key + 1_000_000 + index}",
+                                                        //TODO + index
+                                                        utteranceId = "${selectedPost.id}_${basicList.compositionKey + 1_000_000}",
                                                         ttsClient = ttsClient
                                                             ?: throw NullPointerException("TtsClient not provided"),
-                                                        scrollableState = state.listState,
+                                                        scrollableState = lazyListState,
                                                         highlightStyle = TextStyle(
                                                             color = MaterialTheme.colorScheme.secondary,
                                                         ),
@@ -647,10 +618,11 @@ private fun PostScreenImpl(
 private fun PostPanePreview1() {
 
     val articeData = remember {
-        HtmlArticleData(
+        ArticleData(
             url = "https://android-developers.googleblog.com/2025/09/weareplay-meet-the-people-building-vibrant-communities-with-their-apps-and-games.html",
+            headData = ArticleHeadData.Empty,
             elements = listOf(
-                HtmlElement.TextBlock(
+                ArticleElement.Text(
                     text = buildAnnotatedString {
                         append(
                             text = "In our latest #WeArePlay stories, we meet the founders who turned their interests into vibrant communities through their apps and games on Google Play - from democratizing music production for artists in Brazil to building a global network for Black professionals.\n" +
@@ -658,35 +630,37 @@ private fun PostPanePreview1() {
                                     "Here are a few of our favorites:"
                         )
                     },
-                    id = null,
-                    key = 3,
+                    ids = emptyList(),
+                    sourceIndex = 3,
+                    style = TextStyle.Default,
                 ),
-                HtmlElement.Image(
+                ArticleElement.Image(
                     url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-Ux4E4BpQ4Ojs3ifq6bcYEyfx2Ehb8TGYSXt0ELGoN4ztjwxFOx3i0z5R22U08MM_225-8j395cT840zcn7313BbWFXEOxpHA4gnX2PUQPiDBeMptoOlF9dBDGVSzAm7ULXfnrBVCFzRxWQ0yAIKv1XpSfnrTuBxgUiZBe0vPalqzKkl14h5DcMisHR4/s1600/01_BRAZIL_MURB_FOUNDER_ERICK%20MACEDO_KELVIN%20MACEDO_edited.jpg",
-                    alt = null,
-                    description = null,
-                    id = null,
-                    key = 4,
+                    sourceIndex = 4,
                     defaultSize = IntSize.Zero,
+                    contentDescription = null,
+                    ids = emptyList(),
                 ),
-                HtmlElement.Title(
+                ArticleElement.Text(
                     text = buildAnnotatedString {
                         append(
                             text = "Erik and Kelvin’s app Murb connects and enables indie artists in Brazil to create and distribute music from their phones."
                         )
                     },
-                    id = null,
-                    key = 5,
-                    titleTag = "h3",
+                    sourceIndex = 5,
+                    tag = "h3",
+                    ids = emptyList(),
+                    style = TextStyle.Default,
                 ),
-                HtmlElement.TextBlock(
+                ArticleElement.Text(
                     text = buildAnnotatedString {
                         append(
                             text = "Brothers Erick and Kelvin combined their passion for Brazil's urban culture from skateboarding to graffiti with their professional experience in tech to create Murb. Their app empowers young, independent artists in the rap, trap, and funk communities to produce music directly on their phones, providing a vital platform for those who lack access to studios. With recent features like producer profiles to help musicians sell their work and plans to integrate with major streaming platforms, Murb is on a mission to democratize music production."
                         )
                     },
-                    id = null,
-                    key = 6,
+                    sourceIndex = 6,
+                    style = TextStyle.Default,
+                    ids = emptyList(),
                 )
             )
         )
@@ -720,26 +694,27 @@ private fun PostPanePreview1() {
                 settings = SettingsStorage.Settings.Default,
                 data = Result.success(
                     value = AdjustedPostData(
-                        headerImage = HtmlElement.Image(
+                        headerImage = ArticleElement.Image(
                             url = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXHK03KiFLi-Ej2Pewi30s2R58kkiiIkl7mzZx9PNC28ac7zbsIvkTqsQZJoKh3QeogtqCwP2vF2iwBaWqE7H770IUfFyZlZX41ZvdqN-3Cvd1hsBowXGOaMR2w0IB4vyBLzX6xfbT7qGbuIeEXZOZzMShMLs9QrTbJeaNkSeImX9GCiqdTOEiJD8kycc/s1600/Android%20Devs%20_%20Google%20Devs%20-Blog_Header_1200x600.jpg",
-                            description = null,
                             defaultSize = IntSize.Zero,
-                            alt = null,
-                            id = null,
-                            key = 1,
+                            contentDescription = null,
+                            sourceIndex = 516,
+                            ids = emptyList()
                         ),
                         date = SimpleDate(
                             dayOfMonth = 24,
                             month = Month.SEPTEMBER,
                             year = 2025,
                         ),
-                        title = HtmlElement.Title(
+                        title = ArticleElement.Text(
                             text = buildAnnotatedString {
                                 append(text = "#WeArePlay: Meet the people building vibrant communities with their apps and games")
                             },
-                            key = 0,
-                            titleTag = "h1",
-                            id = null,
+                            isTitle = true,
+                            tag = "h1",
+                            sourceIndex = 0,
+                            ids = emptyList(),
+                            style = TextStyle()
                         ),
                         postData = articeData,
                         contest = emptyList(),
@@ -747,7 +722,8 @@ private fun PostPanePreview1() {
                 ),
                 onRefresh = {},
                 onToggleFavorite = {},
-                state = rememberJetHtmlArticleState(initialData = articeData),
+                articleState = rememberArticleState(initialData = articeData),
+                lazyListState = rememberLazyListState()
             )
         }
     }

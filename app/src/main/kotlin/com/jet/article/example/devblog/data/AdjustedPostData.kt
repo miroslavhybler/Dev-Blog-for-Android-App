@@ -2,9 +2,9 @@
 
 package com.jet.article.example.devblog.data
 
-import com.jet.article.data.HtmlArticleData
-import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
+import com.jet.article.nativelib.ArticleData
+import com.jet.article.nativelib.ArticleElement
 
 
 /**
@@ -17,10 +17,10 @@ import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
  * created on 23.08.2024
  */
 public data class AdjustedPostData public constructor(
-    val headerImage: HtmlElement.Image?,
-    val postData: HtmlArticleData,
+    val headerImage: ArticleElement.Image?,
+    val postData: ArticleData,
     val date: SimpleDate?,
-    val title: HtmlElement.Title?,
+    val title: ArticleElement.Text?,
     val contest: List<TitleWithOriginalIndex>,
 ) {
 

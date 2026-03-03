@@ -3,12 +3,8 @@
 package com.jet.article.example.devblog.data
 
 import androidx.annotation.CheckResult
+import androidx.annotation.Keep
 import androidx.compose.ui.util.fastForEach
-import com.jet.article.ArticleAnalyzer
-import com.jet.article.ArticleParser
-import com.jet.article.data.HtmlArticleData
-import com.jet.article.data.HtmlElement
-import com.jet.article.data.TagInfo
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.Constants
 import com.jet.article.example.devblog.ContentParseException
@@ -16,9 +12,10 @@ import com.jet.article.example.devblog.NotConnectedToInternetException
 import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
-import com.jet.article.example.devblog.parseWithInitialization
-import com.jet.article.example.devblog.ui.Green80
 import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
+import com.jet.article.nativelib.ArticleContentTransformer
+import com.jet.article.nativelib.ArticleData
+import com.jet.article.nativelib.ArticleElement
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -68,6 +65,10 @@ class CoreRepo @Inject constructor(
     ).also { format ->
         format.timeZone = TimeZone.getTimeZone("GMT-08:00")
     }
+
+
+    @Keep
+    private data class LinkInfo(val href: String?)
 
 
     /**
@@ -290,18 +291,26 @@ class CoreRepo @Inject constructor(
         htmlCode: String,
         url: String,
     ): Result<AdjustedPostData> {
-        val original = ArticleParser.parseWithInitialization(
-            content = htmlCode,
+        val original = ArticleContentTransformer()
+            .transform(
+            html = htmlCode,
             url = url,
-        )
+            customTagFilter = { tag, attributes ->
+                ExcludeOption.devBlogExcludeRules.fastForEach { option ->
+                    if (!option.filter(tag = tag, attributes = attributes)) {
+                        return@transform false
+                    }
+                }
+                return@transform true
+            })
 
         try {
             val title = original.elements
-                .firstOrNull { it is HtmlElement.Title } as? HtmlElement.Title
+                .firstOrNull { it is ArticleElement.Text && it.isTitle } as? ArticleElement.Text
             val headerImage = original.elements
-                .firstOrNull { it is HtmlElement.Image } as? HtmlElement.Image
+                .firstOrNull { it is ArticleElement.Image } as? ArticleElement.Image
             val date = original.elements
-                .firstOrNull() { it is HtmlElement.TextBlock } as? HtmlElement.TextBlock
+                .firstOrNull() { it is ArticleElement.Text } as? ArticleElement.Text
 
 
             val simpleDate = processDate(date = date!!.text.toString())
@@ -319,7 +328,7 @@ class CoreRepo @Inject constructor(
                     date = simpleDate,
                     title = title,
                     contest = data.elements.mapIndexedNotNull { index, element ->
-                        if (element is HtmlElement.Title) {
+                        if (element is ArticleElement.Text && element.isTitle) {
                             TitleWithOriginalIndex(
                                 title = element,
                                 originalIndex = index,
@@ -343,33 +352,40 @@ class CoreRepo @Inject constructor(
     private suspend fun parsePosts(
         htmlCode: String
     ): Result<List<PostItem>> {
-        ArticleParser.initialize(
-            isLoggingEnabled = false,
-            areImagesEnabled = true,
-            isTextFormattingEnabled = true,
-            isQueryingTextOutsideTextTags = true,
-        )
+//        ArticleParser.initialize(
+//            isLoggingEnabled = false,
+//            areImagesEnabled = true,
+//            isTextFormattingEnabled = true,
+//            isQueryingTextOutsideTextTags = true,
+//        )
         var hasFeaturedItem: Boolean = false
-        val links: ArrayList<TagInfo> = ArrayList()
-        ArticleAnalyzer.process(
-            content = htmlCode,
-            onTag = { tag ->
-                //needs to query links to the articles
-                if (tag.tag == "a" && tag.clazz == "adb-card__href") {
-                    links.add(element = tag)
-                }
+        val links: ArrayList<LinkInfo> = ArrayList()
 
-                //Has reatured item outside the list, this needs to be removed
-                if (tag.tag == "div" && tag.clazz == "featured__wrapper") {
-                    hasFeaturedItem = true
-                }
-            }
-        )
 
-        val data = ArticleParser.parseWithInitialization(
-            content = htmlCode,
-            url = Constants.indexUrl,
-        )
+        val data = ArticleContentTransformer()
+            .transform(
+                html = htmlCode,
+                url = Constants.indexUrl,
+                customTagFilter = { tag, attributes ->
+                    ExcludeOption.devBlogExcludeRules.fastForEach { option ->
+                        if (!option.filter(tag = tag, attributes = attributes)) {
+                            return@transform false
+                        }
+                    }
+
+                    val classes = ArticleContentTransformer.getClasses(attributes = attributes)
+                    if (tag == "a" && classes.contains(element = "adb-card__href")) {
+                        links.add(element = LinkInfo(href = attributes["href"]))
+                    }
+
+                    //Has reatured item outside the list, this needs to be removed
+                    if (tag == "div" && classes.contains(element = "featured__wrapper")) {
+                        hasFeaturedItem = true
+                    }
+                    true
+                }
+            )
+
         val finalData = data.getPostList(
             links = links,
             hasFeaturedItem = hasFeaturedItem,
@@ -452,7 +468,7 @@ class CoreRepo @Inject constructor(
     }
 
     /**
-     * When html code is parsed, one [PostItem] consist of 4 [HtmlElement]:
+     * When html code is parsed, one [PostItem] consist of 4 [ArticleElement]:
      * * Image
      * * Title
      * * Date
@@ -472,12 +488,12 @@ class CoreRepo @Inject constructor(
      * @return [Result] of conversion
      * @since 1.0.0
      */
-    private fun HtmlArticleData.getPostList(
-        links: List<TagInfo>,
+    private fun ArticleData.getPostList(
+        links: List<LinkInfo>,
         hasFeaturedItem: Boolean,
     ): Result<List<PostItem>> {
         try {
-            val newList = ArrayList<HtmlElement>()
+            val newList = ArrayList<ArticleElement>()
             newList.addAll(elements = elements)
 
             if (hasFeaturedItem) {
@@ -496,19 +512,15 @@ class CoreRepo @Inject constructor(
             }
 
             val list = chunked.mapIndexed { index, sublist ->
-                val dateString = (sublist[2] as HtmlElement.TextBlock).text
+                val dateString = (sublist[2] as ArticleElement.Text).text
                 val date = processDate(date = dateString.toString())!!
                 PostItem(
-                    image = (sublist[0] as HtmlElement.Image).url,
-                    title = ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                        input = (sublist[1] as HtmlElement.TextBlock).text.toString()
-                    ),
+                    image = (sublist[0] as ArticleElement.Image).url,
+                    title = (sublist[1] as ArticleElement.Text).text.toString(),
                     date = date,
                     dateTimeStamp = date.timestamp,
-                    description = ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                        input = (sublist[3] as HtmlElement.TextBlock).text.toString(),
-                    ),
-                    url = links[index].tagAttributes["href"]
+                    description = (sublist[3] as ArticleElement.Text).text.toString(),
+                    url = links[index].href
                         ?: throw NullPointerException("Unable to extract href from ${links[index]}"),
                     isUnread = true,
                     isFavorite = false,

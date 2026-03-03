@@ -40,9 +40,7 @@ import com.jet.article.example.devblog.ui.LocalBackstack
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.colorFavorited
 import com.jet.article.example.devblog.ui.containsEntry
-import com.jet.article.ui.elements.HtmlImage
-import com.jet.article.ui.elements.HtmlTextBlock
-
+import com.jet.article.ui.elements.ImageElement
 
 /**
  * @author Miroslav Hýbler <br>
@@ -183,13 +181,13 @@ private fun HomeListItemColumn(
             color = MaterialTheme.colorScheme.onBackground,
         )
 
-        HtmlTextBlock(
+        Text(
             modifier = Modifier,
             text = AnnotatedString(text = item.title),
             style = MaterialTheme.typography.titleLarge,
             color = contentColor,
         )
-        HtmlTextBlock(
+        Text(
             modifier = Modifier,
             text = AnnotatedString(text = item.description),
             style = MaterialTheme.typography.bodyMedium,
@@ -231,7 +229,7 @@ private fun HomeListItemRow(
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            HtmlImage(
+            ImageElement(
                 modifier = Modifier.size(size = 48.dp),
                 url = item.image,
                 contentScale = ContentScale.Crop,
@@ -251,7 +249,7 @@ private fun HomeListItemRow(
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                 )
-                HtmlTextBlock(
+                Text(
                     modifier = Modifier,
                     text = AnnotatedString(text=item.title),
                     style = MaterialTheme.typography.titleMedium,
@@ -260,7 +258,7 @@ private fun HomeListItemRow(
 
                     )
 
-                HtmlTextBlock(
+                Text(
                     modifier = Modifier,
                     text = AnnotatedString(text=item.description),
                     style = MaterialTheme.typography.bodySmall,

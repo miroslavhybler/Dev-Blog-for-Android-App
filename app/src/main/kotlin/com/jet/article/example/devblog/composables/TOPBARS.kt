@@ -25,7 +25,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.horizontalPadding
-import com.jet.article.ui.elements.HtmlTextBlock
 
 
 /**
@@ -126,7 +125,7 @@ fun PostTopBar(
     LargeTopAppBar(
         modifier = modifier,
         title = {
-            HtmlTextBlock(
+            Text(
                 modifier = Modifier.horizontalPadding(),
                 text = title,
                 maxLines = 2,

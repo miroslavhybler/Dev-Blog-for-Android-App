@@ -20,13 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.jet.article.ArticleParser
-import com.jet.article.data.HtmlElement
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.TitleTopBar
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
+import com.jet.article.nativelib.ArticleElement
 
 
 /**
@@ -76,7 +75,7 @@ fun ContentsScreen(
 
                 itemsIndexed(
                     items = data?.contest ?: emptyList(),
-                    key = { index, item -> item.title.key },
+                    key = { index, item -> item.title.compositionKey },
                 ) { index, item ->
                     Text(
                         modifier = Modifier
@@ -93,11 +92,7 @@ fun ContentsScreen(
                             )
                             .horizontalPadding()
                             .padding(vertical = 16.dp),
-                        text = "${index + 1}. - ${
-                            ArticleParser.Utils.clearTagsAndReplaceEntitiesFromText(
-                                input = item.title.text.toString(),
-                            )
-                        }",
+                        text = "${index + 1}. - ${item.title.text}",
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
@@ -108,6 +103,6 @@ fun ContentsScreen(
 }
 
 data class TitleWithOriginalIndex constructor(
-    val title: HtmlElement.Title,
+    val title: ArticleElement.Text,
     val originalIndex: Int,
 )
