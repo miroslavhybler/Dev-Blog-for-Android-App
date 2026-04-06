@@ -51,7 +51,7 @@ class CoreRepo @Inject constructor(
 ) {
 
     companion object {
-        private const val TIME_OUT = 3_000
+        private const val TIME_OUT = 5_000
     }
 
     /**
@@ -293,16 +293,16 @@ class CoreRepo @Inject constructor(
     ): Result<AdjustedPostData> {
         val original = ArticleContentTransformer()
             .transform(
-            html = htmlCode,
-            url = url,
-            customTagFilter = { tag, attributes ->
-                ExcludeOption.devBlogExcludeRules.fastForEach { option ->
-                    if (!option.filter(tag = tag, attributes = attributes)) {
-                        return@transform false
+                html = htmlCode,
+                url = url,
+                customTagFilter = { tag, attributes ->
+                    ExcludeOption.devBlogExcludeRules.fastForEach { option ->
+                        if (!option.filter(tag = tag, attributes = attributes)) {
+                            return@transform false
+                        }
                     }
-                }
-                return@transform true
-            })
+                    return@transform true
+                })
 
         try {
             val title = original.elements

@@ -284,10 +284,18 @@ private fun PostScreenImpl(
             }
 
             override fun onSameDomainLink(link: Link.SameDomainLink) {
+                try {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW)
+                            .setData(link.fullLink.toUri())
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    e.printStackTrace()
+                }
             }
 
             override fun onUriLink(link: Link.UriLink) {
-
+                //Uri links not supported
             }
 
             override fun onSectionLink(
@@ -469,6 +477,7 @@ private fun PostScreenImpl(
                                             .fillMaxSize()
                                             .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
                                         state = articleState,
+                                        linkCallback = linkCallback,
                                         contentPadding = PaddingValues(
                                             start = dimensions.topLinePadding,
                                             top = dimensions.topLinePadding,
