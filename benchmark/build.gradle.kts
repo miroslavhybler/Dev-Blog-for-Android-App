@@ -5,8 +5,6 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.android)
-
 }
 
 android {
@@ -32,11 +30,13 @@ android {
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
-    testOptions.managedDevices.devices {
-        create<ManagedVirtualDevice>(name = "pixel6Api33") {
-            device = "Pixel 6"
-            apiLevel = 33
-            systemImageSource = "aosp"
+    testOptions.managedDevices {
+        allDevices {
+            create<ManagedVirtualDevice>(name = "pixel6Api33") {
+                device = "Pixel 6"
+                apiLevel = 33
+                systemImageSource = "aosp"
+            }
         }
     }
 
@@ -44,14 +44,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    kotlin {
-        jvmToolchain(jdkVersion = 11)
-    }
 }
+
 
 dependencies {
     implementation(project(":tests-names"))

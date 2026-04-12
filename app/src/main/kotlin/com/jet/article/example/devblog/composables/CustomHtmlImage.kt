@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jet.article.nativelib.ArticleElement
+import com.jet.article.core.ArticleElement
 import com.jet.article.ui.elements.HtmlImageDefaults
 import com.jet.article.ui.elements.ImageElement
 

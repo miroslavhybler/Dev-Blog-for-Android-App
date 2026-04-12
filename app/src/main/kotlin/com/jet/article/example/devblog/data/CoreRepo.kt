@@ -13,9 +13,9 @@ import com.jet.article.example.devblog.RequestNotSucesfullException
 import com.jet.article.example.devblog.data.database.DatabaseRepo
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
-import com.jet.article.nativelib.ArticleContentTransformer
-import com.jet.article.nativelib.ArticleData
-import com.jet.article.nativelib.ArticleElement
+import com.jet.article.core.ArticleContentTransformer
+import com.jet.article.core.ArticleData
+import com.jet.article.core.ArticleElement
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.network.sockets.SocketTimeoutException

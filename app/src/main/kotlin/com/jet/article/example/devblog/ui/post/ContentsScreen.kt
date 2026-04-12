@@ -25,7 +25,7 @@ import com.jet.article.example.devblog.composables.TitleTopBar
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
-import com.jet.article.nativelib.ArticleElement
+import com.jet.article.core.ArticleElement
 
 
 /**

@@ -1,4 +1,5 @@
 import com.android.tools.r8.internal.ks
+import org.gradle.kotlin.dsl.main
 import kotlin.collections.set
 
 plugins {
@@ -48,19 +49,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-    }
-    kotlin {
-        jvmToolchain(jdkVersion = 11)
-    }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     ksp {
         arg(k = "room.schemaLocation", v = "${projectDir.path}/room-schemas")
+    }
+}
+
+kotlin {
+    jvmToolchain(jdkVersion = 11)
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
 }
 
@@ -69,7 +72,7 @@ dependencies {
 //    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     //debugImplementation(files("libs/jet-article-old-debug.aar"))
-   // implementation(dependencyNotation = files("libs/jet-article-old-debug.aar"))
+    // implementation(dependencyNotation = files("libs/jet-article-old-debug.aar"))
 
     implementation(dependencyNotation = files("libs/jet-article-core-debug.aar"))
     implementation(dependencyNotation = files("libs/jet-article-ui-debug.aar"))

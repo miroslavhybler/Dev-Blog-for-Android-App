@@ -1,41 +1,40 @@
 [versions]
-aboutLibraries = "13.1.0"
-androidJodaVersion = "2.13.1"
+aboutLibraries = "13.2.1"
+androidJodaVersion = "2.14.1"
 appUpdateKtx = "2.1.0"
 benchmark = "1.4.1"
 coil = "2.7.0"
-composeBom = "2025.09.01"
-activityCompose = "1.11.0"
-coreSplashscreen = "1.0.1"
-datastorePreferencesCore = "1.1.7"
-paging = "3.3.6"
+composeBom = "2026.03.01"
+activityCompose = "1.13.0"
+coreSplashscreen = "1.2.0"
+paging = "3.4.2"
 paletteKtx = "1.0.0"
-roomVersion = "2.8.1"
+roomVersion = "2.8.4"
 jetUtils = "1.3.0"
 jetLint = "1.0.2"
 jetTts = "1.0.0-RC5"
-androidxCoreKtx = "1.17.0"
-androidxLifecycleRuntimeKtx = "2.9.4"
-hilt = "2.57.2"
+androidxCoreKtx = "1.18.0"
+androidxLifecycleRuntimeKtx = "2.10.0"
+hilt = "2.59.2"
 hiltCommon = "1.3.0"
 junit = "4.13.2"
-kotlin = "2.2.20"
-ksp = "2.2.20-2.0.3"
-ktorVersion = "3.2.2"
-material3 = "1.5.0-alpha04"
-nav3ViewModel = "2.4.0-alpha04"
-nav3adaptive = "1.0.0-alpha02"
-navigation3 = "1.0.0-alpha09"
+kotlin = "2.3.20"
+ksp = "2.3.4"
+ktorVersion = "3.4.2"
+material3 = "1.5.0-alpha17"
+nav3ViewModel = "2.10.0"
+nav3adaptive = "1.0.0-alpha03"
+navigation3 = "1.1.0"
 
 junitKtx = "1.3.0"
-compose = "1.9.2"
-agp = "8.13.2"
+compose = "1.10.6"
+agp = "9.1.0"
 junitVersion = "1.3.0"
 espressoCoreVersion = "3.7.0"
 perfetto = "1.0.1"
 uiautomator = "2.3.0"
-workRuntimeKtx = "2.10.5"
-datastore = "1.2.0-alpha02"
+workRuntimeKtx = "2.11.2"
+datastore = "1.2.1"
 appcompat = "1.7.1"
 storage = "1.6.0"
 profileinstaller = "1.4.1"
@@ -46,8 +45,8 @@ aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref
 
 android-joda = { module = "net.danlew:android.joda", version.ref = "androidJodaVersion" }
 
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesCore" }
-androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 androidx-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltCommon" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltCommon" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }

@@ -42,8 +42,8 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.jet.article.example.devblog.data.ExcludeOption
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.ui.LocalDimensions
-import com.jet.article.nativelib.ArticleContentTransformer
-import com.jet.article.nativelib.ArticleData
+import com.jet.article.core.ArticleContentTransformer
+import com.jet.article.core.ArticleData
 import com.jet.utils.pxToDp
 
 

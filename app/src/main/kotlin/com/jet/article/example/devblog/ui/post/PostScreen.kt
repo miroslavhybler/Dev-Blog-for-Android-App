@@ -75,10 +75,16 @@ import androidx.compose.ui.util.trace
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jet.article.core.ArticleData
+import com.jet.article.core.ArticleElement
+import com.jet.article.core.ArticleHeadData
+import com.jet.article.core.Link
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
+import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.PostTopBar
+import com.jet.article.example.devblog.composables.rememberSnackbarState
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.data.Month
 import com.jet.article.example.devblog.data.SettingsStorage
@@ -86,6 +92,7 @@ import com.jet.article.example.devblog.data.SimpleDate
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.horizontalPadding
 import com.jet.article.example.devblog.openWeb
+import com.jet.article.example.devblog.overrideSpecifiedTextColors
 import com.jet.article.example.devblog.rememberCurrentOffset
 import com.jet.article.example.devblog.shareUrl
 import com.jet.article.example.devblog.shared.Tracing
@@ -97,26 +104,18 @@ import com.jet.article.example.devblog.ui.MainActivity
 import com.jet.article.example.devblog.ui.Route
 import com.jet.article.example.devblog.ui.SectionSelectedEvent
 import com.jet.article.example.devblog.ui.home.NewPostMark
-
-import com.jet.article.ui.LinkClickHandler
-import com.jet.tts.TextTts
-import com.jet.tts.rememberTtsState
-import com.jet.utils.dpToPx
-import com.jet.utils.pxToDp
-import com.jet.article.example.devblog.composables.MessageSnackbar
-import com.jet.article.example.devblog.composables.rememberSnackbarState
-import com.jet.article.example.devblog.overrideSpecifiedTextColors
-import com.jet.article.nativelib.ArticleData
-import com.jet.article.nativelib.ArticleElement
-import com.jet.article.nativelib.ArticleHeadData
-import com.jet.article.nativelib.Link
 import com.jet.article.ui.ArticleLazyColumn
 import com.jet.article.ui.ArticleState
+import com.jet.article.ui.LinkClickHandler
 import com.jet.article.ui.elements.ContentList
 import com.jet.article.ui.rememberArticleState
+import com.jet.tts.TextTts
 import com.jet.tts.TtsLifecycleAwareEffect
 import com.jet.tts.TtsState
 import com.jet.tts.rememberTtsClient
+import com.jet.tts.rememberTtsState
+import com.jet.utils.dpToPx
+import com.jet.utils.pxToDp
 import com.jet.utils.statusBarsPaddingPx
 import kotlinx.coroutines.launch
 
@@ -455,7 +454,6 @@ private fun PostScreenImpl(
                                             .fillMaxSize()
                                             .verticalScroll(state = rememberScrollState())
                                             .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection)
-
                                     ) {
                                         ErrorLayout(
                                             modifier = Modifier
@@ -630,6 +628,7 @@ private fun PostPanePreview1() {
         ArticleData(
             url = "https://android-developers.googleblog.com/2025/09/weareplay-meet-the-people-building-vibrant-communities-with-their-apps-and-games.html",
             headData = ArticleHeadData.Empty,
+            faviconUrl = null,
             elements = listOf(
                 ArticleElement.Text(
                     text = buildAnnotatedString {

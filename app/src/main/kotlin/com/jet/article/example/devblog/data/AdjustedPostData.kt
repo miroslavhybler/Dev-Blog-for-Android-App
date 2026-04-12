@@ -2,9 +2,9 @@
 
 package com.jet.article.example.devblog.data
 
+import com.jet.article.core.ArticleData
+import com.jet.article.core.ArticleElement
 import com.jet.article.example.devblog.ui.post.TitleWithOriginalIndex
-import com.jet.article.nativelib.ArticleData
-import com.jet.article.nativelib.ArticleElement
 
 
 /**

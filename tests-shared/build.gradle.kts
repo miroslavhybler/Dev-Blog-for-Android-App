@@ -9,6 +9,11 @@ android {
 
     defaultConfig {
         minSdk = 23
+    }
+    lint {
+        targetSdk = 36
+    }
+    testOptions {
         targetSdk = 36
     }
 

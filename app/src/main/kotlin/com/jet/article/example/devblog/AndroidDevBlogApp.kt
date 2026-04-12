@@ -161,9 +161,6 @@ class AndroidDevBlogApp : Application(),
         super.onCreate()
         prepareNotificationsGroupAndChannel()
         ContentSyncWorker.register(context = this)
-        //Loading c++ jet-article library for parsing html
-//        System.loadLibrary("jet-article")
-
     }
 
 
