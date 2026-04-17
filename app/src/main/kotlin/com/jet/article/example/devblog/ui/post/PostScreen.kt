@@ -319,6 +319,10 @@ private fun PostScreenImpl(
     }
 
 
+    BackHandler(enabled = selectedImageUrl != null) {
+        selectedImageUrl = null
+    }
+
     LaunchedEffect(key1 = data) {
         if (
             data != null
@@ -343,7 +347,8 @@ private fun PostScreenImpl(
         mPost.postData.elements.fastForEach { element ->
             when (element) {
                 is ArticleElement.Text -> {
-                    ttsState["${selectedPost.id}_${element.compositionKey}"] = element.text.toString()
+                    ttsState["${selectedPost.id}_${element.compositionKey}"] =
+                        element.text.toString()
                 }
 
                 is ArticleElement.ContentList -> {
@@ -475,6 +480,7 @@ private fun PostScreenImpl(
                                             .fillMaxSize()
                                             .nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
                                         state = articleState,
+                                        lazyListState = lazyListState,
                                         linkCallback = linkCallback,
                                         contentPadding = PaddingValues(
                                             start = dimensions.topLinePadding,

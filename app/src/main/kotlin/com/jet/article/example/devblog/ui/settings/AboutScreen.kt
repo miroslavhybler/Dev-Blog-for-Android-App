@@ -89,7 +89,7 @@ fun AboutScreen(
                             )
                         ) {
                             pushLink(
-                                link = LinkAnnotation.Url(url = "https://github.com/miroslavhybler/jet-article")
+                                link = LinkAnnotation.Url(url = "https://github.com/miroslavhybler/jet-article-core")
                             )
                             append(
                                 text = stringResource(id = R.string.settings_about_0_1)
