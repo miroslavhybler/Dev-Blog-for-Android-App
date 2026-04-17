@@ -79,7 +79,7 @@
 
     <string name="settings_changelog_title_1_3_0">Used new lib for html parse ⚙️</string>
     <string name="settings_changelog_1_3_0__0">Replaced the jet-article library with new version for better functionality</string>
-    <string name="settings_changelog_1_3_0__1">Addad back handled when image is opened in PostScreen</string>
+    <string name="settings_changelog_1_3_0__1">Added back handled when image is opened in PostScreen</string>
 
     <string name="settings_about_title">About</string>
 
