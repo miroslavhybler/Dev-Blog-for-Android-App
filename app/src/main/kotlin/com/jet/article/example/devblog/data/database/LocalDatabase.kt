@@ -75,6 +75,9 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
         @Query("SELECT DISTINCT * FROM posts WHERE url=:url")
         fun getByUrl(url: String): PostItem
 
+        @Query("SELECT DISTINCT * FROM posts WHERE id=:id LIMIT 1")
+        fun getByIdOrNull(id: Int): PostItem?
+
         @Query("SELECT DISTINCT * FROM posts ORDER BY id DESC LIMIT 1")
         fun getLastPost(): PostItem
 
@@ -87,6 +90,9 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
 
         @Query("UPDATE posts SET is_favorite=:isFavorite WHERE id=:id")
         fun updateIsFavorite(id: Int, isFavorite: Boolean)
+
+        @Query("UPDATE posts SET date_timestamp=:dateTimeStamp WHERE id=:id")
+        fun updateDateTimestamp(id: Int, dateTimeStamp: Int)
     }
 
 

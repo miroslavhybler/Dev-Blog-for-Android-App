@@ -123,90 +123,116 @@ private fun HomeListPaneContent(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
             ) {
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(tag = Tracing.Tag.posts),
-                    contentPadding = PaddingValues(
-                        start = dimensions.sidePadding,
-                        end = dimensions.sidePadding,
-                        top = dimensions.topLinePadding,
-                        bottom = dimensions.bottomLinePadding,
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = when {
-                            isExpanded && isLargeWidth -> 12.dp
-                            else -> 24.dp
-                        }
-                    ),
-                ) {
-
-                    if (data.loadState.append is LoadState.Error) {
-                        item(key = errorLazyKey) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    when {
+                        data.itemCount == 0 && data.loadState.refresh is LoadState.Error -> {
                             ErrorLayout(
-                                modifier = Modifier.animateItem(),
-                                title = stringResource(R.string.error_unable_to_load_posts),
-                                cause = (data.loadState.append as LoadState.Error).error,
-                                onRefresh = onRefresh
-                            )
-                        }
-
-                    }
-
-                    items(
-                        count = data.itemCount,
-                    ) { index ->
-                        data[index]?.let {
-                            HomeListItem(
-                                modifier = if (index == 0) {
-                                    Modifier
-                                        .testTag(tag = Tracing.Tag.firstPostItem)
-                                        .animateItem()
-                                } else Modifier
-                                    .animateItem(),
-                                onOpenPost = { index, item ->
-                                    val route = Route.Post(item = item)
-                                    onNavigate(route)
-                                },
-                                item = it,
-                                index = index,
-                                onToggleFavorite = onToggleFavorite,
-                                isSelected = false,
-                            )
-                        }
-                    }
-
-                    if (data.loadState.append is LoadState.Loading) {
-                        item(key = loadingLazyKey) {
-                            Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateItem(),
-                                contentAlignment = Alignment.Center
+                                    .align(alignment = Alignment.TopCenter)
+                                    .padding(
+                                        start = dimensions.sidePadding,
+                                        end = dimensions.sidePadding,
+                                        top = dimensions.topLinePadding,
+                                    ),
+                                title = stringResource(R.string.error_unable_to_load_posts),
+                                cause = (data.loadState.refresh as LoadState.Error).error,
+                                onRefresh = onRefresh,
+                            )
+                        }
+
+                        data.itemCount == 0 && data.loadState.refresh is LoadState.Loading -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(size = 24.dp)
+                                    .align(alignment = Alignment.Center)
+                            )
+                        }
+
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .testTag(tag = Tracing.Tag.posts),
+                                contentPadding = PaddingValues(
+                                    start = dimensions.sidePadding,
+                                    end = dimensions.sidePadding,
+                                    top = dimensions.topLinePadding,
+                                    bottom = dimensions.bottomLinePadding,
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(
+                                    space = when {
+                                        isExpanded && isLargeWidth -> 12.dp
+                                        else -> 24.dp
+                                    }
+                                ),
                             ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(size = 24.dp)
-                                )
+
+                                if (data.loadState.append is LoadState.Error) {
+                                    item(key = errorLazyKey) {
+                                        ErrorLayout(
+                                            modifier = Modifier.animateItem(),
+                                            title = stringResource(R.string.error_unable_to_load_posts),
+                                            cause = (data.loadState.append as LoadState.Error).error,
+                                            onRefresh = onRefresh
+                                        )
+                                    }
+
+                                }
+
+                                items(
+                                    count = data.itemCount,
+                                ) { index ->
+                                    data[index]?.let {
+                                        HomeListItem(
+                                            modifier = if (index == 0) {
+                                                Modifier
+                                                    .testTag(tag = Tracing.Tag.firstPostItem)
+                                                    .animateItem()
+                                            } else Modifier
+                                                .animateItem(),
+                                            onOpenPost = { index, item ->
+                                                val route = Route.Post(item = item)
+                                                onNavigate(route)
+                                            },
+                                            item = it,
+                                            index = index,
+                                            onToggleFavorite = onToggleFavorite,
+                                            isSelected = false,
+                                        )
+                                    }
+                                }
+
+                                if (data.loadState.append is LoadState.Loading) {
+                                    item(key = loadingLazyKey) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .animateItem(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier
+                                                    .size(size = 24.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
 
-                }
-
-                AnimatedVisibility(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .align(alignment = Alignment.TopCenter),
-                    visible = !isConnectedToInternet,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    SmallNoConnectionLayout()
+                    AnimatedVisibility(
+                        modifier = Modifier
+                            .padding(top = 6.dp)
+                            .align(alignment = Alignment.TopCenter),
+                        visible = !isConnectedToInternet,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        SmallNoConnectionLayout()
+                    }
                 }
             }
         },
     )
 }
-

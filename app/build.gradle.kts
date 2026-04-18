@@ -68,12 +68,6 @@ kotlin {
 }
 
 dependencies {
-
-//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-
-    //debugImplementation(files("libs/jet-article-old-debug.aar"))
-    // implementation(dependencyNotation = files("libs/jet-article-old-debug.aar"))
-
     implementation(dependencyNotation = files("libs/jet-article-core-debug.aar"))
     implementation(dependencyNotation = files("libs/jet-article-ui-debug.aar"))
 
@@ -152,10 +146,6 @@ dependencies {
     add(
         configurationName = "benchmarkImplementation",
         dependencyNotation = "androidx.test:core-ktx:1.5.0"
-    )
-    add(
-        configurationName = "benchmarkImplementation",
-        dependencyNotation = files("libs/jet-article-old-release.aar")
     )
     implementation(dependencyNotation = libs.androidx.runtime.tracing)
     testImplementation(dependencyNotation = libs.junit)

@@ -19,6 +19,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.jet.article.example.devblog.AndroidDevBlogApp
 import com.jet.article.example.devblog.data.SettingsStorage
+import com.jet.article.example.devblog.data.database.DatabaseRepo
+import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isAppDark
 import com.jet.article.example.devblog.rememberSystemBarsStyle
 import com.jet.tts.TtsClient
@@ -39,6 +41,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     companion object {
+        const val EXTRA_POST_ID: String = "postId"
 
         /**
          * True when [MainActivity] was created and is running (both, on foreground or hanging in
@@ -53,6 +56,7 @@ class MainActivity : ComponentActivity() {
          * don't forget to call [MainActivity.onDeeplinkOpened] to clear the value.
          */
         private var deeplink: String? by mutableStateOf(value = null)
+        private var notificationPost: PostItem? by mutableStateOf(value = null)
 
         /**
          * True when splash screen should be visible.
@@ -62,6 +66,10 @@ class MainActivity : ComponentActivity() {
 
         fun onDeeplinkOpened() {
             deeplink = null
+        }
+
+        fun onNotificationPostOpened() {
+            notificationPost = null
         }
 
 
@@ -84,10 +92,14 @@ class MainActivity : ComponentActivity() {
      * change.
      */
     private var updateNetworkCallbackJob: Job? = null
+    private var loadNotificationPostJob: Job? = null
 
 
     @Inject
     lateinit var settingsStorage: SettingsStorage
+
+    @Inject
+    lateinit var databaseRepo: DatabaseRepo
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,8 +111,8 @@ class MainActivity : ComponentActivity() {
             delay(timeMillis = 1_000)
             //Just in case that onDataLoaded() will not be called after 1 sec (this can be due
             //to bad connection) so we will hide splashscreen even when data are not loaded yet
-            if (!isSplashScreenVisible) {
-                isSplashScreenVisible = true
+            if (isSplashScreenVisible) {
+                isSplashScreenVisible = false
             }
         }
 
@@ -160,7 +172,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    MainNavDisplay()
+                    MainNavDisplay(
+                        openedNotificationPost = notificationPost,
+                        onNotificationPostConsumed = Companion::onNotificationPostOpened,
+                    )
                 }
             }
         }
@@ -173,12 +188,15 @@ class MainActivity : ComponentActivity() {
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         checkDeeplink(intent = intent)
     }
 
 
     override fun onDestroy() {
         isActive = false
+        loadNotificationPostJob?.cancel()
+        loadNotificationPostJob = null
         updateNetworkCallbackJob?.cancel()
         updateNetworkCallbackJob = null
         AndroidDevBlogApp.unregisterNetworkCallback(context = application)
@@ -200,5 +218,23 @@ class MainActivity : ComponentActivity() {
             //Path must be longer that one because path "/" is not url to post detail but for the index
             intent.data!!.toString()
         } else null
+
+        loadNotificationPostJob?.cancel()
+        loadNotificationPostJob = null
+
+        if (deeplink != null) {
+            notificationPost = null
+            return
+        }
+
+        val postId = intent.getIntExtra(EXTRA_POST_ID, 0).takeIf { it > 0 }
+        if (postId == null) {
+            notificationPost = null
+            return
+        }
+
+        loadNotificationPostJob = lifecycleScope.launch {
+            notificationPost = databaseRepo.getPostByIdOrNull(id = postId)
+        }
     }
 }

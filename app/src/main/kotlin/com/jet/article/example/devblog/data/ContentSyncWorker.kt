@@ -131,7 +131,7 @@ public class ContentSyncWorker @AssistedInject public constructor(
                     applicationContext,
                     0,
                     Intent(applicationContext, MainActivity::class.java)
-                        .putExtra("postId", localPostId),
+                        .putExtra(MainActivity.EXTRA_POST_ID, localPostId),
                     PendingIntent.FLAG_UPDATE_CURRENT,
                     false
                 )

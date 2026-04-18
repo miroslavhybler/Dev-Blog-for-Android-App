@@ -160,7 +160,7 @@ fun PostScreen(
         state = ttsState,
     )
 
-    LaunchedEffect(key1 = deeplink) {
+    LaunchedEffect(key1 = deeplink, key2 = selectedPost.id) {
         if (deeplink != null) {
             viewModel.loadPostFromDeeplink(
                 url = deeplink,

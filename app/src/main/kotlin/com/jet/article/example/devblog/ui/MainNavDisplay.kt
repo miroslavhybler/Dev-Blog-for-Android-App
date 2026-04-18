@@ -18,6 +18,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -76,7 +77,10 @@ private enum class Scene {
  * created on 08.09.2025
  */
 @Composable
-fun MainNavDisplay() {
+fun MainNavDisplay(
+    openedNotificationPost: PostItem? = null,
+    onNotificationPostConsumed: () -> Unit = {},
+) {
     val windowAdaptiveInfo = currentWindowAdaptiveInfo()
     val directive = calculatePaneScaffoldDirective(
         windowAdaptiveInfo = windowAdaptiveInfo,
@@ -85,6 +89,14 @@ fun MainNavDisplay() {
 
     var selectedSectionEvent: SectionSelectedEvent? by remember { mutableStateOf(value = null) }
 
+    LaunchedEffect(openedNotificationPost?.id) {
+        val post = openedNotificationPost ?: return@LaunchedEffect
+        val lastRoute = backstack.lastOrNull()
+        if (lastRoute !is Route.Post || lastRoute.item.id != post.id) {
+            backstack.add(element = Route.Post(item = post))
+        }
+        onNotificationPostConsumed()
+    }
 
     CompositionLocalProvider(
         LocalBackstack provides backstack

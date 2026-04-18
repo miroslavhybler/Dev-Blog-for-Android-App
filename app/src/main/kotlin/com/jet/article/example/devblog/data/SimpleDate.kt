@@ -1,11 +1,9 @@
 package com.jet.article.example.devblog.data
 
-import android.icu.util.Calendar
-import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
+import java.util.Calendar
 import java.util.Date
 
 
@@ -22,16 +20,22 @@ data class SimpleDate constructor(
     val dayOfMonth: Int,
 ) : Comparable<SimpleDate> {
 
+    private fun createCalendar(): Calendar = Calendar.getInstance().apply {
+        set(Calendar.YEAR, year)
+        set(Calendar.MONTH, month.value - 1)
+        set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+
 
     /**
      * Timestamp in seconds
      */
     val timestamp: Int
-        get() {
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month.value, dayOfMonth, 0, 0)
-            return (calendar.timeInMillis / 1000).toInt()
-        }
+        get() = (createCalendar().timeInMillis / 1000).toInt()
 
 
     fun getDateString(): String {
@@ -40,10 +44,7 @@ data class SimpleDate constructor(
 
 
     fun toDate(): Date {
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month.value - 1, dayOfMonth, 0, 0)
-        val date = calendar.time
-        return date
+        return createCalendar().time
     }
 
 

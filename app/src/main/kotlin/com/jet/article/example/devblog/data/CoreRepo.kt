@@ -273,11 +273,14 @@ class CoreRepo @Inject constructor(
     suspend fun loadFromLocal(
         page: Int,
         count: Int,
-    ): List<PostItem> = databaseRepo.withTransaction {
-        databaseRepo.postDao.getByDate(
-            count = count,
-            offset = page * count,
-        )
+    ): List<PostItem> {
+        databaseRepo.ensureCorrectPostTimestamps()
+        return databaseRepo.withTransaction {
+            databaseRepo.postDao.getByDate(
+                count = count,
+                offset = page * count,
+            )
+        }
     }
 
 
@@ -433,12 +436,14 @@ class CoreRepo @Inject constructor(
             val response: HttpResponse = ktorHttpClient.get(urlString = url)
             val body = response.bodyAsText()
 
-            if (isCachingResult) {
-                cacheRepo.saveToCache(url = url, content = body)
-            }
-
             when (response.status.value) {
-                in 200..300 -> Result.success(value = body)
+                in 200..299 -> {
+                    if (isCachingResult) {
+                        cacheRepo.saveToCache(url = url, content = body)
+                    }
+                    Result.success(value = body)
+                }
+
                 else -> Result.failure(
                     exception = RequestNotSucesfullException(
                         "${response.status.value}",
