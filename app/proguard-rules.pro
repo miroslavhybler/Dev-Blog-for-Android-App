@@ -28,3 +28,10 @@
 -dontwarn com.jet.article.ui.elements.HtmlImageDefaults
 -dontwarn com.jet.article.ui.elements.HtmlImageKt
 -dontwarn com.jet.article.ui.elements.HtmlTextBlockKt
+
+# Keep methods called from native code
+-keepclassmembers class com.jet.article.core.TagCallback {
+    public void onStartTag(java.lang.String, java.util.Map);
+    public void onEndTag(java.lang.String);
+    public void onText(java.lang.String);
+}

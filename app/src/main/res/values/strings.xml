@@ -81,6 +81,9 @@
     <string name="settings_changelog_1_3_0__0">Replaced the jet-article library with new version for better functionality</string>
     <string name="settings_changelog_1_3_0__1">Added back handled when image is opened in PostScreen</string>
 
+    <string name="settings_changelog_title_1_3_1">️HOTFIX ‼️</string>
+    <string name="settings_changelog_1_3_1__0">Fixed proguard, added missing rules that caused app to crash</string>
+
     <string name="settings_about_title">About</string>
 
 

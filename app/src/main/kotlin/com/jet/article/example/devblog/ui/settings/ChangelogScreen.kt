@@ -45,6 +45,14 @@ import com.jet.article.example.devblog.ui.LocalDimensions
  */
 private val changelog: List<Changelog> = listOf(
     Changelog(
+        version = "1.3.1",
+        dateFormatted = "23.04.2026",
+        titleRes = R.string.settings_changelog_title_1_3_1,
+        changes = listOf(
+            R.string.settings_changelog_1_3_1__0,
+        )
+    ),
+    Changelog(
         version = "1.3.0",
         dateFormatted = "17.04.2026",
         titleRes = R.string.settings_changelog_title_1_3_0,
