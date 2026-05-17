@@ -7,6 +7,6 @@ to maximize user experience on all devices, with support of Dark Theme and Dynam
 
 
 
-Also, this app is example for [jet-article](https://github.com/miroslavhybler/jet-article-core) project
+Also, this app is example for [jet-article](https://github.com/miroslavhybler/jet-article-ui) project
 showing full power of the library, parsing index site to list of posts and showing post detail using
 [Jetpack Compose](https://developer.android.com/compose) and [Material3](https://m3.material.io/).
