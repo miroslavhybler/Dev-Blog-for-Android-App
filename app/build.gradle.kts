@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.jet.article.example.devblog"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 21
         versionName = "1.3.1"
 
@@ -100,7 +100,7 @@ dependencies {
     testImplementation(dependencyNotation = libs.androidx.paging.paging.common.ktx)
     implementation(dependencyNotation = libs.androidx.paging.compose)
 
-    implementation(dependencyNotation = libs.android.joda)
+    implementation(dependencyNotation = libs.kotlinx.datetime)
     implementation(dependencyNotation = libs.coil.compose)
     implementation(dependencyNotation = libs.coil.gif)
 

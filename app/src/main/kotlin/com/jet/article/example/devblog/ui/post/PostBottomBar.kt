@@ -1,96 +1,68 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@file:Suppress("RemoveRedundantQualifierName")
 
 package com.jet.article.example.devblog.ui.post
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ButtonGroupMenuState
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.hideFromAccessibility
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.ui.DevBlogAppTheme
+import com.jet.article.example.devblog.ui.LocalDimensions
 import com.jet.article.example.devblog.ui.LocalTtsClient
 import com.jet.article.example.devblog.ui.colorFavorited
 import com.jet.tts.TtsState
 import com.jet.tts.rememberTtsState
-import com.jet.article.example.devblog.composables.SnackbarData
-import com.jet.article.example.devblog.composables.SnackbarState
-import com.jet.article.example.devblog.composables.rememberSnackbarState
 import kotlinx.coroutines.delay
 
-private val ITEM_SIZE: Dp = 76.dp
-private val ITEM_PADDING: Dp = 18.dp
-private val TOGGLE_ITEM_PADDING: Dp = 14.dp
-private const val PRESSED_ANIM_SCALE: Float = 1.5f
 
+const val DEFAULT_WEIGHT: Float = 1f
+const val NOT_FAVORITE_WEIGHT: Float = 1.5f
+const val MAJOR_ITEM_WEIGHT: Float = 2f
 
-/**
- * @author Miroslav Hýbler <br>
- * created on 29.04.2025
- */
+/** Post actions presented as an expressive Material button group. */
 @Composable
 fun PostBottomBar(
     modifier: Modifier = Modifier,
+    isExpanded: Boolean,
+    onExpandedChange: (isExpanded: Boolean) -> Unit,
     ttsState: TtsState,
     onToggleFavorite: () -> Unit,
     onShowContest: () -> Unit,
@@ -98,352 +70,357 @@ fun PostBottomBar(
     onShare: () -> Unit,
     isFavorite: Boolean,
     isUsingTTS: Boolean,
-    snackbarState: SnackbarState,
-    shape: Shape = MaterialTheme.shapes.extraLarge,
+    shape: Shape = CircleShape,
     containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
 ) {
-    val isInspection = LocalInspectionMode.current
     val ttsClient = LocalTtsClient.current
     val dimensions = LocalDimensions.current
+    var togglePositionX by remember { mutableFloatStateOf(Float.NaN) }
 
-    var isExpanded by rememberSaveable { mutableStateOf(value = isInspection) }
-
-    var rememberedIsSpeaking by remember { mutableStateOf(value = ttsClient?.isSpeaking == true) }
-
-
-    LaunchedEffect(key1 = ttsClient?.isSpeaking) {
-        if (ttsClient?.isSpeaking == false) {
-            //Just delay for showing "stop" icon for one sec before AnimatedVisibility hides
-            delay(timeMillis = 1_000)
-        }
-        rememberedIsSpeaking = ttsClient?.isSpeaking == true
-    }
-
-
-    Box(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .padding(bottom = dimensions.bottomLinePadding)
-            .padding(horizontal = 12.dp) //Not using horizontalPadding() because its too large
-            .wrapContentWidth()
-            .height(height = ITEM_SIZE)
-            .clip(shape = shape)
-            .then(other = modifier),
-    ) {
-        AnimatedVisibility(
-            modifier = Modifier.fillMaxWidth(),
-            visible = isExpanded,
-            enter = slideInHorizontally(
-                initialOffsetX = { fullWidth -> fullWidth }
-            ) + expandHorizontally(expandFrom = Alignment.End),
-            exit = slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
-            ) + shrinkHorizontally(shrinkTowards = Alignment.End)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = containerColor, shape = shape)
-                    .horizontalScroll(state = rememberScrollState()),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Item(
-                    iconRes = if (isFavorite)
-                        R.drawable.ic_favorite_filled
-                    else
-                        R.drawable.ic_favorite_outlined,
-                    onClick = onToggleFavorite,
-                    tint = if (isFavorite) colorFavorited else contentColor,
-                    label = stringResource(
-                        id = if (isFavorite)
-                            R.string.content_desc_add_to_favorites
-                        else
-                            R.string.content_desc_remove_from_favorites,
-                    ),
-                    snackbarState = snackbarState,
-                    shape = shape,
-                )
-
-                if (isUsingTTS) {
-
-                    ItemDivider()
-
-                    Item(
-                        iconRes = R.drawable.ic_tts,
-                        isReady = ttsClient?.isInitialized == true,
-                        onClick = {
-                            if (ttsClient?.isSpeaking == true) {
-                                ttsClient.stop()
-                            } else {
-                                ttsClient?.speak(state = ttsState)
-                            }
-                        },
-                        tint = contentColor,
-                        snackbarState = snackbarState,
-                        label = stringResource(
-                            id = if (ttsClient?.isSpeaking == true)
-                                R.string.content_desc_stop_tts
-                            else
-                                R.string.content_desc_speak_tts,
-                        ),
-                        shape = shape,
-                        customContent = {
-
-                            androidx.compose.animation.AnimatedVisibility(
-                                modifier = Modifier
-                                    .size(size = 24.dp)
-                                    .align(alignment = Alignment.Center)
-                                    .offset(x = 12.dp, y = 12.dp),
-                                visible = rememberedIsSpeaking,
-                                enter = scaleIn(),
-                                exit = scaleOut(),
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .semantics(
-                                            properties = {
-                                                this.hideFromAccessibility()
-                                            }
-                                        ),
-                                    painter = painterResource(
-                                        id = if (ttsClient?.isSpeaking == true)
-                                            R.drawable.ic_tts_play
-                                        else
-                                            R.drawable.ic_tts_stop,
-                                    ),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                        }
-                    )
-                }
-
-                ItemDivider()
-
-                Item(
-                    iconRes = R.drawable.ic_open_external,
-                    isReady = true,
-                    onClick = onOpenWeb,
-                    tint = contentColor,
-                    snackbarState = snackbarState,
-                    label = stringResource(id = R.string.content_desc_open_in_browser),
-                    shape = shape,
-                )
-
-                ItemDivider()
-
-                Item(
-                    iconRes = R.drawable.ic_share,
-                    onClick = onShare,
-                    tint = contentColor,
-                    snackbarState = snackbarState,
-                    label = stringResource(id = R.string.content_desc_share),
-                    shape = shape,
-                )
-
-                ItemDivider()
-
-                Item(
-                    iconRes = R.drawable.ic_content,
-                    onClick = onShowContest,
-                    tint = contentColor,
-                    snackbarState = snackbarState,
-                    label = stringResource(id = R.string.content_desc_show_contest),
-                    shape = shape,
-                )
-
-
-                Spacer(
-                    modifier = Modifier
-                        .size(size = ITEM_SIZE),
-                )
-            }
-        }
-
-
-        ToggleItem(
-            modifier = Modifier
-                .align(alignment = Alignment.CenterEnd),
-            iconRes = R.drawable.ic_content,
-            onClick = { isExpanded = !isExpanded },
-            shape = shape,
-            label = stringResource(id = R.string.content_desc_show_menu),
-        )
-
-    }
-}
-
-
-@Composable
-private fun ItemDivider(
-    modifier: Modifier = Modifier,
-) {
-    VerticalDivider(
-        modifier = modifier.padding(vertical = ITEM_PADDING),
-        thickness = 2.dp,
-        color = MaterialTheme.colorScheme.outline,
+    val favoriteLabel = stringResource(
+        id = if (isFavorite) R.string.content_desc_remove_from_favorites else R.string.content_desc_add_to_favorites,
     )
-}
-
-
-@Composable
-private fun RowScope.Item(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconRes: Int,
-    onClick: () -> Unit,
-    tint: Color,
-    label: String,
-    snackbarState: SnackbarState,
-    isEnabled: Boolean = true,
-    isReady: Boolean = true,
-    useWeight: Boolean = true,
-    shape: Shape,
-    customContent: @Composable BoxScope.() -> Unit = {},
-) {
-
-    val indication = LocalIndication.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    var isClicked by remember { mutableStateOf(value = false) }
-
-    // Animate horizontal scale when pressed
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed || isClicked) PRESSED_ANIM_SCALE else 1f,
-        label = "PressScale",
+    val ttsLabel = stringResource(
+        id = if (ttsClient?.isSpeaking == true) R.string.content_desc_stop_tts else R.string.content_desc_speak_tts,
     )
-    val weight by animateFloatAsState(
-        targetValue = if (isPressed || isClicked) PRESSED_ANIM_SCALE else 1f,
-        label = "WeightAnim"
-    )
+    val openInBrowserLabel = stringResource(id = R.string.content_desc_open_in_browser)
+    val shareLabel = stringResource(id = R.string.content_desc_share)
+    val showContentsLabel = stringResource(id = R.string.content_desc_show_contest)
 
-    LaunchedEffect(key1 = interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            if (interaction is PressInteraction.Release) {
-                //Using Release Interaction as click indicator to animate scale and weight
-                isClicked = true
-                delay(timeMillis = 250)
-                isClicked = false
-            }
-        }
-    }
+    val favoriteInteractionSource = remember { MutableInteractionSource() }
+    val ttsInteractionSource = remember { MutableInteractionSource() }
+    val browserInteractionSource = remember { MutableInteractionSource() }
+    val shareInteractionSource = remember { MutableInteractionSource() }
+    val contentsInteractionSource = remember { MutableInteractionSource() }
+    val toggleInteractionSource = remember { MutableInteractionSource() }
+    val toggleLabel = stringResource(
+        id = if (isExpanded) R.string.content_desc_hide_menu else R.string.content_desc_show_menu,
+    )
+    val itemCount = if (isUsingTTS) 5 else 4
 
     Box(
         modifier = modifier
-            .size(size = ITEM_SIZE)
-            .weight(weight = if (useWeight) weight else 1f)
-            .clip(shape = shape)
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = indication,
-                enabled = isEnabled,
-                onClickLabel = label,
-                role = Role.Button,
-                onClick = onClick,
-                onLongClick = {
-                    snackbarState.data = SnackbarData(
-                        message = label,
+            .navigationBarsPadding()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = dimensions.bottomLinePadding)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        ButtonGroup(
+            overflowIndicator = { menuState ->
+                if (isExpanded) {
+                    ButtonGroupDefaults.OverflowIndicator(
+                        menuState = menuState,
+                        shape = shape,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = containerColor,
+                            contentColor = contentColor,
+                        ),
+                    )
+                } else {
+                    // Preserve overflow measurement while actions are visually collapsed.
+                    Spacer(modifier = Modifier.size(56.dp))
+                }
+            },
+            // Keep a dedicated slot for the persistent expand/collapse control.
+            modifier = Modifier
+                .padding(end = 64.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            customItem(
+                buttonGroupContent = {
+                    StaggeredPostActionButton(
+                        modifier = Modifier
+                            .animateWidth(interactionSource = favoriteInteractionSource)
+                            .weight(weight = if (!isFavorite) NOT_FAVORITE_WEIGHT else DEFAULT_WEIGHT),
+                        iconRes = if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_outlined,
+                        label = favoriteLabel,
+                        onClick = onToggleFavorite,
+                        shape = shape,
+                        containerColor = containerColor,
+                        contentColor = if (isFavorite) colorFavorited else contentColor,
+                        interactionSource = favoriteInteractionSource,
+                        isGroupExpanded = isExpanded,
+                        togglePositionX = togglePositionX,
+                        index = 0,
+                        itemCount = itemCount,
                     )
                 },
-                onLongClickLabel = label,
+                menuContent = { menuState ->
+                    PostActionMenuItem(
+                        menuState = menuState,
+                        iconRes = if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_outlined,
+                        label = favoriteLabel,
+                        onClick = onToggleFavorite,
+                    )
+                },
             )
-            .graphicsLayer(
-                block = {
-                    scaleY = scale
-                    scaleX = scale
-                }
-            )
-            .semantics(
-                properties = {
-                    role = Role.Button
-                    contentDescription = label
-                }
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
 
-        androidx.compose.animation.AnimatedVisibility(
-            modifier = Modifier
-                .align(alignment = Alignment.Center)
-                .matchParentSize(),
-            visible = !isReady,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(size = 24.dp),
-                color = tint,
+            if (isUsingTTS) {
+                customItem(
+                    buttonGroupContent = {
+                        StaggeredPostActionButton(
+                            modifier = Modifier
+                                .animateWidth(interactionSource = ttsInteractionSource)
+                                .weight(weight = DEFAULT_WEIGHT),
+                            iconRes = R.drawable.ic_tts,
+                            label = ttsLabel,
+                            enabled = ttsClient?.isInitialized == true,
+                            onClick = {
+                                if (ttsClient?.isSpeaking == true) {
+                                    ttsClient.stop()
+                                } else {
+                                    ttsClient?.speak(state = ttsState)
+                                }
+                            },
+                            shape = shape,
+                            containerColor = containerColor,
+                            contentColor = contentColor,
+                            interactionSource = ttsInteractionSource,
+                            isGroupExpanded = isExpanded,
+                            togglePositionX = togglePositionX,
+                            index = 1,
+                            itemCount = itemCount,
+                        )
+                    },
+                    menuContent = { menuState ->
+                        PostActionMenuItem(
+                            menuState = menuState,
+                            iconRes = R.drawable.ic_tts,
+                            label = ttsLabel,
+                            enabled = ttsClient?.isInitialized == true,
+                            onClick = {
+                                if (ttsClient?.isSpeaking == true) {
+                                    ttsClient.stop()
+                                } else {
+                                    ttsClient?.speak(state = ttsState)
+                                }
+                            },
+                        )
+                    },
+                )
+            }
+
+            customItem(
+                buttonGroupContent = {
+                    StaggeredPostActionButton(
+                        modifier = Modifier
+                            .animateWidth(interactionSource = browserInteractionSource)
+                            .weight(weight = MAJOR_ITEM_WEIGHT),
+                        iconRes = R.drawable.ic_open_external,
+                        label = openInBrowserLabel,
+                        onClick = onOpenWeb,
+                        shape = MaterialTheme.shapes.large,
+                        containerColor = containerColor,
+                        contentColor = contentColor,
+                        interactionSource = browserInteractionSource,
+                        isGroupExpanded = isExpanded,
+                        togglePositionX = togglePositionX,
+                        index = if (isUsingTTS) 2 else 1,
+                        itemCount = itemCount,
+                    )
+                },
+                menuContent = { menuState ->
+                    PostActionMenuItem(
+                        menuState,
+                        R.drawable.ic_open_external,
+                        openInBrowserLabel,
+                        onOpenWeb,
+                    )
+                },
             )
+
+            customItem(
+                buttonGroupContent = {
+                    StaggeredPostActionButton(
+                        modifier = Modifier
+                            .animateWidth(interactionSource = shareInteractionSource)
+                            .weight(weight = DEFAULT_WEIGHT),
+                        iconRes = R.drawable.ic_share,
+                        label = shareLabel,
+                        onClick = onShare,
+                        shape = shape,
+                        containerColor = containerColor,
+                        contentColor = contentColor,
+                        interactionSource = shareInteractionSource,
+                        isGroupExpanded = isExpanded,
+                        togglePositionX = togglePositionX,
+                        index = if (isUsingTTS) 3 else 2,
+                        itemCount = itemCount,
+                    )
+                },
+                menuContent = { menuState ->
+                    PostActionMenuItem(menuState, R.drawable.ic_share, shareLabel, onShare)
+                },
+            )
+
+            customItem(
+                buttonGroupContent = {
+                    StaggeredPostActionButton(
+                        modifier = Modifier
+                            .animateWidth(interactionSource = contentsInteractionSource)
+                            .weight(weight = DEFAULT_WEIGHT),
+                        iconRes = R.drawable.ic_content,
+                        label = showContentsLabel,
+                        onClick = onShowContest,
+                        shape = shape,
+                        containerColor = containerColor,
+                        contentColor = contentColor,
+                        interactionSource = contentsInteractionSource,
+                        isGroupExpanded = isExpanded,
+                        togglePositionX = togglePositionX,
+                        index = if (isUsingTTS) 4 else 3,
+                        itemCount = itemCount,
+                    )
+                },
+                menuContent = { menuState ->
+                    PostActionMenuItem(
+                        menuState = menuState,
+                        iconRes = R.drawable.ic_content,
+                        label = showContentsLabel,
+                        onClick = onShowContest,
+                    )
+                },
+            )
+
         }
 
-        androidx.compose.animation.AnimatedVisibility(
-            modifier = Modifier
-                .align(alignment = Alignment.Center)
-                .matchParentSize(),
-            visible = isReady,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Icon(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = ITEM_PADDING),
-                painter = painterResource(id = iconRes),
-                contentDescription = label,
-                tint = tint,
-            )
-        }
-
-        customContent()
-    }
-}
-
-
-@Composable
-private fun ToggleItem(
-    modifier: Modifier = Modifier,
-    @DrawableRes iconRes: Int,
-    onClick: () -> Unit,
-    shape: Shape,
-    label: String,
-) {
-
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Box(
-        modifier = modifier
-            .size(size = ITEM_SIZE)
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = shape
-            )
-            .clip(shape = shape)
-            .clickable(
-                interactionSource = interactionSource,
-                onClickLabel = label,
-                onClick = onClick,
-            )
-            .semantics(
-                properties = {
-                    role = Role.Button
-                    contentDescription = label
-                }
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            modifier = Modifier
-                .align(alignment = Alignment.Center)
-                .matchParentSize()
-                .padding(all = TOGGLE_ITEM_PADDING),
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        PostActionButton(
+            modifier = Modifier.onGloballyPositioned { coordinates ->
+                togglePositionX = coordinates.positionInRoot().x
+            },
+            iconRes = R.drawable.ic_content,
+            label = toggleLabel,
+            onClick = { onExpandedChange(!isExpanded) },
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            interactionSource = toggleInteractionSource,
+            shape = MaterialTheme.shapes.large,
         )
     }
 }
 
+@Composable
+private fun StaggeredPostActionButton(
+    modifier: Modifier,
+    @DrawableRes iconRes: Int,
+    label: String,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    interactionSource: MutableInteractionSource,
+    isGroupExpanded: Boolean,
+    togglePositionX: Float,
+    index: Int,
+    itemCount: Int,
+    enabled: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+) {
+    var itemPositionX by remember { mutableFloatStateOf(Float.NaN) }
+    var isVisible by remember { mutableStateOf(false) }
+    val canAnimate = togglePositionX.isFinite() && itemPositionX.isFinite()
+    val delayMillis = if (isGroupExpanded) (itemCount - index - 1) * 80 else index * 50
+
+    LaunchedEffect(isGroupExpanded, canAnimate, delayMillis) {
+        if (isGroupExpanded && canAnimate) {
+            delay(timeMillis = delayMillis.toLong())
+            isVisible = true
+        }
+    }
+
+    val progress by animateFloatAsState(
+        targetValue = if (isGroupExpanded && canAnimate) 1f else 0f,
+        animationSpec = tween(durationMillis = 360 + index * 30, delayMillis = delayMillis),
+        label = "Post action $index expansion",
+        finishedListener = {
+            if (!isGroupExpanded) {
+                isVisible = false
+            }
+        },
+    )
+    val offsetToToggle = if (canAnimate) togglePositionX - itemPositionX else 0f
+
+    PostActionButton(
+        modifier = modifier
+            .onGloballyPositioned { coordinates ->
+                itemPositionX = coordinates.positionInRoot().x
+            }
+            .graphicsLayer {
+                alpha = if (isVisible) 1f else 0f
+                translationX = offsetToToggle * (1f - progress)
+            },
+        iconRes = iconRes,
+        label = label,
+        // Keep Material colors stable while collapse is in progress, but ignore hidden actions.
+        onClick = {
+            if (isGroupExpanded) {
+                onClick()
+            }
+        },
+        containerColor = containerColor,
+        contentColor = contentColor,
+        interactionSource = interactionSource,
+        enabled = enabled,
+        shape = shape,
+    )
+}
+
+@Composable
+private fun PostActionButton(
+    modifier: Modifier,
+    @DrawableRes iconRes: Int,
+    label: String,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+
+    ) {
+    FilledTonalIconButton(
+        onClick = onClick,
+        modifier = modifier.defaultMinSize(minHeight = 56.dp, minWidth = 56.dp),
+        enabled = enabled,
+        shape = shape,
+        colors = IconButtonDefaults.filledTonalIconButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
+        interactionSource = interactionSource,
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = label,
+        )
+    }
+}
+
+@Composable
+private fun PostActionMenuItem(
+    menuState: ButtonGroupMenuState,
+    @DrawableRes iconRes: Int,
+    label: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    DropdownMenuItem(
+        text = { Text(text = label) },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            onClick()
+            menuState.dismiss()
+        },
+        enabled = enabled,
+    )
+}
 
 @Composable
 @PreviewLightDark
@@ -451,14 +428,15 @@ private fun PostBottomBarPreview() {
     DevBlogAppTheme {
         Box(modifier = Modifier.fillMaxWidth()) {
             PostBottomBar(
+                isExpanded = true,
+                onExpandedChange = { _ -> },
                 ttsState = rememberTtsState(),
                 onToggleFavorite = {},
                 onShowContest = {},
-                isFavorite = false,
-                isUsingTTS = true,
                 onOpenWeb = {},
                 onShare = {},
-                snackbarState = rememberSnackbarState(),
+                isFavorite = false,
+                isUsingTTS = true,
             )
         }
     }

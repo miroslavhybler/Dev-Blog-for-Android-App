@@ -114,6 +114,7 @@
     <string name="content_desc_open_in_browser">Open in browser</string>
     <string name="content_desc_show_contents">Show Contents</string>
     <string name="content_desc_show_menu">Show menu</string>
+    <string name="content_desc_hide_menu">Hide menu</string>
     <string name="content_desc_speak_tts">Read by TTS</string>
     <string name="content_desc_stop_tts">Stop TTS</string>
     <string name="post_no_sections">This post doesn\'t have sections</string>

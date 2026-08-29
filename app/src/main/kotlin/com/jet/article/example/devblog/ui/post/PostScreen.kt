@@ -1,6 +1,6 @@
 @file:OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalSharedTransitionApi::class,
+    ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class,
 )
 
 package com.jet.article.example.devblog.ui.post
@@ -32,6 +32,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -82,9 +84,7 @@ import com.jet.article.core.Link
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.ErrorLayout
-import com.jet.article.example.devblog.composables.MessageSnackbar
 import com.jet.article.example.devblog.composables.PostTopBar
-import com.jet.article.example.devblog.composables.rememberSnackbarState
 import com.jet.article.example.devblog.data.AdjustedPostData
 import com.jet.article.example.devblog.data.Month
 import com.jet.article.example.devblog.data.SettingsStorage
@@ -146,13 +146,18 @@ fun PostScreen(
 
     val data by viewModel.postData.collectAsStateWithLifecycle()
 
-
     val ttsState = rememberTtsState(key = selectedPost.id)
     val state = rememberArticleState()
     val lazyListState = rememberLazyListState()
 
+    var isBottomBarExpanded by remember { mutableStateOf(value = false) }
 
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
+
+
+    BackHandler(enabled = isBottomBarExpanded) {
+        isBottomBarExpanded = false
+    }
 
     //Initializes ttsClient with the state
     TtsLifecycleAwareEffect(
@@ -215,7 +220,9 @@ fun PostScreen(
         },
         onToggleFavorite = {
             viewModel.toggleFavoriteItem(item = selectedPost)
-        }
+        },
+        isBottomBarExpanded = isBottomBarExpanded,
+        onBottomBarExpandedChange = { newIsExpanded -> isBottomBarExpanded = newIsExpanded }
     )
 }
 
@@ -233,6 +240,8 @@ private fun PostScreenImpl(
     data: Result<AdjustedPostData>?,
     onRefresh: () -> Unit,
     onToggleFavorite: () -> Unit,
+    isBottomBarExpanded: Boolean,
+    onBottomBarExpandedChange: (Boolean) -> Unit,
 ) {
     val selectedPost = route.item
     val colorScheme = MaterialTheme.colorScheme
@@ -263,7 +272,6 @@ private fun PostScreenImpl(
     }
     var selectedImageUrl: String? by rememberSaveable { mutableStateOf(value = null) }
 
-    val snackbarState = rememberSnackbarState()
     var isRefreshing by rememberSaveable { mutableStateOf(value = false) }
     val post = remember(key1 = data) { data?.getOrNull() }
     var lastUrl: String? by remember { mutableStateOf(value = null) }
@@ -560,7 +568,7 @@ private fun PostScreenImpl(
 
 
                                 if (data == null) {
-                                    CircularProgressIndicator(
+                                    LoadingIndicator(
                                         modifier = Modifier.align(alignment = Alignment.Center)
                                     )
                                 }
@@ -589,11 +597,6 @@ private fun PostScreenImpl(
                 }
             }
         },
-        snackbarHost = {
-            MessageSnackbar(
-                state = snackbarState,
-            )
-        },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -602,6 +605,8 @@ private fun PostScreenImpl(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 PostBottomBar(
+                    isExpanded = isBottomBarExpanded,
+                    onExpandedChange = onBottomBarExpandedChange,
                     ttsState = ttsState,
                     onToggleFavorite = onToggleFavorite,
                     onShowContest = {
@@ -618,7 +623,6 @@ private fun PostScreenImpl(
                     },
                     isFavorite = selectedPost.isFavoriteState,
                     isUsingTTS = settings.isUsingTTS,
-                    snackbarState = snackbarState,
                 )
             }
         }
@@ -737,7 +741,9 @@ private fun PostPanePreview1() {
                 onRefresh = {},
                 onToggleFavorite = {},
                 articleState = rememberArticleState(initialData = articeData),
-                lazyListState = rememberLazyListState()
+                lazyListState = rememberLazyListState(),
+                isBottomBarExpanded = true,
+                onBottomBarExpandedChange = { _ -> },
             )
         }
     }

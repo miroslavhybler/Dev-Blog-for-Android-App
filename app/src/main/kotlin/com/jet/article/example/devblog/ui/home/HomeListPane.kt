@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package com.jet.article.example.devblog.ui.home
 
@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -141,9 +143,8 @@ private fun HomeListPaneContent(
                         }
 
                         data.itemCount == 0 && data.loadState.refresh is LoadState.Loading -> {
-                            CircularProgressIndicator(
+                            LoadingIndicator(
                                 modifier = Modifier
-                                    .size(size = 24.dp)
                                     .align(alignment = Alignment.Center)
                             )
                         }
@@ -210,9 +211,8 @@ private fun HomeListPaneContent(
                                                 .animateItem(),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            CircularProgressIndicator(
+                                            LoadingIndicator(
                                                 modifier = Modifier
-                                                    .size(size = 24.dp)
                                             )
                                         }
                                     }
