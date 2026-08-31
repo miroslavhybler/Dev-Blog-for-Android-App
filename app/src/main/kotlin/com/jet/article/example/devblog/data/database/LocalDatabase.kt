@@ -73,7 +73,7 @@ abstract class LocalDatabase constructor() : RoomDatabase() {
         fun contains(url: String): Boolean
 
         @Query("SELECT DISTINCT * FROM posts WHERE url=:url")
-        fun getByUrl(url: String): PostItem
+        fun getByUrl(url: String): PostItem?
 
         @Query("SELECT DISTINCT * FROM posts WHERE id=:id LIMIT 1")
         fun getByIdOrNull(id: Int): PostItem?

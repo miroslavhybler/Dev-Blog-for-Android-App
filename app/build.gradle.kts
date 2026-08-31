@@ -73,6 +73,14 @@ dependencies {
 
     implementation(dependencyNotation = project(path = ":tests-names"))
 
+    /** ContentDive lib */
+    implementation("com.gihub.miroslavhybler:contentdive-backend-appsearch:DEV")
+    implementation("com.gihub.miroslavhybler:contentdive-compose:DEV")
+    implementation("com.gihub.miroslavhybler:contentdive-navigation3:DEV")
+    implementation("com.gihub.miroslavhybler:contentdive-serialization-kotlinx:DEV")
+    implementation("com.gihub.miroslavhybler:contentdive-ksp-annotations:DEV")
+    ksp("com.gihub.miroslavhybler:contentdive-ksp-processor:DEV")
+
     implementation(dependencyNotation = libs.jet.utils)
     implementation(dependencyNotation = libs.jet.lint)
     implementation(dependencyNotation = libs.jet.tts)

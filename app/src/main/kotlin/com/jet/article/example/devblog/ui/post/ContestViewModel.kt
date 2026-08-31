@@ -1,6 +1,7 @@
 package com.jet.article.example.devblog.ui.post
 
 import android.app.Application
+import com.jet.article.example.devblog.data.PostContentDiveIndexer
 import com.jet.article.example.devblog.data.SettingsStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,9 +15,11 @@ import javax.inject.Inject
 class ContestViewModel @Inject constructor(
     application: Application,
     settingsStorage: SettingsStorage,
+    postContentDiveIndexer: PostContentDiveIndexer,
 ) : BasePostViewModel(
     application = application,
     settingsStorage = settingsStorage,
+    postContentDiveIndexer = postContentDiveIndexer,
 ) {
 
 

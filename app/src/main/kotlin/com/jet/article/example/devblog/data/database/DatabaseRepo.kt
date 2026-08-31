@@ -32,6 +32,10 @@ class DatabaseRepo @Inject constructor(
         postDao.getByIdOrNull(id = id)
     }
 
+    suspend fun getPostByUrlOrNull(url: String): PostItem? = withTransaction {
+        postDao.getByUrl(url = url)
+    }
+
     suspend fun ensureCorrectPostTimestamps() {
         if (!arePostTimestampsNormalized.compareAndSet(false, true)) {
             return

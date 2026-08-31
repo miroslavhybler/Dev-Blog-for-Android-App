@@ -3,6 +3,7 @@ package com.jet.article.example.devblog.ui.post
 import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.jet.article.example.devblog.data.AdjustedPostData
+import com.jet.article.example.devblog.data.PostContentDiveIndexer
 import com.jet.article.example.devblog.data.SettingsStorage
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.ui.BaseViewModel
@@ -22,9 +23,11 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(
     application: Application,
     settingsStorage: SettingsStorage,
+    private val postContentDiveIndexer: PostContentDiveIndexer,
 ) : BasePostViewModel(
     application = application,
     settingsStorage=settingsStorage,
+    postContentDiveIndexer = postContentDiveIndexer,
 ) {
 
 
@@ -38,10 +41,14 @@ class PostViewModel @Inject constructor(
         onFinal: suspend () -> Unit,
     ) {
         viewModelScope.launch {
-            mPostData.value = coreRepo.loadPostDetail(
+            val loadedPost = coreRepo.loadPostDetail(
                 url = url,
                 isRefresh = isRefresh,
             )
+            mPostData.value = loadedPost
+            if (loadedPost.isSuccess) {
+                postContentDiveIndexer.index(loadedPost.getOrThrow())
+            }
             onFinal()
         }
     }

@@ -89,6 +89,10 @@
 
     <string name="content_desc_show_contest">Show Contest screen</string>
     <string name="content_desc_open_settings">Open settings</string>
+    <string name="content_desc_open_search">Search opened posts</string>
+    <string name="content_desc_close_search">Close search</string>
+    <string name="search_placeholder">Search opened posts</string>
+    <string name="search_no_results">No matching opened posts</string>
     <string name="content_desc_report_on_mail">Report bug on Mail</string>
     <string name="content_desc_report_on_github">Report bug on Github</string>
     <string name="content_desc_copy_stacktrace">Copy stacktrace to clipboard</string>
