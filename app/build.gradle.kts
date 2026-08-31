@@ -16,7 +16,7 @@ plugins {
 
 android {
     namespace = "com.jet.article.example.devblog"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.jet.article.example.devblog"
