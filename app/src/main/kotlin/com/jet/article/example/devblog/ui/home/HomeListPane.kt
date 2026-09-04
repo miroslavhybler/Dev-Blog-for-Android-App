@@ -9,14 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -74,7 +70,8 @@ fun HomeListPane(
 }
 
 private const val errorLazyKey: Int = Int.MAX_VALUE
-private const val loadingLazyKey: Int = Int.MIN_VALUE - 1
+private const val loadingLazyKey: Int = Int.MIN_VALUE
+private const val placeholderCount: Int = 7
 
 
 @Composable
@@ -143,10 +140,33 @@ private fun HomeListPaneContent(
                         }
 
                         data.itemCount == 0 && data.loadState.refresh is LoadState.Loading -> {
-                            LoadingIndicator(
+                            LazyColumn(
                                 modifier = Modifier
-                                    .align(alignment = Alignment.Center)
-                            )
+                                    .fillMaxSize()
+                                    .testTag(tag = Tracing.Tag.posts),
+                                contentPadding = PaddingValues(
+                                    start = dimensions.sidePadding,
+                                    end = dimensions.sidePadding,
+                                    top = dimensions.topLinePadding,
+                                    bottom = dimensions.bottomLinePadding,
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(
+                                    space = when {
+                                        isExpanded && isLargeWidth -> 12.dp
+                                        else -> 24.dp
+                                    }
+                                ),
+                            ) {
+                                items(
+                                    count = placeholderCount,
+                                    key = { index -> loadingLazyKey + index },
+                                ) {
+                                    HomeListItemPlaceholder(
+                                        modifier = Modifier.animateItem(),
+                                        isCompact = isExpanded && isLargeWidth,
+                                    )
+                                }
+                            }
                         }
 
                         else -> {
@@ -204,17 +224,14 @@ private fun HomeListPaneContent(
                                 }
 
                                 if (data.loadState.append is LoadState.Loading) {
-                                    item(key = loadingLazyKey) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .animateItem(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            LoadingIndicator(
-                                                modifier = Modifier
-                                            )
-                                        }
+                                    items(
+                                        count = placeholderCount,
+                                        key = { index -> loadingLazyKey + index },
+                                    ) {
+                                        HomeListItemPlaceholder(
+                                            modifier = Modifier.animateItem(),
+                                            isCompact = isExpanded && isLargeWidth,
+                                        )
                                     }
                                 }
                             }

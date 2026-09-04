@@ -33,6 +33,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
+import com.jet.article.example.devblog.composables.shimmer
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
@@ -108,6 +109,88 @@ fun HomeListItem(
         }
     }
 
+}
+
+@Composable
+fun HomeListItemPlaceholder(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
+) {
+    if (isCompact) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialTheme.shapes.medium,
+                )
+                .padding(
+                    start = 6.dp,
+                    end = 6.dp,
+                    top = 8.dp,
+                    bottom = 8.dp,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(size = 48.dp)
+                    .shimmer(cornerRadius = 8.dp),
+            )
+
+            Spacer(modifier = Modifier.width(width = 12.dp))
+
+            Column(
+                modifier = Modifier.weight(weight = 1f),
+            ) {
+                PlaceholderLine(modifier = Modifier.width(width = 56.dp).height(height = 10.dp))
+                Spacer(modifier = Modifier.height(height = 6.dp))
+                PlaceholderLine(modifier = Modifier.fillMaxWidth().height(height = 18.dp))
+                Spacer(modifier = Modifier.height(height = 4.dp))
+                PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.8f).height(height = 14.dp))
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialTheme.shapes.medium,
+                )
+                .padding(
+                    start = 14.dp,
+                    end = 14.dp,
+                    top = 10.dp,
+                    bottom = 16.dp,
+                ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 164.dp)
+                    .shimmer(cornerRadius = 12.dp),
+            )
+
+            Spacer(modifier = Modifier.height(height = 8.dp))
+            PlaceholderLine(modifier = Modifier.width(width = 64.dp).height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 8.dp))
+            PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.85f).height(height = 24.dp))
+            Spacer(modifier = Modifier.height(height = 6.dp))
+            PlaceholderLine(modifier = Modifier.fillMaxWidth().height(height = 18.dp))
+            Spacer(modifier = Modifier.height(height = 4.dp))
+            PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.7f).height(height = 18.dp))
+        }
+    }
+}
+
+@Composable
+private fun PlaceholderLine(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.shimmer(cornerRadius = 4.dp),
+    )
 }
 
 

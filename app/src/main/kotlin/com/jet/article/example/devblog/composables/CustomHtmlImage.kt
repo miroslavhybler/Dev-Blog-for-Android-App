@@ -61,6 +61,7 @@ object CustomHtmlImageDefaults {
                     color = MaterialTheme.colorScheme.outline,
                     shape = MaterialTheme.shapes.medium,
                 )
+                .shimmer(cornerRadius = 12.dp)
         )
     }
 }
