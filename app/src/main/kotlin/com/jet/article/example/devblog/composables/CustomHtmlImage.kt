@@ -26,9 +26,7 @@ fun CustomHtmlImage(
     ImageElement(
         modifier = modifier.animateContentSize(),
         image = image,
-        loading = {
-            CustomHtmlImageDefaults.Loading()
-        },
+        loading = { CustomHtmlImageDefaults.Loading() },
         error = { HtmlImageDefaults.ErrorLayout() },
     )
 }
@@ -41,9 +39,7 @@ fun CustomHtmlImage(
     ImageElement(
         modifier = modifier.animateContentSize(),
         url = url,
-        loading = {
-            CustomHtmlImageDefaults.Loading()
-        },
+        loading = { CustomHtmlImageDefaults.Loading() },
         error = { HtmlImageDefaults.ErrorLayout() }
     )
 }

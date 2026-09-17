@@ -3,6 +3,7 @@ package com.jet.article.example.devblog.ui.home
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -30,18 +32,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.jet.article.example.devblog.R
 import com.jet.article.example.devblog.composables.CustomHtmlImage
 import com.jet.article.example.devblog.composables.shimmer
+import com.jet.article.example.devblog.data.Month
+import com.jet.article.example.devblog.data.SimpleDate
 import com.jet.article.example.devblog.data.database.PostItem
 import com.jet.article.example.devblog.isExpanded
 import com.jet.article.example.devblog.isMedium
 import com.jet.article.example.devblog.ui.LocalBackstack
 import com.jet.article.example.devblog.ui.Route
+import com.jet.article.example.devblog.ui.DevBlogAppTheme
 import com.jet.article.example.devblog.ui.colorFavorited
 import com.jet.article.example.devblog.ui.containsEntry
 import com.jet.article.ui.elements.ImageElement
+import com.jet.article.ui.theme.ArticleDimensions
+import com.jet.article.ui.theme.LocalArticleDimensions
+
+
+private val dimensForImage: ArticleDimensions = ArticleDimensions.Default.copy(
+    startPadding = 0.dp,
+    endPadding = 0.dp,
+)
 
 /**
  * @author Miroslav Hýbler <br>
@@ -91,7 +105,6 @@ fun HomeListItem(
                     index = index,
                     containerColor = containerColor,
                     contentColor = contentColor,
-                    onToggleFavorite = onToggleFavorite,
                 )
             }
 
@@ -143,11 +156,23 @@ fun HomeListItemPlaceholder(
             Column(
                 modifier = Modifier.weight(weight = 1f),
             ) {
-                PlaceholderLine(modifier = Modifier.width(width = 56.dp).height(height = 10.dp))
+                PlaceholderLine(
+                    modifier = Modifier
+                        .width(width = 56.dp)
+                        .height(height = 10.dp)
+                )
                 Spacer(modifier = Modifier.height(height = 6.dp))
-                PlaceholderLine(modifier = Modifier.fillMaxWidth().height(height = 18.dp))
+                PlaceholderLine(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 18.dp)
+                )
                 Spacer(modifier = Modifier.height(height = 4.dp))
-                PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.8f).height(height = 14.dp))
+                PlaceholderLine(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.8f)
+                        .height(height = 14.dp)
+                )
             }
         }
     } else {
@@ -173,13 +198,29 @@ fun HomeListItemPlaceholder(
             )
 
             Spacer(modifier = Modifier.height(height = 8.dp))
-            PlaceholderLine(modifier = Modifier.width(width = 64.dp).height(height = 10.dp))
+            PlaceholderLine(
+                modifier = Modifier
+                    .width(width = 64.dp)
+                    .height(height = 10.dp)
+            )
             Spacer(modifier = Modifier.height(height = 8.dp))
-            PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.85f).height(height = 24.dp))
+            PlaceholderLine(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.85f)
+                    .height(height = 24.dp)
+            )
             Spacer(modifier = Modifier.height(height = 6.dp))
-            PlaceholderLine(modifier = Modifier.fillMaxWidth().height(height = 18.dp))
+            PlaceholderLine(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 18.dp)
+            )
             Spacer(modifier = Modifier.height(height = 4.dp))
-            PlaceholderLine(modifier = Modifier.fillMaxWidth(fraction = 0.7f).height(height = 18.dp))
+            PlaceholderLine(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.7f)
+                    .height(height = 18.dp)
+            )
         }
     }
 }
@@ -220,42 +261,46 @@ private fun HomeListItemColumn(
             )
     ) {
         Box(modifier = Modifier.wrapContentSize()) {
-            CustomHtmlImage(
-                modifier = Modifier,
-                url = item.image,
-            )
-
-            if (item.isUnreadState) {
-                NewPostMark(
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .padding(start = 12.dp, top = 8.dp)
+            CompositionLocalProvider(LocalArticleDimensions provides dimensForImage) {
+                CustomHtmlImage(
+                    modifier = Modifier.fillMaxWidth(),
+                    url = item.image,
                 )
             }
 
-            IconButton(
+            Row(
                 modifier = Modifier
-                    .align(alignment = Alignment.TopEnd)
-                    .padding(end = 12.dp, top = 8.dp),
-                onClick = { onToggleFavorite(item) },
+                    .fillMaxWidth()
+                    .padding(start = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Icon(
-                    painter = painterResource(
-                        id = if (item.isFavoriteState)
-                            R.drawable.ic_favorite_filled
+                if (item.isUnreadState) {
+                    NewPostMark()
+                }
+
+                IconButton(
+                    modifier = Modifier,
+                    onClick = { onToggleFavorite(item) },
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (item.isFavoriteState)
+                                R.drawable.ic_favorite_filled
+                            else
+                                R.drawable.ic_favorite_outlined
+                        ),
+                        contentDescription = null,
+                        tint = if (item.isFavoriteState)
+                            colorFavorited
                         else
-                            R.drawable.ic_favorite_outlined
-                    ),
-                    contentDescription = null,
-                    tint = if (item.isFavoriteState)
-                        colorFavorited
-                    else
-                        MaterialTheme.colorScheme.onBackground
-                )
+                            MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(height = 4.dp))
+        Spacer(modifier = Modifier.height(height = 8.dp))
 
         Text(
             modifier = Modifier,
@@ -288,7 +333,6 @@ private fun HomeListItemRow(
     index: Int,
     contentColor: Color,
     containerColor: Color,
-    onToggleFavorite: (item: PostItem) -> Unit,
 ) {
 
     Box(
@@ -334,7 +378,7 @@ private fun HomeListItemRow(
                 )
                 Text(
                     modifier = Modifier,
-                    text = AnnotatedString(text=item.title),
+                    text = AnnotatedString(text = item.title),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     color = contentColor,
@@ -343,7 +387,7 @@ private fun HomeListItemRow(
 
                 Text(
                     modifier = Modifier,
-                    text = AnnotatedString(text=item.description),
+                    text = AnnotatedString(text = item.description),
                     style = MaterialTheme.typography.bodySmall,
                     color = contentColor,
                     maxLines = 1,
@@ -377,9 +421,37 @@ fun NewPostMark(
             modifier = Modifier
                 .align(alignment = Alignment.Center)
                 .padding(horizontal = 8.dp, vertical = 2.dp),
-            text = stringResource(R.string.general_unread),
+            text = stringResource(id = R.string.general_unread),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onTertiary,
+        )
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun HomeListItemPreview() {
+    DevBlogAppTheme {
+        HomeListItem(
+            modifier = Modifier.padding(all = 16.dp),
+            onOpenPost = { _, _ -> },
+            onToggleFavorite = {},
+            item = PostItem(
+                title = "What's new in Android development",
+                url = "https://android-developers.googleblog.com/",
+                date = SimpleDate(
+                    year = 2026,
+                    month = Month.SEPTEMBER,
+                    dayOfMonth = 7,
+                ),
+                dateTimeStamp = 0,
+                description = "Explore the latest Android tools, APIs, and development guidance.",
+                image = "https://developer.android.com/static/images/jetpack/compose/hero-compose.png",
+                isUnread = true,
+                isFavorite = false,
+            ),
+            index = 0,
+            isSelected = false,
         )
     }
 }
