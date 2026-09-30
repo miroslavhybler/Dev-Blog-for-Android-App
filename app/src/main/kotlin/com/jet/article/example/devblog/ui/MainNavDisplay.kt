@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.HingePolicy
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
@@ -81,11 +82,22 @@ fun MainNavDisplay(
     openedNotificationPost: PostItem? = null,
     onNotificationPostConsumed: () -> Unit = {},
 ) {
-    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+    val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
     val directive = calculatePaneScaffoldDirective(
         windowAdaptiveInfo = windowAdaptiveInfo,
     )
+    val listDetailSceneStrategy = rememberListDetailSceneStrategy<NavKey>(
+        backNavigationBehavior = BackNavigationBehavior.PopLatest,
+        directive = directive,
+    )
     val backstack: NavBackStack<NavKey> = rememberNavBackStack(Route.Home)
+
+    fun navigate(route: Route) {
+        if (route is Route.Post) {
+            backstack.removeAll { entry -> entry is Route.Contest }
+        }
+        backstack.add(element = route)
+    }
 
     var selectedSectionEvent: SectionSelectedEvent? by remember { mutableStateOf(value = null) }
 
@@ -93,7 +105,7 @@ fun MainNavDisplay(
         val post = openedNotificationPost ?: return@LaunchedEffect
         val lastRoute = backstack.lastOrNull()
         if (lastRoute !is Route.Post || lastRoute.item.id != post.id) {
-            backstack.add(element = Route.Post(item = post))
+            navigate(route = Route.Post(item = post))
         }
         onNotificationPostConsumed()
     }
@@ -104,9 +116,9 @@ fun MainNavDisplay(
         NavDisplay(
             modifier = Modifier
                 .fillMaxSize()
-                .semantics(properties = { testTagsAsResourceId = true }),
+            .semantics(properties = { testTagsAsResourceId = true }),
             backStack = backstack,
-
+            sceneStrategies = listOf(listDetailSceneStrategy),
             onBack = { backstack.pop() },
             entryProvider = entryProvider(
                 fallback = {
@@ -123,7 +135,7 @@ fun MainNavDisplay(
                     ) {
                         HomeListPane(
                             onNavigate = { route ->
-                                backstack.add(element = route)
+                                navigate(route = route)
                             },
                         )
                     }
@@ -136,7 +148,7 @@ fun MainNavDisplay(
                     ) { route ->
                         PostScreen(
                             onBack = { backstack.pop() },
-                            onNavigate = { backstack.add(element = it) },
+                            onNavigate = { navigate(route = it) },
                             route = route,
                             selectedSectionEvent = selectedSectionEvent,
                         )
@@ -165,9 +177,7 @@ fun MainNavDisplay(
                             onBack = {
                                 backstack.pop()
                             },
-                            onNavigate = { route ->
-                                backstack.add(element = route)
-                            }
+                            onNavigate = { route -> navigate(route = route) }
                         )
                     }
 
