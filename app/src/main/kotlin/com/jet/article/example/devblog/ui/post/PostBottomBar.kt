@@ -120,14 +120,14 @@ fun PostBottomBar(
                     )
                 } else {
                     // Preserve overflow measurement while actions are visually collapsed.
-                    Spacer(modifier = Modifier.size(56.dp))
+                    Spacer(modifier = Modifier.size(size = 56.dp))
                 }
             },
             // Keep a dedicated slot for the persistent expand/collapse control.
             modifier = Modifier
                 .padding(end = 64.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         ) {
             customItem(
                 buttonGroupContent = {
